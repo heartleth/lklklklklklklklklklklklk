@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="actionedit.css">
+    <link rel="stylesheet" href="default.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="headbar">
+        <div>File</div>
+        <div id="reset">Clear</div>
+        <div>View</div>
+        <div>Tool</div>
+        <div>Help</div>
+    </div>
+    <div id="workspaceframe">
+        <div id="wsleft"></div>
+        <div id="wsff">
+            <div id="wsnav">
+                <div>Page</div>
+            </div>
+            <div id="workspace">
+                <wsbody>
+                    <h1>Hello, world!</h1>
+                    <div style="width: 200px; min-height: 200px;">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Modi vitae quod et quae hic. Animi voluptates totam et rem temporibus itaque praesentium natus hic deserunt quam? Minus dicta dolores nostrum?</div>
+                </wsbody>
+            </div>
+        </div>
+        <div id="wsright"></div>
+    </div>
+    <div id="menus"></div>
+    <div id="addmenu" class="draggablemenu">
+        <drag-menu></drag-menu>
+        <label>UI</label><show-hide-button div="true"></show-hide-button><br>
+        <div>
+            <add-menu name="title"></add-menu>
+            <add-menu name="button"></add-menu>
+        </div>
+        <label>Layout</label><show-hide-button div="true"></show-hide-button><br>
+        <div>
+            <add-menu name="box"></add-menu>
+            <add-menu name="components"></add-menu>
+        </div>
+        <label>Style</label><show-hide-button div="true"></show-hide-button><br>
+        <div>
+            <add-menu name="style"></add-menu>
+        </div>
+        <label>States</label><show-hide-button div="true"></show-hide-button><br>
+        <div>
+            <add-menu name="states"></add-menu>
+        </div>
+        <label>Page</label><show-hide-button div="true"></show-hide-button><br>
+        <div>
+            <add-menu name="route"></add-menu>
+        </div>
+    </div>
+    <script src="ui/menu.js"></script>
+    <script src="workspaces.js"></script>
+    <script src="blockcoding.js"></script>
+    <script src="ui/actionmenu.js"></script>
+    <script src="ui/stylemenu.js"></script>
+    <script src="ui/statesmenu.js"></script>
+    <script src="ui/titlesmenu.js"></script>
+    <script src="ui/buttonmenu.js"></script>
+    <script src="ui/boxmenu.js"></script>
+    <script src="ui/values.js"></script>
+    <script src="ui.js"></script>
+</body>
+</html>

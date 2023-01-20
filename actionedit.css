@@ -1,0 +1,263 @@
+function-edit-window {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+function-edit-window > function-edit-block,
+div > function-edit-block {
+    border: solid 1px rgb(188, 188, 188);
+    border-radius: 5px 5px 5px 5px;
+    padding-right: 8px;
+    position: absolute;
+    width: fit-content;
+    padding-left: 8px;
+    padding-top: 1px;
+    font-size: 13px;
+    min-width: 80px;
+    height: 20px;
+    left: 30px;
+    top: 30px;
+}
+
+div > function-edit-block {
+    min-width: max-content;
+    margin-right: 8px;
+    position: initial;
+}
+
+function-edit-window > function-edit-block.start,
+div > function-edit-block.start {
+    background: linear-gradient(90deg, rgb(0, 255, 102) 5px, rgb(41, 41, 41) 1px);
+}
+
+function-edit-window > function-edit-block.value,
+div > function-edit-block.value {
+    background: linear-gradient(90deg, rgb(255, 0, 149) 5px, rgb(41, 41, 41) 1px);
+}
+
+function-edit-window > function-edit-block.control,
+div > function-edit-block.control {
+    background: linear-gradient(90deg, rgb(35, 201, 182) 5px, rgb(41, 41, 41) 1px);
+    min-height: 52px;
+}
+
+function-edit-window > function-edit-block.ui,
+div > function-edit-block.ui {
+    background: linear-gradient(90deg, rgb(193, 35, 201) 5px, rgb(41, 41, 41) 1px);
+}
+
+function-edit-window > function-edit-block.style,
+div > function-edit-block.style {
+    background: linear-gradient(90deg, rgb(90, 202, 236) 5px, rgb(41, 41, 41) 1px);
+}
+
+function-edit-window > function-edit-block.code,
+div > function-edit-block.code {
+    background: linear-gradient(90deg, rgb(0, 0, 0) 5px, rgb(41, 41, 41) 1px);
+}
+
+function-edit-window > function-edit-block::after, function-edit-window > function-edit-block.control > div::after {
+    background-color: rgb(0, 0, 0);
+    border: solid 1.5px #ddd;
+    border-radius: 10px;
+    position: absolute;
+    display: block;
+    z-index: 100;
+    bottom: -4px;
+    height: 3px;
+    content: "";
+    width: 3px;
+    left: 7px;
+}
+
+function-edit-window > function-edit-block.control > div::after
+/* ,div > function-edit-block.control > div::after */
+{
+    left: 18px;
+    bottom: -3.2px;
+}
+
+function-edit-window > function-edit-block::before, function-edit-window > function-edit-block.control > div::before {
+    background-color: rgb(0, 0, 0);
+    border: solid 1.5px #ddd;
+    border-radius: 10px;
+    position: absolute;
+    display: block;
+    z-index: 100;
+    height: 3px;
+    content: "";
+    width: 3px;
+    left: 18px;
+    top: -4px;
+}
+
+function-edit-window > function-edit-block.control > div::before {
+    left: 7px;
+}
+
+function-edit-window > function-edit-block.start::before {
+    display: none;
+}
+
+function-edit-window > function-edit-block.control::after {
+    bottom: -4px;
+    top: unset;
+}
+
+function-edit-window > function-edit-block.control > div {
+    background: rgb(28, 28, 28);
+    position: absolute;
+    height: calc(100% - 32px);
+    width: calc(100% - 8px);
+    margin-top: 4px;
+    border-left: solid 1px #ddd;
+    border-bottom: solid 1px #ddd;
+    border-top: solid 1px #ddd;
+    border-radius: 5px 0px 0px 5px;
+}
+
+function-edit-window > div {
+    background-color: rgb(79, 79, 79);
+    border-radius: 0px 0px 4px 4px;
+    border: solid 1px #bbb;
+    white-space: initial;
+    position: absolute;
+    overflow: auto;
+    padding: 8px;
+    height: 150px;
+    bottom: 16px;
+    right: 4px;
+    left: 4px;
+}
+
+function-edit-window > div > function-edit-block {
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+small-value > input[type="text"]:nth-child(2) {
+    border-radius: 0px 8px 8px 0px;
+    height: 12px !important;
+    display: inline-block;
+    margin-right: 4px;
+    margin-left: 0px;
+    border: white;
+    width: 60px;
+}
+
+small-value > input[type="text"]:first-child {
+    height: 12px !important;
+    display: inline-block;
+    border-radius: 8px;
+    position: relative;
+    border: white;
+    margin: 0px;
+    width: 60px;
+    top: -1.8px;
+}
+
+small-value {
+    grid-template-columns: 1fr 4fr;
+    margin: 0px !important;
+    display: inline-grid;
+}
+
+small-value > select:first-child {
+    display: inline-block;
+    margin-right: 4px;
+    margin-left: 4px;
+    font-size: 10px;
+    height: 14px;
+    width: 60px;
+}
+
+small-value > select.blockCodeSelectBetween:first-child {
+    max-width: 10px !important;
+    display: inline-block;
+    margin-right: 4px;
+    margin-left: 4px;
+    font-size: 10px;
+    height: 14px;
+}
+
+small-value > select:nth-child(2) {
+    border-radius: 0px 8px 8px 0px;
+    width: 60px !important;
+    display: inline-block;
+    margin-right: 4px;
+    margin-left: 0px;
+    font-size: 10px;
+    height: 14px;
+}
+
+small-value > button {
+    border-radius: 8px 0px 0px 8px;
+    background: rgb(94, 94, 94);
+    background-size: 12px 12px;
+    border: solid 1px white;
+    display: inline-block;
+    margin-right: 0px;
+    margin-left: 4px;
+    height: 14px;
+    width: 8px;
+}
+
+small-value > button.m0 {
+    background-image: radial-gradient(#fbff00 2px, transparent 0);
+}
+
+small-value > button.m1 {
+    background-image: radial-gradient(#ff6ec2 2px, transparent 0);
+}
+
+small-value > button.m2 {
+    background-image: radial-gradient(#00f7ff 2px, transparent 0);
+}
+
+.blockNav {
+    background-color: rgb(54, 54, 54);
+    border-radius: 0px 0px 0px 0px;
+    border: solid 1px #bbb;
+    white-space: initial;
+    position: absolute;
+    overflow: auto;
+    display: flex;
+    bottom: 183px;
+    padding: 0px;
+    height: 20px;
+    right: 4px;
+    left: 4px;
+}
+
+.blockNav > div {
+    text-align: center;
+    width: 100%;
+}
+
+.blockNav > div:hover {
+    background-color: rgb(97, 97, 97);
+}
+
+function-edit-block.args {
+    display: inline-block !important;
+    padding-bottom: 0px !important;
+    border-radius: 8px !important;
+    padding-top: 0px !important;
+    height: 14px !important;
+    font-size: 12px;
+}
+
+function-edit-block.args::after {
+    display: none;
+}
+
+function-edit-block.args::before {
+    display: none;
+}
+
+function-edit-block.args > * {
+    margin-bottom: 0px !important;
+    position: relative !important;
+    top: -1px !important;
+}

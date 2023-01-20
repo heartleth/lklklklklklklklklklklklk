@@ -1,0 +1,531 @@
+#menus {
+    user-select: none;
+    position: fixed;
+    right: 0px;
+    left: 0px;
+    top: 0px;
+}
+
+body {
+    background-color: rgb(65, 65, 65);
+    margin: 0px;
+}
+
+.draggablemenu {
+    box-shadow: 0px 5px 8px 2px rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.736);
+    position: absolute;
+    user-select: none;
+    display: block;
+    padding: 4px;
+    right: 30px;
+    top: 28px;
+}
+
+add-menu {
+    border: solid 2px rgb(89, 89, 89);
+    background-color: gray;
+    border-radius: 8px;
+    margin-bottom: 2px;
+    user-select: none;
+    text-align: left;
+    font-size: 12px;
+    display: block;
+    color: white;
+    height: 20px;
+    padding: 0px;
+    width: 96px;
+}
+
+#addmenu {
+    width: 100px !important;
+    font-size: 12px;
+    z-index: 99999;
+}
+
+#addmenu>label {
+    font-weight: light;
+    position: relative;
+    color: white;
+    top: -2px;
+}
+
+add-component {
+    border: solid 2px rgb(89, 89, 89);
+    background-color: gray;
+    width: calc(100% - 20px);
+    border-radius: 8px;
+    margin-bottom: 2px;
+    user-select: none;
+    text-align: left;
+    margin: 8px auto;
+    font-size: 12px;
+    display: block;
+    color: black;
+    height: fit-content;
+    padding: 5px;
+    text-align: center;
+}
+
+add-menu:hover {
+    border: solid 2px white;
+    cursor: pointer;
+}
+
+add-component:hover {
+    border: solid 2px white;
+    cursor: grab;
+}
+
+add-component:active {
+    cursor: grabbing;
+}
+
+add-menu label {
+    user-select: none;
+    margin-left: 5px;
+    width: 30px;
+}
+
+drag-menu {
+    background-color: rgb(77, 77, 77);
+    border-radius: 8px;
+    margin-bottom: 5px;
+    user-select: none;
+    display: block;
+    cursor: move;
+    height: 8px;
+}
+
+span-menu {
+    background-color: rgb(77, 77, 77);
+    border-radius: 8px 0px 0px 8px;
+    width: calc(100% - 22px);
+    user-select: none;
+    cursor: s-resize;
+    margin-top: 5px;
+    display: block;
+    height: 8px;
+}
+
+span-menu:hover {
+    background-color: rgb(109, 109, 109);
+}
+
+.menuws {
+    background-color: rgba(110, 110, 110, 0.719);
+    border: solid 1px rgb(176, 176, 176);
+    height: calc(100% - 34px);
+    width: calc(100% - 10px);
+    scroll-behavior: smooth;
+    white-space: nowrap;
+    overflow-x: hidden;
+    border-radius: 3px;
+    overflow-y: auto;
+    font-size: 14px;
+    color: white;
+    padding: 4px;
+}
+
+::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(65, 65, 65);
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(149, 149, 149);
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(190, 190, 190);
+    border-radius: 8px;
+}
+
+drag-menu button, span-menu div {
+    background-color: rgb(163, 163, 163);
+    margin-left: calc(100% - 30px);
+    border-radius: 8px;
+    display: block;
+    border: none;
+    height: 8px;
+    width: 30px;
+}
+
+span-menu div {
+    border-left: solid 1.5px rgb(197, 197, 197);
+    border-radius: 0px 8px 8px 0px;
+    background-color: inherit;
+    cursor: se-resize;
+    margin-left: 100%;
+    width: 20px;
+}
+
+drag-menu button:hover {
+    background-color: rgb(176, 135, 135);
+}
+
+#workspaceframe {
+    justify-content: space-between;
+    position: fixed;
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+#wsleft, #wsright {
+    border-right: solid 1px rgb(136, 136, 136);
+    background-color: rgb(34, 34, 34);
+    padding-right: 10px;
+    overflow-y: scroll;
+    position: relative;
+    width: fit-content;
+    height: 100%;
+    bottom: 0px;
+}
+
+#wsright {
+    border-left: solid 1px rgb(136, 136, 136);
+    border-right: none;
+}
+
+#wsff {
+    overflow-y: scroll;
+    margin-right: 4px;
+    margin-left: 4px;
+    flex: content;
+    padding: 0px;
+    height: 100%;
+}
+
+#workspace {
+    background-color: rgb(255, 255, 255);
+    margin-bottom: 30px;
+    margin-top: 4px;
+}
+
+input[type="text"], textarea {
+    border: solid 1px black;
+    width: calc(100% - 10px);
+    border-radius: 8px;
+    padding-left: 5px;
+    resize: vertical;
+    font-size: 10px;
+    outline: none;
+    height: 12px;
+}
+
+.menuws > .title {
+    font-weight: bold;
+    display: block;
+}
+
+div[temp] {
+    border: solid 1px black !important;
+    position: absolute !important;
+    opacity: 0.5 !important;
+}
+
+div[temp][t2x] > * {
+    visibility: hidden;
+}
+
+div[temp][t2] > * {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+div[temp][t2x] {
+    background-color: rgba(251, 255, 0, 0.62) !important;
+}
+
+div[temp][t2] {
+    background-color: rgba(37, 37, 37, 0) !important;
+    position: relative !important;
+    height: auto !important;
+    width: 100% !important;
+    opacity: 1 !important;
+    cursor: grabbing;
+}
+
+.outline {
+    border: dashed 3px rgba(0, 0, 0, 0.449);
+    outline: black 1px;
+}
+
+wsbody {
+    min-height: 100px;
+    display: block;
+    padding: .01px;
+}
+
+button.close {
+    background-color: rgb(70, 70, 70);
+    border: 1px solid black;
+    position: absolute;
+    text-align: center;
+    cursor: pointer;
+    color: white;
+    outline: none;
+    height: 20px;
+    width: 20px;
+}
+
+length-input {
+    display: block;
+}
+
+length-input {
+    width: calc(100% - 52px);
+}
+
+select.measure {
+    position: relative;
+    top: 2px;
+    width: 45px;
+    height: 15px;
+}
+
+select {
+    background-color: rgb(25, 25, 25);
+    border-radius: 8px;
+    border: solid 1px;
+    font-size: 12px;
+    color: white;
+}
+
+value-input, action-input {
+    border: solid 2px rgb(89, 89, 89);
+    background-color: gray;
+    width: calc(100% - 16px);
+    height: fit-content;
+    border-radius: 8px;
+    margin-bottom: 2px;
+    user-select: none;
+    text-align: left;
+    overflow: hidden;
+    font-size: 12px;
+    display: block;
+    color: white;
+    padding: 5px;
+    margin: 0px;
+}
+
+value-input.hide, action-input.hide  {
+    display: none;
+}
+
+.stateName, .blockCodeSelectBetween {
+    border: solid 1px white;
+    width: calc(100% - 157px);
+    border-radius: 80px;
+    margin-left: 8px;
+    min-width: 50px;
+}
+
+.blockCodeSelectBetween {
+    top: 1px
+}
+
+value-input > .newStateName, action-input > .newStateName {
+    background-color: rgb(29, 29, 29);
+    border: solid 1px white;
+    border-radius: 80px;
+    margin-left: 3px;
+    font-size: 12px;
+    color: white;
+    outline: none;
+    width: 36px;
+}
+
+value-input p {
+    color: white;
+}
+
+value-input select {
+    position: relative;
+}
+
+value-input .valuedefault {
+    border: solid 1px black;
+    width: calc(100% - 70px);
+    border-radius: 80px;
+    position: relative;
+    right: -23px;
+}
+
+line {
+    border-bottom: solid 1px white;
+    margin-bottom: 3px;
+    display: block;
+    content: "";
+    margin: 4px;
+}
+
+value-input .expression {
+    border: solid 1px black;
+    width: calc(100% - 70px);
+    border-radius: 80px;
+    position: relative;
+    right: -5px;
+}
+
+value-input span {
+    margin-left: 8px;
+}
+
+show-hide-button {
+    display: inline-block;
+    position: relative;
+    margin-left: 4px;
+    font-size: 10px;
+    top: -1px;
+}
+
+.initbutton {
+    background-color: rgb(29, 29, 29);
+    border: solid 1px white;
+    border-radius: 8px;
+    margin-top: 2px;
+    font-size: 12px;
+    display: inline-block;
+    color: white;
+    outline: none;
+}
+
+.initbutton:hover, .newstate:hover {
+    background-color: rgb(63, 63, 63);
+}
+
+.newstate {
+    background-color: rgb(29, 29, 29);
+    border: solid 1px white;
+    border-radius: 8px;
+    margin-left: 4px;
+    font-size: 12px;
+    color: white;
+    outline: none;
+}
+
+.fullStateName {
+    border: solid 1px white;
+    width: calc(100% - 96px);
+    border-radius: 80px;
+    margin-left: 0px;
+}
+
+value-input > input.useStates {
+    border: solid 1px black;
+    width: calc(100% - 70px);
+    border-radius: 8px;
+    margin-left: 8px;
+}
+
+#headbar {
+    background-color: rgb(47, 47, 47);
+    border-bottom: solid 5px black;
+    padding-left: 4px;
+    font-size: 10px;
+    color: white;
+    z-index: 99999;
+}
+
+#headbar > div {
+    background-color: rgb(85, 85, 85);
+    display: inline-block;
+    user-select: none;
+    padding: 0 8px;
+}
+
+#headbar > div:hover {
+    background-color: rgb(96, 96, 96);
+}
+
+function-edit {
+    grid-template-columns: calc(100% - 56px) 50px;
+    display: grid;
+}
+
+function-edit>.useStatesList {
+    background-color: rgb(63, 63, 63);
+    border: solid 1px white;
+    word-break: break-all;
+    word-wrap: break-word;
+    display: inline-block;
+    white-space: normal;
+    overflow-y: scroll;
+    border-radius: 8px;
+    user-select: text;
+    min-height: 35px;
+    max-height: 70px;
+    width: 100%;
+}
+
+.useStatesList::-webkit-scrollbar {
+    display: none;
+}
+
+.useStatesList>select {
+    width: calc(100% - 24px);
+}
+
+.openActionEditor {
+    display: inline-block;
+    border: solid 1px white;
+    background-color: #444;
+    white-space: initial;
+    border-radius: 8px;
+    text-align: center;
+    margin-left: 4px;
+    width: 50px;
+}
+
+.openActionEditor:hover {
+    background-color: #333;
+    cursor: pointer;
+}
+
+.functionEdit {
+    background: #222;
+    background-image: radial-gradient(#2f2f2f 2px, transparent 0);
+    background-size: 25px 25px;
+}
+
+.styleEdit {
+    display: block;
+    background-color: white;
+    height: calc(100% - 20px);
+    width: 100%;
+}
+
+#wsnav>div {
+    border-radius: 10px;
+    border: solid 1px white;
+    display: inline-block;
+    padding-right: 8px;
+    padding-left: 8px;
+    font-size: 12px;
+    color: white;
+    user-select: none;
+    cursor: pointer;
+}
+
+#wsnav>div:hover {
+    background-color: rgb(120, 120, 120);
+}
+
+.addOpenComponent {
+    width: 100%;
+    border-radius: 10px;
+    outline: none;
+    user-select: none;
+    color: white;
+    background-color: #222;
+    border: solid 1px white;
+    font-size: 14px;
+}
