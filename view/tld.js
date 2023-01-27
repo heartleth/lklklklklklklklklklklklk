@@ -114,6 +114,7 @@ function topLeftDrag(me, evt) {
 
 function topLeftDrop(me, evt) {
     let wsb = document.querySelector('wsbody');
+    wsb.style.opacity = '1';
     for (let k of wsb.querySelectorAll('*')) {
         k.style.opacity = '1';
     }
@@ -165,18 +166,18 @@ function topLeftDrop(me, evt) {
             me.mom = undefined;
             return;
         }
-        else {
-            me.temp = undefined;
-            me.mom = undefined;
-            return;
-        }
-        
-        if (me.temp) {
+        else if (me.mom == wsb && me.temp && wsb.children.length < 2) {
             let { tempRect, elem } = getEmbodiedElem(me);
             wsb.insertBefore(elem, me.temp);
             elem.style.marginLeft = tempRect.left - piv[0] + 'px';
             elem.style.marginTop = tempRect.top - piv[1] + 'px';
             me.temp.remove();
+        }
+        else {
+            me.temp.remove();
+            me.temp = undefined;
+            me.mom = undefined;
+            return;
         }
     }
     me.temp = undefined;

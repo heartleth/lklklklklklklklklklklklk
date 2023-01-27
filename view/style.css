@@ -9,6 +9,7 @@
 body {
     background-color: rgb(65, 65, 65);
     margin: 0px;
+    font-family: 'Consolas';
 }
 
 .draggablemenu {
@@ -259,8 +260,9 @@ div[temp][t2] {
 
 wsbody {
     min-height: 500px;
+    overflow-y: auto;
     display: block;
-    padding: .01px;
+    height: auto;
 }
 
 button.close {

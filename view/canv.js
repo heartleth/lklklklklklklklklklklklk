@@ -20,6 +20,7 @@ function drawCanvas() {
         ctx.lineTo(wsrect.width, i);
     }
     ctx.stroke();
+    drawResizes(canvas, ctx);
 }
 
 function getCell(x, y) {
@@ -72,3 +73,76 @@ ws.addEventListener('resize', drawCanvas);
 window.addEventListener('DOMContentLoaded', drawCanvas);
 window.addEventListener('mousemove', drawCanvas);
 window.addEventListener('resize', drawCanvas);
+
+function drawResizes(canvas, ctx) {
+    const canvasRect = canvas.getBoundingClientRect();
+    let wsb = document.querySelector('wsbody');
+    for (let div of wsb.querySelectorAll('*')) {
+        const divRect = div.getBoundingClientRect();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = 'rgba(50, 50, 255, 0.5)';
+        ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top, divRect.width, divRect.height);
+        
+        ctx.lineWidth = 2;
+        ctx.fillStyle = 'white'
+        ctx.strokeStyle = 'blue'
+        const tl = [divRect.left - canvasRect.left - 4, divRect.top - canvasRect.top - 4];
+        const wh = [8, 8]
+        const divH = divRect.height;
+        const divW = divRect.width;
+        let fns = (a, b) => {
+            ctx.fillRect(tl[0]+a, tl[1]+b, ...wh);
+            ctx.strokeRect(tl[0]+a, tl[1]+b, ...wh);
+        };
+        fns(divW/2, 2);
+        fns(divW/2, divH-2);
+        fns(2, divH/2);
+        fns(divW-2, divH/2);
+    }
+}
+
+window.addEventListener('mousedown', (e) => {
+    let canvas = document.querySelector('canvas');
+    const canvasRect = canvas.getBoundingClientRect();
+    let mx = e.clientX;
+    let my = e.clientY;
+    if (isInRect(mx, my, canvasRect)) {
+        let ctx = canvas.getContext('2d');
+        let wsb = document.querySelector('wsbody');
+        for (let div of wsb.querySelectorAll('*')) {
+            const divRect = div.getBoundingClientRect();
+            const tl = [divRect.left - canvasRect.left - 4, divRect.top - canvasRect.top - 4];
+            const divH = divRect.height;
+            const divW = divRect.width;
+            const wh = [8, 8];
+            const rects = [
+                { top:tl[1]+divH/2, bottom:tl[1]+divH/2+wh[1], left:tl[0]+2, right:tl[0]+2+wh[0] },
+                { top:tl[1]+2, bottom:tl[1]+2+wh[1], left:tl[0]+divW/2, right:tl[0]+divW/2+wh[0] },
+                { top:tl[1]+divH/2, bottom:tl[1]+divH/2+wh[1], left:tl[0]+divW-2, right:tl[0]+divW-2+wh[0] },
+                { top:tl[1]+divH-2, bottom:tl[1]+divH-2+wh[1], left:tl[0]+divW/2, right:tl[0]+divW/2+wh[0] }
+            ];
+            for (let i = 0; i < 4; i++) {
+                if (isInRect(mx - canvasRect.left, my - canvasRect.top, rects[i])) {
+                    ctx.fillStyle = 'rgba(50, 50, 255, 0.5)';
+                    ctx.fillRect(rects[i].left, rects[i].top, ...wh);
+                    
+                    window.resizing = {
+                        element: div,
+                        direction: [
+                            'left', 'top', 'right', 'bottom'
+                        ][i],
+                        drawOriginal: [divRect.left - canvasRect.left, divRect.top - canvasRect.top, divRect.width, divRect.height],
+                        begin: [mx, my],
+                        originalStyle: JSON.parse(JSON.stringify(div.style)),
+                        original: JSON.parse(JSON.stringify(getComputedStyle(div))),
+                        ctx
+                    };
+                }
+            }
+        }
+    }
+});
+
+function isInRect(x, y, rect) {
+    return (rect.left < x && x < rect.right) && (rect.top < y && y < rect.bottom);
+}
