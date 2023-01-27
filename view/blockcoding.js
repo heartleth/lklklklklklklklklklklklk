@@ -1,4 +1,12 @@
 let blockmap = {
+    'return': {
+        html: '= ?T',
+        category: 'value',
+        exec: ((stc, local, v) => {
+            window.locals[local]._returnValue = getValue(v, local);
+            return;
+        })
+    },
     'JavaScript': {
         html: 'JavaScript ?T',
         category: 'code',
@@ -23,6 +31,14 @@ let blockmap = {
         exp: (e) => `#${e}`,
         exec: ((stc, local, e) => {
             return '#' + getValue(e, local);
+        })
+    },
+    'ValueOf': {
+        html: 'Input value:?T',
+        category: 'ui',
+        isArgs: true,
+        exec: ((stc, local, v) => {
+            return window.locals[local][v][0].value;
         })
     },
     'State': {
@@ -88,7 +104,7 @@ let blockmap = {
         category: 'ui',
         exec: ((stc, local, html, v) => {
             if (window.locals[local][v][0].classList) {
-                window.locals[local][v].forEach(e=>e.innerHTML+=getValue(html, local));
+                window.locals[local][v].forEach(e=>e.appendChild(getValue(html, local)));
             }
         })
     },
@@ -100,26 +116,11 @@ let blockmap = {
             window.states[st] = getValue(text, local);
         })
     },
-    'AddState': {
-        html: 'Add state % by ?T',
-        category: 'value',
-        exec: ((stc, local, st, text) => {
-            stc.push(st);
-            window.states[st] = parseFloat(window.states[st]) + parseFloat(getValue(text, local));
-        })
-    },
     'SetLocal': {
         html: 'Set variable ?T as ?T',
         category: 'value',
         exec: ((stc, local, v, text) => {
             window.locals[local][v] = getValue(text, local);
-        })
-    },
-    'AddLocal': {
-        html: 'Add variable ?T by ?T',
-        category: 'value',
-        exec: ((stc, local, v, text) => {
-            window.locals[local][v] = parseFloat(window.locals[local][v]) + parseFloat(getValue(text, local));
         })
     },
     'IfOrd': {
@@ -184,9 +185,9 @@ function registerBlocks(d) {
         d.blockNav.appendChild(nav);
     }
 
-    for (let k of Object.keys(blockmap)) {
-        d.registerBlock(new BlockCreator(blockmap[k].category, k, blockmap[k].html, blockmap[k].isArgs));
-    }
+    // for (let k of Object.keys(blockmap)) {
+    //     d.registerBlock(new BlockCreator(blockmap[k].category, k, blockmap[k].html, blockmap[k].isArgs));
+    // }
 }
 
 function showBlocks(d) {
@@ -199,16 +200,16 @@ function showBlocks(d) {
 }
 
 function getValue(v, local) {
-    if (!v.substring) {
-        console.log(v);
+    if (!v.substring && v.name) {
         return blockmap[v.name].exec([], local, ...v.params.map(e=>getValue(e, local)));
     }
-
-    if (v.startsWith('#Local:')) {
-        return window.locals[local][v.substring(7)];
-    }
-    else if (v.startsWith('#State:')) {
-        return window.states[v.substring(7)];
+    if (v.startsWith) {
+        if (v.startsWith('#Local:')) {
+            return window.locals[local][v.substring(7)];
+        }
+        else if (v.startsWith('#State:')) {
+            return window.states[v.substring(7)];
+        }
     }
     return v;
-}   
+}

@@ -261,3 +261,9 @@ function-edit-block.args > * {
     position: relative !important;
     top: -1px !important;
 }
+
+function-edit-window > button {
+    position: absolute;
+    bottom: 210px;
+    left: 10px;
+}

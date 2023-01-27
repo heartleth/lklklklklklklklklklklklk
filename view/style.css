@@ -32,7 +32,6 @@ add-menu {
     font-size: 12px;
     display: block;
     color: white;
-    height: 20px;
     padding: 0px;
     width: 96px;
 }
@@ -253,13 +252,13 @@ div[temp][t2] {
     cursor: grabbing;
 }
 
-.outline {
+/* .outline {
     border: dashed 3px rgba(0, 0, 0, 0.449);
     outline: black 1px;
-}
+} */
 
 wsbody {
-    min-height: 100px;
+    min-height: 500px;
     display: block;
     padding: .01px;
 }
@@ -433,6 +432,7 @@ value-input > input.useStates {
     font-size: 10px;
     color: white;
     z-index: 99999;
+    margin-bottom: 0px;
 }
 
 #headbar > div {
@@ -504,28 +504,78 @@ function-edit>.useStatesList {
 }
 
 #wsnav>div {
-    border-radius: 10px;
+    border-radius: 0px 0px 10px 10px;
     border: solid 1px white;
     display: inline-block;
+    position: relative;
     padding-right: 8px;
     padding-left: 8px;
+    margin-right: 8px;
+    user-select: none;
     font-size: 12px;
     color: white;
-    user-select: none;
     cursor: pointer;
+    top: -5px;
 }
 
 #wsnav>div:hover {
     background-color: rgb(120, 120, 120);
 }
 
-.addOpenComponent {
-    width: 100%;
+#wsnav>div button {
+    background-color: rgb(0, 0, 0);
+    border: solid 1px white;
+    display: inline-block;
     border-radius: 10px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    font-size: 8px;
+    color: white;
+    padding: none;
+    height: 14px;
+    width: 22px;
+    top: -0.8px;
+    left: 5px;
+}
+
+.addOpenComponent {
+    border-radius: 10px;
+    width: 100%;
     outline: none;
     user-select: none;
     color: white;
     background-color: #222;
     border: solid 1px white;
     font-size: 14px;
+}
+
+component-editor input.componentAttrs {
+    width: calc(100% - 30px);
+}
+
+component-editor button.removeButton {
+    font-size: 10px;
+}
+
+button.openComponent {
+    border: solid 1px white;
+    background-color: #222;
+    border-radius: 10px;
+    margin-left: 4px;
+    font-size: 10px;
+    color: white;
+    height: 18px;
+}
+
+component-editor {
+    border: solid 1px white;
+    background-color: #333;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+canvas {
+    position: absolute;
+    pointer-events: none;
 }

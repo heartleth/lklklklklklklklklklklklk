@@ -1,0 +1,17 @@
+.hide {
+    display: none !important;
+}
+
+user-built-component {
+    display: block;
+}
+
+button.natural {
+    background-color: white !important;
+    border: solid 1px gray;
+}
+
+div.natural {
+    outline: solid 1px rgb(128, 128, 128) !important;
+    border-radius: 12px !important;
+}

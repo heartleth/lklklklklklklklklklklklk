@@ -217,58 +217,7 @@ window.addEventListener('mousemove', (e)=>{
             }
         }
         else if (this.isClicked == 'place') {
-            let ws = document.getElementById('workspace');
-            let box = me.parentElement.parentElement;
-            let rect = box.getClientRects()[0];
-            if (rect.x > e.clientX || rect.x + rect.width < e.clientX || rect.y > e.clientY || rect.y + rect.height < e.clientY) {
-                if (this.isOut != true) {
-                    let selector = 'wsbody';
-                    for (let i = 0; i < insertDepth; i++) {
-                        selector += ', wsbody' + '>*'.repeat(i+1);
-                    }
-                    this.isOut = true;
-                    let dcs = getComputedStyle(me.children[0]);
-                    [...ws.querySelectorAll(selector)].forEach(e=>{
-                        e.classList.add('outline');
-                        const cn = [...e.childNodes];
-                        
-                        for (child of cn) {
-                            if (child.nodeType == Node.TEXT_NODE && child.textContent.trim() == '') {
-                                continue;
-                            }
-                            let d = document.createElement('div');
-                            setDStyle(d, dcs);
-                            d.setAttribute('temp', true);
-                            d.innerHTML = me.innerHTML;
-                            e.insertBefore(d, child);
-                            applyScaling(d);
-                        }
-                        
-                        let d = document.createElement('div');
-                        setDStyle(d, dcs);
-                        d.setAttribute('temp', true);
-                        d.innerHTML = me.innerHTML;
-                        e.appendChild(d);
-                        applyScaling(d);
-                    });
-                }
-
-                document.querySelectorAll('[temp]').forEach(ne=>{
-                    let rect = ne.getClientRects()[0];
-                    if (!(rect.x > e.clientX || rect.x + rect.width < e.clientX || rect.y > e.clientY || rect.y + rect.height < e.clientY)) {
-                        ne.setAttribute('t2', true);
-                        ne.removeAttribute('t2x');
-                    }
-                    else {
-                        ne.setAttribute('t2x', true);
-                        ne.removeAttribute('t2');
-                    }
-                });
-            }
-            else {
-                document.querySelectorAll('[temp]').forEach(e=>e.remove());
-                this.isOut = false;
-            }
+            dragToPlace(me, e);
         }
     }
     return false;
@@ -280,26 +229,29 @@ window.addEventListener('mouseup', (e) => {
         resizeMenu(0, 0, false, false);
     }
     else if (window.isClicked == 'place') {
-        document.querySelectorAll('[temp]').forEach(ne=>{
-            let rect = ne.getClientRects()[0];
-            if (!(rect.x > e.clientX || rect.x + rect.width < e.clientX || rect.y > e.clientY || rect.y + rect.height < e.clientY)) {
-                k = ne;
-            }
-        });
-        document.querySelectorAll('.outline').forEach(e=>e.classList.remove('outline'));
+        dropToPlace(window.movingElement, e);
     }
-    document.querySelectorAll('[temp]').forEach(e=>{
-        if (e==k) {
-            e.removeAttribute('temp');
-            e.removeAttribute('t2');
-            e.children[0].style.transform = 'unset';
-            e.parentElement.insertBefore(e.children[0], e);
-            e.remove();
-        }
-        else {
-            e.remove()
-        }
-    });
+    // else if (window.isClicked == 'place') {
+    //     document.querySelectorAll('[temp]').forEach(ne=>{
+    //         let rect = ne.getBoundingClientRect();
+    //         if (!(rect.x > e.clientX || rect.x + rect.width < e.clientX || rect.y > e.clientY || rect.y + rect.height < e.clientY)) {
+    //             k = ne;
+    //         }
+    //     });
+    //     document.querySelectorAll('.outline').forEach(e=>e.classList.remove('outline'));
+    // }
+    // document.querySelectorAll('[temp]').forEach(e=>{
+    //     if (e==k) {
+    //         e.removeAttribute('temp');
+    //         e.removeAttribute('t2');
+    //         e.children[0].style.transform = 'unset';
+    //         e.parentElement.insertBefore(e.children[0], e);
+    //         e.remove();
+    //     }
+    //     else {
+    //         e.remove()
+    //     }
+    // });
     if (window.isClicked) {
         save();
     }
@@ -400,9 +352,16 @@ window.onkeyup = (k) => {
 
 async function save() {
     setTimeout(()=>{
-        localStorage.setItem('actions', JSON.stringify(window.actions));
+        let mode = document.querySelector('wsbody').getAttribute('mode');
+        if (mode != 'Page') {
+            window.builtComponents[mode].html = document.querySelector('wsbody').innerHTML;
+        }
+        else {
+            localStorage.setItem('page', document.querySelector('wsbody').innerHTML);
+        }
+        localStorage.setItem('components', JSON.stringify(window.builtComponents));
         localStorage.setItem('states', JSON.stringify(window.states));
-        localStorage.setItem('page', document.querySelector('wsbody').innerHTML);
+        localStorage.setItem('actions', JSON.stringify(window.actions));
         localStorage.setItem('menus', JSON.stringify([...document.getElementById('menus').children].map(e=>{
             let { top, left, right, width, height } = e.style;
             let an = e.actionName;
@@ -417,7 +376,28 @@ async function save() {
 }
 
 async function load() {
+    window.builtComponents = {};
+    for (let k of Object.keys(defaultBuiltComponents)) {
+        window.builtComponents[k] = defaultBuiltComponents[k];
+    }
     if (localStorage.getItem('states')) {
+        window.builtComponents = JSON.parse(localStorage.getItem('components'));
+        
+        for (let bc of Object.keys(window.builtComponents)) {
+            if (!window.builtComponents[bc]) {
+                continue;
+            }
+            let attrs = window.builtComponents[bc].attributes;
+            blockmap['ComponentCreate' + bc] = {
+                html: 'Create ' + bc + ' ' + attrs.map(e=>e+':?T'),
+                category: 'ui',
+                isArgs: true,
+                exp: (e) => `#${e}`,
+                exec: ((stc, local, ...params) => {
+                    return make('user-built-component').set('attrs', params).set('componentName', bc).elem;
+                })
+            };
+        }
         window.actions = JSON.parse(localStorage.getItem('actions'));
         window.states = JSON.parse(localStorage.getItem('states'));
         document.querySelector('wsbody').innerHTML = localStorage.getItem('page');
@@ -470,4 +450,11 @@ document.getElementById('wsff').addEventListener('scroll', () => {
             h.closeButton.style.top = rect.y + 'px';
         }
     });
+});
+
+document.getElementById('toPage').addEventListener('click', () => {
+    let wsb = document.querySelector('wsbody');
+    save();
+    wsb.innerHTML = localStorage.getItem('page');
+    wsb.setAttribute('mode', 'Page');
 });

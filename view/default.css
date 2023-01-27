@@ -1,0 +1,26 @@
+.hide {
+    display: none !important;
+}
+
+user-built-component {
+    display: block;
+}
+
+button.natural {
+    outline: solid 1.5px rgb(128, 128, 128) !important;
+    border-radius: 12px !important;
+    background-color: white;
+    display: block;
+    border: none;
+    text-align: center;
+}
+
+button.natural:hover {
+    background-color: rgb(234, 234, 234);
+    cursor: pointer;
+}
+
+div.natural {
+    outline: solid 1.5px rgb(128, 128, 128) !important;
+    border-radius: 12px !important;
+}

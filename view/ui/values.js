@@ -22,7 +22,7 @@ class ValueInput extends HTMLElement {
         this.innerHTML = '';
         let modeSelect = null;
         if (!this.onlyState) {
-            modeSelect = make('select').opts(['Text', 'State', 'Value']).elem;
+            modeSelect = make('select').opts(['Text', 'State', 'Attr']).elem;
             modeSelect.addEventListener('change', v => {
                 this.mode = modeSelect.value;
                 this.render();
@@ -105,12 +105,16 @@ class ValueInput extends HTMLElement {
             this.appendChild(preview);
             updateState(['__default__' + statenameInput.value, statenameInput.value]);
         }
-        else if (this.mode == 'Value') {
+        else if (this.mode == 'Attr') {
             modeSelect.children[2].selected = 'selected';
-            this.appendChild(make('text').addClass('useStates').elem);
-            this.appendChild(make('line').elem);
-            this.appendChild(wse.label('Expression').elem);
-            this.appendChild(make('text').addClass('expression').set('value', this.defaultText ?? '0').elem);
+            let mode = document.querySelector('wsbody').getAttribute('mode');
+            if (mode != 'Page') {
+                this.appendChild(make('select').opts(window.builtComponents[mode].attributes).addClass('useStates').elem);
+            }
+            // this.appendChild(make('text').addClass('useStates').elem);
+            // this.appendChild(make('line').elem);
+            // this.appendChild(wse.label('Expression').elem);
+            // this.appendChild(make('text').addClass('expression').set('value', this.defaultText ?? '0').elem);
         }
     }
     
@@ -128,12 +132,16 @@ class ValueInput extends HTMLElement {
                 return window.states[this.children[1].value] ?? this.children[4].value;
             }
         }
-        else if (this.mode == 'Value') {
-            if (this.children[4]) {
-                return '';
+        else if (this.mode == 'Attr') {
+            if (this.children[1]) {
+                return '{' + this.children[1].value + '}';
                 // return eval(this.children[4].value);
             }
         }
+    }
+
+    get cells() {
+        return parseFloat(this.val) * cellSpacing + 'px';
     }
 
     get functor() {
@@ -161,6 +169,10 @@ class ValueInput extends HTMLElement {
         }
         return [];
     }
+
+    get usingAttrs() {
+        return this.mode == 'Attr' ? this.children[1].value : false;
+    }
 }
 
 window.customElements.define('value-input',  ValueInput);
@@ -173,7 +185,16 @@ function updateState(stateNames) {
                 e.setAttribute(property.substring(1), window.states[state]);
             }
             else if (property[0] == '#') {
-                e.style[property.substring(1)] = window.states[state];
+                if ([
+                    '#width', '#height',
+                    '#maxWidth', '#maxHeight',
+                    '#minWidth', '#minHeight',
+                ].includes(property)) {
+                    e.style[property.substring(1)] = parseFloat(window.states[state]) * cellSpacing + 'px';
+                }
+                else {
+                    e.style[property.substring(1)] = window.states[state];
+                }
             }
             else {
                 e[property] = window.states[state];

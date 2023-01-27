@@ -15,18 +15,17 @@
         <div>View</div>
         <div>Tool</div>
         <div>Help</div>
+        <div id="openServer">Open Server</div>
     </div>
     <div id="workspaceframe">
         <div id="wsleft"></div>
         <div id="wsff">
             <div id="wsnav">
-                <div>Page</div>
+                <div id="toPage">Page</div>
             </div>
             <div id="workspace">
-                <wsbody>
-                    <h1>Hello, world!</h1>
-                    <div style="width: 200px; min-height: 200px;">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Modi vitae quod et quae hic. Animi voluptates totam et rem temporibus itaque praesentium natus hic deserunt quam? Minus dicta dolores nostrum?</div>
-                </wsbody>
+                <canvas></canvas>
+                <wsbody mode="Page"></wsbody>
             </div>
         </div>
         <div id="wsright"></div>
@@ -36,8 +35,10 @@
         <drag-menu></drag-menu>
         <label>UI</label><show-hide-button div="true"></show-hide-button><br>
         <div>
+            <add-menu name="library"></add-menu>
             <add-menu name="title"></add-menu>
             <add-menu name="button"></add-menu>
+            <add-menu name="input text"></add-menu>
         </div>
         <label>Layout</label><show-hide-button div="true"></show-hide-button><br>
         <div>
@@ -57,8 +58,15 @@
             <add-menu name="route"></add-menu>
         </div>
     </div>
+    <script src="complib/default.js"></script>
+    <script src="tld.js"></script>
+    <script src="tmd.js"></script>
+    <script src="canv.js"></script>
+    <script src="dragui.js"></script>
     <script src="ui/menu.js"></script>
+    <script src="ui/uimenus.js"></script>
     <script src="workspaces.js"></script>
+    <script src="usercomponents.js"></script>
     <script src="blockcoding.js"></script>
     <script src="ui/actionmenu.js"></script>
     <script src="ui/stylemenu.js"></script>
@@ -68,5 +76,18 @@
     <script src="ui/boxmenu.js"></script>
     <script src="ui/values.js"></script>
     <script src="ui.js"></script>
+
+    <script>
+        if (window.require) {
+            let electron = require('electron');
+
+            let openServer = document.getElementById('openServer');
+            openServer.addEventListener('click', () => {
+                let wsb = document.querySelector('wsbody');
+                wsb.setAttribute('mode', 'Page');
+                electron.ipcRenderer.send('openExpress', wsb.innerHTML, window.builtComponents, window.actions, window.states);
+            });
+        }
+    </script>
 </body>
 </html>

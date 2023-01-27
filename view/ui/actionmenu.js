@@ -136,7 +136,6 @@ window.customElements.define('function-edit', FunctionEdit);
 function functoreditmenu(ws, funcName) {
     ws.classList.add('functionEdit');
     if (!ws.parentElement.style.height) {
-        // ws.parentElement.style.top = window.innerHeight - 540 + 'px';
         ws.parentElement.style.top = '100px';
         ws.parentElement.style.height = '500px';
         ws.parentElement.style.width = '400px';
@@ -148,21 +147,61 @@ function functoreditmenu(ws, funcName) {
 
 class FunctionEditWindow extends HTMLElement {
     connectedCallback() {
+        this.init();
+    }
+    
+    init() {
         this.actionName = this.getAttribute('actionName');
-        let rect = this.getBoundingClientRect();
-        this.start = make('function-edit-block').addClass('start').html('Event start: ' + this.actionName).elem;
-        this.appendChild(this.start);
-        this.loadCode(undefined, window.actions[this.actionName].code);
-        this.blockNav = make('div').addClass('blockNav').elem;
-        this.appendChild(this.blockNav);
-        this.addBlocks = make('div').elem;
-        registerBlocks(this);
-        this.appendChild(this.addBlocks);
-        this.addEventListener('mousemove', this.onmousemove);
-        this.addEventListener('mouseup', this.onmouseup);
+        if (this.actionName) {
+            let rect = this.getBoundingClientRect();
+            if (window.actions[this.actionName].code) {
+                this.start = make('function-edit-block').addClass('start').html('Event start: ' + this.actionName).elem;
+                this.start.style.left = '10px';
+                this.start.style.top = '45px';
+                this.appendChild(this.start);
+                this.loadCode(this.start, window.actions[this.actionName].code);
+            }
+            else {
+                this.starts = {};
+                let i = 0;
+                for (let k of Object.keys(window.actions[this.actionName])) {
+                    let start = make('function-edit-block').addClass('start').html(k).elem;
+                    start.style.left = '10px';
+                    start.style.top = 45 + 60 * i + 'px';
+                    this.appendChild(start);
+                    this.starts[k] = (start);
+                    this.loadCode(start, window.actions[this.actionName][k].code, k);
+                    i += 1;
+                }
+            }
+            this.blockNav = make('div').addClass('blockNav').elem;
+            this.hideAddBlocks = make('button').text('-').addClass('newstate').elem;
+            this.addBlocks = make('div').elem;
+            this.hideAddBlocks.addEventListener('click', () => {
+                if (this.hideAddBlocks.innerText == '-') {
+                    this.hideAddBlocks.style.bottom = '20px';
+                    this.addBlocks.style.display = 'none';
+                    this.blockNav.style.display = 'none';
+                    this.hideAddBlocks.innerText = '+';
+                }
+                else if (this.hideAddBlocks.innerText == '+') {
+                    this.hideAddBlocks.style.bottom = '210px';
+                    this.addBlocks.style.display = 'block';
+                    this.blockNav.style.display = 'flex';
+                    this.hideAddBlocks.innerText = '-';
+                }
+            });
+            this.hideAddBlocks.click();
+            this.appendChild(this.hideAddBlocks);
+            this.appendChild(this.blockNav);
+            registerBlocks(this);
+            this.appendChild(this.addBlocks);
+            this.addEventListener('mousemove', this.onmousemove);
+            this.addEventListener('mouseup', this.onmouseup);
+        }
     }
 
-    loadCode(t, codes) {
+    loadCode(t, codes, vk) {
         let tail = t ?? this.start;
         for (let code of codes) {
             tail = make('function-edit-block')
@@ -202,15 +241,30 @@ class FunctionEditWindow extends HTMLElement {
                 tail.render(undefined, undefined, true);
             }
             
-            let i = 0;
-            for (let param of code.params) {
-                if (tail.children[i].tagName == 'SMALL-VALUE') {
-                    tail.children[i].setValue(param, true);
-                    let k = tail.children[i];
-                    tail.children[i].addEventListener('change', () => {
-                        window.actions[this.actionName].code[i] = k.val;
-                    });
-                    i += 1;
+            if (vk) {
+                let i = 0;
+                for (let param of code.params) {
+                    if (tail.children[i].tagName == 'SMALL-VALUE') {
+                        tail.children[i].setValue(param, true);
+                        let k = tail.children[i];
+                        tail.children[i].addEventListener('change', () => {
+                            window.actions[this.actionName][vk].code[i] = k.val;
+                        });
+                        i += 1;
+                    }
+                }
+            }
+            else {
+                let i = 0;
+                for (let param of code.params) {
+                    if (tail.children[i].tagName == 'SMALL-VALUE') {
+                        tail.children[i].setValue(param, true);
+                        let k = tail.children[i];
+                        tail.children[i].addEventListener('change', () => {
+                            window.actions[this.actionName].code[i] = k.val;
+                        });
+                        i += 1;
+                    }
                 }
             }
         }
@@ -237,12 +291,7 @@ class FunctionEditWindow extends HTMLElement {
                     let ty = e.clientY + me.offset[1];
                     let bx = me.getBoundingClientRect().left;
                     let by = me.getBoundingClientRect().top;
-                    // for (let c of me.children) {
-                    //     if (c.tagName == 'small-value') {
-                    //         c.render(me.style.zIndex);
-                    //     }
-                    // }
-                    if (Math.hypot(tx - bx, ty - by) > 5) {
+                    if (Math.hypot(tx - bx, ty - by) > 10) {
                         me.template.expression = null;
                         me.template.render();
                         me.template = null;
@@ -254,11 +303,6 @@ class FunctionEditWindow extends HTMLElement {
                     let py = e.clientY + me.offset[1] + 22;
                     me.style.left = Math.min(Math.max(9, px - boxRect.left), this.clientHeight-80-me.clientHeight) + 'px';
                     me.style.top =  Math.min(Math.max(22, py - boxRect.top), this.clientHeight-80-me.clientHeight) + 'px';
-                    // for (let c of me.children) {
-                    //     if (c.tagName == 'small-value') {
-                    //         c.render(me.style.zIndex);
-                    //     }
-                    // }
                     let mx = me.getBoundingClientRect().left;
                     let my = me.getBoundingClientRect().top;
                     let ups = [...this.querySelectorAll('function-edit-block>small-value')].filter(e=>{
@@ -420,15 +464,31 @@ class FunctionEditWindow extends HTMLElement {
     }
 
     saveCode() {
-        if (this.start.down) {
-            window.actions[this.actionName].code = this.start.down.makeCode();
+        if (this.start) {
+            if (this.start.down) {
+                window.actions[this.actionName].code = this.start.down.makeCode();
+            }
+            else {
+                window.actions[this.actionName].code = [];
+            }
+            this.start.render();
+            document.querySelectorAll('function-edit > .useStatesList').forEach(e=>e.reload());
+            save();
         }
         else {
-            window.actions[this.actionName].code = [];
+            for (let k of Object.keys(window.actions[this.actionName])) {
+                const start = this.starts[k];
+                if (start.down) {
+                    window.actions[this.actionName][k].code = start.down.makeCode();
+                }
+                else {
+                    window.actions[this.actionName][k].code = [];
+                }
+                start.render();
+                document.querySelectorAll('function-edit > .useStatesList').forEach(e=>e.reload());
+                save();
+            }
         }
-        this.start.render();
-        document.querySelectorAll('function-edit > .useStatesList').forEach(e=>e.reload());
-        save();
     }
 }
 

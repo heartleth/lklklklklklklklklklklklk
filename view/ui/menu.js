@@ -22,6 +22,12 @@ function createMenu(ws, name, n) {
     else if (name == 'edit functor') {
         functoreditmenu(ws, n);
     }
+    else if (name == 'input text') {
+        uiMenus('input text', ws);
+    }
+    else if (name == 'library') {
+        compLib(ws);
+    }
 }
 
 class AddComponent extends HTMLElement {
@@ -46,6 +52,7 @@ class AddComponent extends HTMLElement {
 
     render() {
         let usingStates = new Array();
+        if (!this.refs) return;
         for (let refselector of this.refs) {
             let ref = document.querySelector(refselector);
             if (ref) {
@@ -175,8 +182,9 @@ function addc(refs, template) {
 }
 
 class ElementComponent {
-    constructor(tag, updates) {
+    constructor(tag, updates, childs) {
         this.updates = updates;
+        this.childs = childs;
         this.tag = tag;
     }
 
@@ -201,10 +209,14 @@ class ElementComponent {
                 let refinfo = ref.substring(1).split('/');
                 let refelem = document.querySelector(refinfo[0]);
                 if (refelem) {
-                    let us = refelem.usingStates;
+                    const us = refelem.usingStates;
                     depstates = depstates.concat(us);
                     if (us.length > 0) {
                         this.elem.setAttribute(`updateforstate-${us[0]}`, property);
+                    }
+                    let ua = refelem.usingAttrs;
+                    if (ua) {
+                        this.elem.setAttribute(`attributeSlot-${ua}`, property);
                     }
                     
                     if (property[0] == ':') {
@@ -230,6 +242,10 @@ class ElementComponent {
                 }
             }
         }
+        if (this.childs !== undefined) {
+            addChilds(this.elem, this.childs.map(e => { e.embody(); return e.elem; }));
+        }
+        this.elem.classList.add('natural');
         this.elem.setAttribute('depstates', depstates);
     }
 }
