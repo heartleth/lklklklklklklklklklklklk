@@ -77,11 +77,20 @@ window.addEventListener('resize', drawCanvas);
 function drawResizes(canvas, ctx) {
     const canvasRect = canvas.getBoundingClientRect();
     let wsb = document.querySelector('wsbody');
-    for (let div of wsb.querySelectorAll('*')) {
+    for (let div of wsb.querySelectorAll('.natural')) {
+        if (div.classList.contains('dummy')) continue;
+        if (div.tagName == 'BR') continue;
+        
         const divRect = div.getBoundingClientRect();
         ctx.lineWidth = 2.5;
         ctx.strokeStyle = 'rgba(50, 50, 255, 0.5)';
         ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top, divRect.width, divRect.height);
+        if (div.id.length) {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+            ctx.font = '12px Consolas';
+            ctx.fillText('#' + div.id, divRect.left - canvasRect.left, divRect.top - canvasRect.top - 3);
+            ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top - 15, ctx.measureText('#' + div.id).width + 2, 15);
+        }
         
         ctx.lineWidth = 2;
         ctx.fillStyle = 'white'

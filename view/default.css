@@ -23,4 +23,12 @@ button.natural:hover {
 div.natural {
     outline: solid 1.5px rgb(128, 128, 128) !important;
     border-radius: 12px !important;
+    overflow: auto;
+}
+
+h1.natural {
+    display: block;
+    margin-inline: unset;
+    margin-block: unset;
+    
 }

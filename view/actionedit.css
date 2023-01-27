@@ -154,7 +154,7 @@ small-value > input[type="text"]:first-child {
     border: white;
     margin: 0px;
     width: 60px;
-    top: -1.8px;
+    /* top: -1.8px; */
 }
 
 small-value {
@@ -259,7 +259,7 @@ function-edit-block.args::before {
 function-edit-block.args > * {
     margin-bottom: 0px !important;
     position: relative !important;
-    top: -1px !important;
+    /* top: -1px !important; */
 }
 
 function-edit-window > button {

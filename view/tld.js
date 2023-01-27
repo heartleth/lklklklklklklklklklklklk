@@ -14,29 +14,23 @@ function topLeftDrag(me, evt) {
     const mh = me.children[0].getBoundingClientRect().height / cellSpacing;
     if (mom) {
         const momRect = mom.getBoundingClientRect();
-        let momCell = getCell(momRect.left, momRect.top);
-        // momCell[1] += 1;
+        const momCell = getCell(momRect.left, momRect.top);
         if ([...mom.children].filter(e=>!e.classList.contains('dummy')).length == 0) {
             piv = [momRect.left, momRect.top];
             drawBox(momCell[0], momCell[1], momRect.width / cellSpacing, momRect.height / cellSpacing, '#e79');
             mom.style.opacity = '0.8';
             drawBox(cell[0], cell[1], mw, mh, '#77e', mom.getBoundingClientRect());
-            if (!mom.padds) {
-                me.mom = mom;
-                savePaddings(me.mom);
-            }
-            mom.style.paddingLeft = mom.style.paddingRight = (cell[0] - momCell[0]) * cellSpacing + 'px';
-            mom.style.paddingTop = mom.style.paddingBottom = (cell[1] - momCell[1]) * cellSpacing + 'px';
-            cm = true;
-            if (mom.childNodes.length == 0) {
-                mom.innerHTML = `<div class="dummy" style="background: yellow; opacity:0.9; width: ${mw*cellSpacing}px; height: ${mh*cellSpacing}"></div>`;
+            me.mom = mom;
+            const margins = [
+                (cell[0] - momCell[0]) * cellSpacing + 'px',
+                (cell[1] - momCell[1]) * cellSpacing + 'px'
+            ];
+            if (mom.childNodes.length == 0 || (mom.children.length == 1 && mom.children[0].classList.contains('dummy'))) {
+                mom.innerHTML = `<div class="dummy" style="margin-top:${margins[1]}; margin-left: ${margins[0]}; min-width: ${mw*cellSpacing}px; min-height: ${mh*cellSpacing}px; width:fit-content;"></div>`;
             }
             me.upsib = undefined;
         }
         else {
-            if (mom != me.mom && me.mom) {
-                loadPaddings(me);
-            }
             cm = false;
             mom.padds = undefined;
             // mom.style.opacity = '0.4';
@@ -90,9 +84,6 @@ function topLeftDrag(me, evt) {
     if (mom == wsb) {
         const canvRect = document.querySelector('canvas').getBoundingClientRect();
         wsb.querySelectorAll('.dummy').forEach(e=>e.remove());
-        if (me.mom) {
-            loadPaddings(me);
-        }
         me.mom = mom;
         if ([...mom.children].filter(e=>!e.classList.contains('dummy')).length == 0) {
             drawBox(cell[0], cell[1], mw, mh);
@@ -122,6 +113,8 @@ function topLeftDrop(me, evt) {
         let dummy = me.mom.querySelector('.dummy');
         if (dummy) {
             let { elem } = getEmbodiedElem(me);
+            elem.style.marginTop = dummy.style.marginTop;
+            elem.style.marginLeft = dummy.style.marginLeft;
             me.mom.insertBefore(elem, dummy);
             dummy.remove();
             if (me.temp) {
@@ -144,7 +137,6 @@ function topLeftDrop(me, evt) {
             let ir = me.idsib.getBoundingClientRect();
             elem.style.display = 'inline-block';
             elem.style.marginLeft = Math.max(0, tempRect.left - piv[0]) + 'px';
-            // elem.style.marginTop = parseInt(me.idsib.style.marginTop.replace('px', '')) + tempRect.top - me.idsib.getBoundingClientRect().top + 'px';
             elem.style.marginBottom = ir.bottom - tempRect.bottom + 'px';
             me.idsib.insertAdjacentElement('afterend', elem);
             if (me.temp) {

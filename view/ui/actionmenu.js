@@ -790,7 +790,7 @@ class SmallValue extends HTMLElement {
             let tx = this.getBoundingClientRect().left;
             let ty = this.getBoundingClientRect().top;
             this.expression.style.left = tx - boxRect.left + 10 + 'px';
-            this.expression.style.top = ty - boxRect.top + 9 + 'px';
+            this.expression.style.top = ty - boxRect.top + 10 + 'px';
             this.expression.params = this.value.params;
             this.expression.render();
             this.style.width = this.expression.getBoundingClientRect().width + 'px';
@@ -807,7 +807,7 @@ class SmallValue extends HTMLElement {
             let tx = this.getBoundingClientRect().left;
             let ty = this.getBoundingClientRect().top;
             this.expression.style.left = tx - boxRect.left + 9 + 'px';
-            this.expression.style.top = ty - boxRect.top + 9 + 'px';
+            this.expression.style.top = ty - boxRect.top + 10 + 'px';
             // this.style.width = this.expression.render(z + 1) + 'px';
             this.expression.params = this.value.params;
             this.expression.render();

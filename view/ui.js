@@ -264,6 +264,9 @@ window.addEventListener('mouseup', (e) => {
     if (window.isClicked) {
         save();
     }
+    if (window.resizing) {
+        save();
+    }
     this.movingElement = undefined;
     this.isClicked = false;
     this.resizing = false;

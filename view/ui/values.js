@@ -202,6 +202,7 @@ function updateState(stateNames) {
         });
     }
     save();
+    drawCanvas();
 }
 
 class ShowHideButton extends HTMLElement {
