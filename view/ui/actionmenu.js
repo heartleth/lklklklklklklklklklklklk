@@ -76,10 +76,17 @@ class ActionInput extends HTMLElement {
 
 function callfunctionwithus(c) {
     let stc = [];
+    let bp = getPage();
     let local = (Math.random() + 1).toString(36).substring(7);
     window.locals[local] = {};
     actfunctioncode(stc, local, window.actions[c].code);
-    updateState(stc);
+    let ap = getPage();
+    if (bp == ap) {
+        updateState(stc);
+    }
+    else {
+        location.reload();
+    }
 }
 
 function actfunctioncode(stc, local, codes) {

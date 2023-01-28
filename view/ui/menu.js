@@ -28,6 +28,9 @@ function createMenu(ws, name, n) {
     else if (name == 'library') {
         compLib(ws);
     }
+    else if (name == 'route') {
+        routeMenu(ws);
+    }
 }
 
 class AddComponent extends HTMLElement {

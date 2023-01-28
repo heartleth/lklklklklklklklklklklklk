@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Webpage Workspace</title>
     <link rel="stylesheet" href="actionedit.css">
     <link rel="stylesheet" href="default.css">
     <link rel="stylesheet" href="style.css">
@@ -61,9 +61,9 @@
     <script src="complib/default.js"></script>
     <script src="saveload.js"></script>
     <script src="tld.js"></script>
-    <script src="tmd.js"></script>
     <script src="canv.js"></script>
     <script src="dragui.js"></script>
+    <script src="route/menu.js"></script>
     <script src="ui/menu.js"></script>
     <script src="ui/uimenus.js"></script>
     <script src="workspaces.js"></script>
@@ -86,7 +86,12 @@
             openServer.addEventListener('click', () => {
                 let wsb = document.querySelector('wsbody');
                 wsb.setAttribute('mode', 'Page');
-                electron.ipcRenderer.send('openExpress', wsb.innerHTML, window.builtComponents, window.actions, window.states);
+                electron.ipcRenderer.send('openExpress',
+                    wsb.innerHTML,
+                    window.builtComponents,
+                    window.actions,
+                    window.states
+                );
             });
         }
     </script>

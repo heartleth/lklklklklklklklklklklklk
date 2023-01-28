@@ -1,5 +1,13 @@
 window.locals = {};
 let blockmap = {
+    'return': {
+        html: '= ?T',
+        category: 'value',
+        exec: ((stc, local, v) => {
+            window.locals[local]._returnValue = getValue(v, local);
+            return;
+        })
+    },
     'JavaScript': {
         html: 'JavaScript ?T',
         category: 'code',
@@ -15,6 +23,13 @@ let blockmap = {
         category: 'ui',
         exec: ((stc, local, text) => {
             alert(getValue(text, local));
+        })
+    },
+    'Href': {
+        html: 'Open Page ?T',
+        category: 'ui',
+        exec: ((stc, local, text) => {
+            location.href = location.href.split('#')[0] + '#' + getValue(text, local);
         })
     },
     'HasId': {
@@ -71,7 +86,7 @@ let blockmap = {
         html: 'Find selector ?T into ?T',
         category: 'ui',
         exec: ((stc, local, s, into) => {
-            window.locals[local][into] = document.querySelectorAll(getValue(s, local));
+            window.locals[local][into] = document.getElementById('workspace').querySelectorAll(getValue(s, local));
         })
     },
     'Hide': {

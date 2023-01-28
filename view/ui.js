@@ -395,7 +395,7 @@ document.getElementById('wsright').addEventListener('scroll', bos);
 document.getElementById('wsleft').addEventListener('scroll', bos);
 document.getElementById('reset').addEventListener('click', () => {
     localStorage.clear();
-    location.href += '';
+    location.href = location.href.split('#')[0];
 });
 
 document.getElementById('wsff').addEventListener('scroll', () => {

@@ -1,17 +1,28 @@
+function getPage() {
+    if (location.hash == '') {
+        return '/.';
+    }
+    else if (location.hash[1] != '/') {
+        return '/' + location.hash.substring(1) + '.';
+    }
+    return location.hash.substring(1) + '.';
+}
 
 async function save() {
     setTimeout(()=>{
+        const page = getPage();
+
         let mode = document.querySelector('wsbody').getAttribute('mode');
         if (mode != 'Page') {
             window.builtComponents[mode].html = document.querySelector('wsbody').innerHTML;
         }
         else {
-            localStorage.setItem('page', document.querySelector('wsbody').innerHTML);
+            localStorage.setItem(page + 'page', document.querySelector('wsbody').innerHTML);
         }
-        localStorage.setItem('components', JSON.stringify(window.builtComponents));
-        localStorage.setItem('states', JSON.stringify(window.states));
-        localStorage.setItem('actions', JSON.stringify(window.actions));
-        localStorage.setItem('menus', JSON.stringify([...document.getElementById('menus').children].map(e=>{
+        localStorage.setItem(page + 'components', JSON.stringify(window.builtComponents));
+        localStorage.setItem(page + 'states', JSON.stringify(window.states));
+        localStorage.setItem(page + 'actions', JSON.stringify(window.actions));
+        localStorage.setItem(page + 'menus', JSON.stringify([...document.getElementById('menus').children].map(e=>{
             let { top, left, right, width, height } = e.style;
             let an = e.actionName;
             let type = e.getAttribute('name');
@@ -25,12 +36,14 @@ async function save() {
 }
 
 async function load() {
+    const page = getPage();
+
     window.builtComponents = {};
     for (let k of Object.keys(defaultBuiltComponents)) {
         window.builtComponents[k] = defaultBuiltComponents[k];
     }
-    if (localStorage.getItem('states')) {
-        window.builtComponents = JSON.parse(localStorage.getItem('components'));
+    if (localStorage.getItem(page + 'states')) {
+        window.builtComponents = JSON.parse(localStorage.getItem(page + 'components'));
         
         for (let bc of Object.keys(window.builtComponents)) {
             if (!window.builtComponents[bc]) {
@@ -47,10 +60,10 @@ async function load() {
                 })
             };
         }
-        window.actions = JSON.parse(localStorage.getItem('actions'));
-        window.states = JSON.parse(localStorage.getItem('states'));
-        document.querySelector('wsbody').innerHTML = localStorage.getItem('page');
-        let menus = JSON.parse(localStorage.getItem('menus'));
+        window.actions = JSON.parse(localStorage.getItem(page + 'actions'));
+        window.states = JSON.parse(localStorage.getItem(page + 'states'));
+        document.querySelector('wsbody').innerHTML = localStorage.getItem(page + 'page');
+        let menus = JSON.parse(localStorage.getItem(page + 'menus'));
         let d = document.getElementById('menus');
         for (let m of menus) {
             let [top, left, right, width, height, type, fix, an] = m;

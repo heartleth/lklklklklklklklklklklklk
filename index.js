@@ -11,8 +11,8 @@ const createWindow = () => {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            
-        }
+        },
+        autoHideMenuBar: true
     });
 
     win.loadFile('view/index.html');

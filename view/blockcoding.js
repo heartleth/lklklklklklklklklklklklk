@@ -24,6 +24,14 @@ let blockmap = {
             alert(getValue(text, local));
         })
     },
+    'Href': {
+        html: 'Open Page ?T',
+        category: 'ui',
+        exec: ((stc, local, text) => {
+            location.href = location.href.split('#')[0] + '#/' + getValue(text, local);
+            location.reload();
+        })
+    },
     'HasId': {
         html: 'Id:?T',
         category: 'ui',
