@@ -7,11 +7,32 @@ user-built-component {
 }
 
 button.natural {
-    background-color: white !important;
-    border: solid 1px gray;
+    outline: solid 1.5px rgb(128, 128, 128) !important;
+    border-radius: 12px !important;
+    background-color: white;
+    display: block;
+    border: none;
+    text-align: center;
+    user-select: none;
+
+}
+
+button.natural:hover {
+    background-color: rgb(234, 234, 234);
+    cursor: pointer;
 }
 
 div.natural {
-    outline: solid 1px rgb(128, 128, 128) !important;
+    outline: solid 1.5px rgb(128, 128, 128) !important;
     border-radius: 12px !important;
+    overflow: auto;
+}
+
+h1.natural, h2.natural, h3.natural, h4.natural, h5.natural, h6.natural {
+    margin-inline: unset;
+    margin-block: unset;
+    width: fit-content;
+    text-align: center;
+    user-select: none;
+    display: block;
 }

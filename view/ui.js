@@ -235,14 +235,22 @@ window.addEventListener('mousemove', (e)=>{
                 element.style.marginTop = Math.max(0, parseFloat(original.marginTop.replace('px', '')) + distY) + 'px';
             }
         }
-        if (direction == 'left' && isLen(originalStyle.marginLeft)) {
-            element.style.marginLeft = Math.max(0, parseFloat(original.marginLeft.replace('px', '')) + distX) + 'px';
-            element.style.minWidth = parseFloat(original.minWidth.replace('px', '')) - distX + 'px';
+        else if (direction == 'left') {
+            if (!isLen(originalStyle.marginLeft)) {
+                element.style.minWidth = parseFloat(original.minWidth.replace('px', '')) - distX * 2 + 'px';
+            }
+            else {
+                element.style.marginLeft = Math.max(0, parseFloat(original.marginLeft.replace('px', '')) + distX) + 'px';
+                element.style.minWidth = parseFloat(original.minWidth.replace('px', '')) - distX + 'px';
+            }
         }
         else if (direction == 'right' && isLen(originalStyle.minWidth)) {
             if (isLen(originalStyle.marginRight)) {
                 element.style.marginRight = Math.max(0, parseFloat(original.marginRight.replace('px', '')) - distX) + 'px';
                 element.style.minWidth = '10px';
+            }
+            else if (!isLen(originalStyle.marginLeft)) {
+                element.style.minWidth = parseFloat(original.minWidth.replace('px', '')) + 2 * distX + 'px';
             }
             else {
                 element.style.minWidth = parseFloat(original.minWidth.replace('px', '')) + distX + 'px';

@@ -26,8 +26,8 @@ function drawCanvas() {
 function getCell(x, y) {
     let canvasRect = document.querySelector('canvas').getBoundingClientRect();
     return [
-        Math.floor(Math.round(x - canvasRect.left) / cellSpacing),
-        Math.floor(Math.round(y - canvasRect.top) / cellSpacing)
+        Math.round(Math.round(x - canvasRect.left) / cellSpacing),
+        Math.round(Math.round(y - canvasRect.top) / cellSpacing)
     ];
 }
 
