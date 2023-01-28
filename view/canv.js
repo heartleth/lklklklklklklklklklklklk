@@ -1,4 +1,4 @@
-const cellSpacing = 30;
+const cellSpacing = 20;
 let ctx;
 
 function drawCanvas() {
@@ -91,10 +91,6 @@ function drawResizes(canvas, ctx) {
             ctx.fillText('#' + div.id, divRect.left - canvasRect.left, divRect.top - canvasRect.top - 3);
             ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top - 15, ctx.measureText('#' + div.id).width + 2, 15);
         }
-        
-        ctx.lineWidth = 2;
-        ctx.fillStyle = 'white'
-        ctx.strokeStyle = 'blue'
         const tl = [divRect.left - canvasRect.left - 4, divRect.top - canvasRect.top - 4];
         const wh = [8, 8]
         const divH = divRect.height;
@@ -103,6 +99,44 @@ function drawResizes(canvas, ctx) {
             ctx.fillRect(tl[0]+a, tl[1]+b, ...wh);
             ctx.strokeRect(tl[0]+a, tl[1]+b, ...wh);
         };
+        
+        ctx.strokeStyle = 'rgba(100, 145, 255, 0.3)'
+        if (div.style.marginTop) {
+            // ctx.lineWidth = divW;
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.moveTo(tl[0]+divW/2+4, tl[1], ...wh);
+            ctx.lineTo(tl[0]+divW/2+4, tl[1]-lpx(div.style.marginTop)+4, ...wh);
+            ctx.stroke();
+        }
+        if (div.style.marginBottom) {
+            // ctx.lineWidth = divW;
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.moveTo(tl[0]+divW/2+4, tl[1]+divH, ...wh);
+            ctx.lineTo(tl[0]+divW/2+4, tl[1]+divH+lpx(div.style.marginBottom)+4, ...wh);
+            ctx.stroke();
+        }
+        if (div.style.marginLeft) {
+            // ctx.lineWidth = divH;
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.moveTo(tl[0], tl[1]+divH/2+4, ...wh);
+            ctx.lineTo(tl[0]-lpx(div.style.marginLeft)+4, tl[1]+divH/2+4, ...wh);
+            ctx.stroke();
+        }
+        if (div.style.marginRight) {
+            // ctx.lineWidth = divH;
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.moveTo(tl[0]+divW, tl[1]+divH/2+4, ...wh);
+            ctx.lineTo(tl[0]+divW+lpx(div.style.marginRight)+4, tl[1]+divH/2+4, ...wh);
+            ctx.stroke();
+        }
+
+        ctx.lineWidth = 2;
+        ctx.fillStyle = 'white'
+        ctx.strokeStyle = 'blue'
         fns(divW/2, 2);
         fns(divW/2, divH-2);
         fns(2, divH/2);
@@ -148,10 +182,29 @@ window.addEventListener('mousedown', (e) => {
                     };
                 }
             }
+            if (isInRect(mx - canvasRect.left, my - canvasRect.top, {
+                top: tl[1],
+                bottom: tl[1]+8,
+                left: tl[0],
+                right: tl[0]+8,
+            })) {
+                if (!div.style.marginRight && div.style.marginLeft) {
+                    div.style.marginRight = div.style.marginLeft;
+                    div.style.width = 'auto';
+                }
+                else if (div.style.marginRight && div.style.marginLeft) {
+                    div.style.marginRight = div.style.marginLeft = 'auto';
+                    div.style.width = 'fit-content';
+                }
+            }
         }
     }
 });
 
 function isInRect(x, y, rect) {
     return (rect.left < x && x < rect.right) && (rect.top < y && y < rect.bottom);
+}
+
+function lpx(px) {
+    return parseFloat(px.replace('px', ''));
 }

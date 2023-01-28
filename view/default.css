@@ -13,6 +13,8 @@ button.natural {
     display: block;
     border: none;
     text-align: center;
+    user-select: none;
+
 }
 
 button.natural:hover {
@@ -26,9 +28,11 @@ div.natural {
     overflow: auto;
 }
 
-h1.natural {
-    display: block;
+h1.natural, h2.natural, h3.natural, h4.natural, h5.natural, h6.natural {
     margin-inline: unset;
     margin-block: unset;
-    
+    width: fit-content;
+    text-align: center;
+    user-select: none;
+    display: block;
 }

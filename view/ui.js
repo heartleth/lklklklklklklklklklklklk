@@ -228,22 +228,28 @@ window.addEventListener('mousemove', (e)=>{
         ctx.strokeRect(...drawOriginal);
         if (direction == 'top') {
             element.style.minHeight = parseFloat(original.minHeight.replace('px', '')) - distY + 'px';
-            if (originalStyle.marginBottom) {
+            if (isLen(originalStyle.marginBottom)) {
                 // element.style.marginBottom = parseFloat(original.marginBottom.replace('px', '')) - distY + 'px';
             }
-            else if (originalStyle.marginTop) {
+            else if (isLen(originalStyle.marginTop)) {
                 element.style.marginTop = Math.max(0, parseFloat(original.marginTop.replace('px', '')) + distY) + 'px';
             }
         }
-        if (direction == 'left' && originalStyle.marginLeft) {
+        if (direction == 'left' && isLen(originalStyle.marginLeft)) {
             element.style.marginLeft = Math.max(0, parseFloat(original.marginLeft.replace('px', '')) + distX) + 'px';
             element.style.minWidth = parseFloat(original.minWidth.replace('px', '')) - distX + 'px';
         }
-        else if (direction == 'right' && originalStyle.minWidth) {
-            element.style.minWidth = parseFloat(original.minWidth.replace('px', '')) + distX + 'px';
+        else if (direction == 'right' && isLen(originalStyle.minWidth)) {
+            if (isLen(originalStyle.marginRight)) {
+                element.style.marginRight = Math.max(0, parseFloat(original.marginRight.replace('px', '')) - distX) + 'px';
+                element.style.minWidth = '10px';
+            }
+            else {
+                element.style.minWidth = parseFloat(original.minWidth.replace('px', '')) + distX + 'px';
+            }
         }
-        else if (direction == 'bottom' && originalStyle.minHeight) {
-            if (originalStyle.marginBottom) {
+        else if (direction == 'bottom' && isLen(originalStyle.minHeight)) {
+            if (isLen(originalStyle.marginBottom)) {
                 element.style.marginBottom = Math.max(0, parseFloat(original.marginBottom.replace('px', '')) - distY) + 'px';
             }
             element.style.minHeight = parseFloat(original.minHeight.replace('px', '')) + distY + 'px';
@@ -251,6 +257,15 @@ window.addEventListener('mousemove', (e)=>{
     }
     return false;
 });
+
+function isLen(l) {
+    if (l) {
+        return l != 'auto';
+    }
+    else {
+        return false;
+    }
+}
 
 window.addEventListener('mouseup', (e) => {
     drawCanvas();

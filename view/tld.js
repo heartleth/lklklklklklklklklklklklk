@@ -111,7 +111,7 @@ function topLeftDrop(me, evt) {
     }
     if (me.mom) {
         let dummy = me.mom.querySelector('.dummy');
-        if (dummy) {
+        if (dummy && !me.upsib) {
             let { elem } = getEmbodiedElem(me);
             elem.style.marginTop = dummy.style.marginTop;
             elem.style.marginLeft = dummy.style.marginLeft;
