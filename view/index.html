@@ -17,6 +17,7 @@
         <div>Help</div>
         <div id="openServer">Open Server</div>
         <div id="gizmos">Gizmos</div>
+        <div id="location" style="position: absolute; right: 4px;"></div>
     </div>
     <div id="workspaceframe">
         <div id="wsleft"></div>
@@ -47,18 +48,16 @@
             <add-menu name="components"></add-menu>
         </div>
         <label>Style</label><show-hide-button div="true"></show-hide-button><br>
-        <div>
-            <add-menu name="style"></add-menu>
-        </div>
+        <div><add-menu name="style"></add-menu></div>
         <label>States</label><show-hide-button div="true"></show-hide-button><br>
-        <div>
-            <add-menu name="states"></add-menu>
-        </div>
+        <div><add-menu name="states"></add-menu></div>
         <label>Page</label><show-hide-button div="true"></show-hide-button><br>
-        <div>
-            <add-menu name="route"></add-menu>
-        </div>
+        <div><add-menu name="route"></add-menu></div>
+        <label>Database</label><show-hide-button div="true"></show-hide-button><br>
+        <div><add-menu name="database"></add-menu></div>
     </div>
+    
+    <script src="database/db.js"></script>
     <script src="complib/default.js"></script>
     <script src="saveload.js"></script>
     <script src="tld.js"></script>

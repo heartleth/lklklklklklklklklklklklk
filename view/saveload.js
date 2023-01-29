@@ -2,7 +2,7 @@ function getPage() {
     if (location.hash == '') {
         return '/.';
     }
-    else if (location.hash[0] != '/') {
+    else if (location.hash[1] != '/') {
         return '/' + location.hash.substring(1) + '.';
     }
     return location.hash.substring(1) + '.';
@@ -11,7 +11,7 @@ function getPage() {
 async function save() {
     setTimeout(()=>{
         const page = getPage();
-
+        localStorage.setItem('tables', JSON.stringify(window.tables));
         let mode = document.querySelector('wsbody').getAttribute('mode');
         if (mode != 'Page') {
             window.builtComponents[mode].html = document.querySelector('wsbody').innerHTML;
@@ -43,6 +43,7 @@ async function load() {
         window.builtComponents[k] = defaultBuiltComponents[k];
     }
     if (localStorage.getItem(page + 'states')) {
+        window.tables = JSON.parse(localStorage.getItem('tables'));
         window.builtComponents = JSON.parse(localStorage.getItem(page + 'components'));
         
         for (let bc of Object.keys(window.builtComponents)) {
@@ -86,9 +87,11 @@ async function load() {
             d.appendChild(e);
         }
         document.querySelectorAll('.outline').forEach(e=>e.classList.remove('outline'));
+        document.getElementById('location').innerText = 'site.com' + getPage().replace('.', '');
     }
     else {
         window.states = {};
     }
+    document.getElementById('location').innerText = 'site.com' + getPage().replace('.', '');
     drawCanvas();
 }

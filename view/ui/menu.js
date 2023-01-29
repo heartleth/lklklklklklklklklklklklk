@@ -31,6 +31,9 @@ function createMenu(ws, name, n) {
     else if (name == 'route') {
         routeMenu(ws);
     }
+    else if (name == 'database') {
+        databaseMenu(ws);
+    }
 }
 
 class AddComponent extends HTMLElement {

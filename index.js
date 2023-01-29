@@ -1,7 +1,9 @@
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const express = require('express');
-
+const { setupIpc } = require('./database');
 let port = 5252;
+
+// const db = new sqlite3.Database(':memory:');
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -27,11 +29,14 @@ app.whenReady().then(() => {
         }
     });
 
+    setupIpc();
+    
     ipcMain.on('openExpress', (e, html, builtComponents, actions, states, localStorage) => {
         port += 1;
         let expressApp = express();
         expressApp.use(express.static('payload'));
-        for (const route of localStorage.route) {
+        for (const routeName of localStorage.route.split(',')) {
+            const route = '/' + routeName;
             const builtComponents = JSON.parse(localStorage[route + '.components']);
             const actions = JSON.parse(localStorage[route + '.actions']);
             const states = JSON.parse(localStorage[route + '.states']);
@@ -47,6 +52,8 @@ app.whenReady().then(() => {
         expressApp.listen(port);
         shell.openExternal(`http://localhost:${port}/`);
     });
+
+
 });
 
 app.on('window-all-closed', () => {
