@@ -26,10 +26,10 @@ let blockmap = {
         })
     },
     'Href': {
-        html: 'Open Page ?T',
+        html: 'Open Page ?L',
         category: 'ui',
         exec: ((stc, local, text) => {
-            location.href = location.href.split('#')[0] + '#' + getValue(text, local);
+            location.href = getValue(text, local);
         })
     },
     'HasId': {
@@ -178,7 +178,7 @@ let blockmap = {
 };
 
 (async () => {
-    let { builtComponents, actions, states } = await (await fetch('/functions')).json();
+    let { builtComponents, actions, states } = await (await fetch('/functions' + location.pathname)).json();
     window.builtComponents = builtComponents;
     window.actions = actions;
     window.states = states;

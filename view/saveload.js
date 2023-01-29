@@ -2,7 +2,7 @@ function getPage() {
     if (location.hash == '') {
         return '/.';
     }
-    else if (location.hash[1] != '/') {
+    else if (location.hash[0] != '/') {
         return '/' + location.hash.substring(1) + '.';
     }
     return location.hash.substring(1) + '.';

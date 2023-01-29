@@ -227,40 +227,40 @@ window.addEventListener('mousemove', (e)=>{
         ctx.strokeStyle = 'rgba(255, 101, 110, 0.9)';
         ctx.strokeRect(...drawOriginal);
         if (direction == 'top') {
-            element.style.minHeight = parseFloat(original.minHeight.replace('px', '')) - distY + 'px';
+            element.style.minHeight = parseFloat(original.minHeight) - distY + 'px';
             if (isLen(originalStyle.marginBottom)) {
-                // element.style.marginBottom = parseFloat(original.marginBottom.replace('px', '')) - distY + 'px';
+                // element.style.marginBottom = parseFloat(original.marginBottom) - distY + 'px';
             }
             else if (isLen(originalStyle.marginTop)) {
-                element.style.marginTop = Math.max(0, parseFloat(original.marginTop.replace('px', '')) + distY) + 'px';
+                element.style.marginTop = Math.max(0, lpx(original.marginTop) + distY) + 'px';
             }
         }
         else if (direction == 'left') {
             if (!isLen(originalStyle.marginLeft)) {
-                element.style.minWidth = parseFloat(original.minWidth.replace('px', '')) - distX * 2 + 'px';
+                element.style.minWidth = lpx(original.minWidth) - distX * 2 + 'px';
             }
             else {
-                element.style.marginLeft = Math.max(0, parseFloat(original.marginLeft.replace('px', '')) + distX) + 'px';
-                element.style.minWidth = parseFloat(original.minWidth.replace('px', '')) - distX + 'px';
+                element.style.marginLeft = Math.max(0, lpx(original.marginLeft) + distX) + 'px';
+                element.style.minWidth = lpx(original.minWidth) - distX + 'px';
             }
         }
         else if (direction == 'right' && isLen(originalStyle.minWidth)) {
             if (isLen(originalStyle.marginRight)) {
-                element.style.marginRight = Math.max(0, parseFloat(original.marginRight.replace('px', '')) - distX) + 'px';
+                element.style.marginRight = Math.max(0, lpx(original.marginRight) - distX) + 'px';
                 element.style.minWidth = '10px';
             }
             else if (!isLen(originalStyle.marginLeft)) {
-                element.style.minWidth = parseFloat(original.minWidth.replace('px', '')) + 2 * distX + 'px';
+                element.style.minWidth = lpx(original.minWidth) + 2 * distX + 'px';
             }
             else {
-                element.style.minWidth = parseFloat(original.minWidth.replace('px', '')) + distX + 'px';
+                element.style.minWidth = lpx(original.minWidth) + distX + 'px';
             }
         }
         else if (direction == 'bottom' && isLen(originalStyle.minHeight)) {
             if (isLen(originalStyle.marginBottom)) {
-                element.style.marginBottom = Math.max(0, parseFloat(original.marginBottom.replace('px', '')) - distY) + 'px';
+                element.style.marginBottom = Math.max(0, lpx(original.marginBottom) - distY) + 'px';
             }
-            element.style.minHeight = parseFloat(original.minHeight.replace('px', '')) + distY + 'px';
+            element.style.minHeight = lpx(original.minHeight) + distY + 'px';
         }
     }
     return false;

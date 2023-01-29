@@ -16,6 +16,7 @@
         <div>Tool</div>
         <div>Help</div>
         <div id="openServer">Open Server</div>
+        <div id="gizmos">Gizmos</div>
     </div>
     <div id="workspaceframe">
         <div id="wsleft"></div>
@@ -90,7 +91,8 @@
                     wsb.innerHTML,
                     window.builtComponents,
                     window.actions,
-                    window.states
+                    window.states,
+                    { ...localStorage }
                 );
             });
         }
