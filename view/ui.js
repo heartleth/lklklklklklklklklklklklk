@@ -394,8 +394,18 @@ let bos = () => {
 document.getElementById('wsright').addEventListener('scroll', bos);
 document.getElementById('wsleft').addEventListener('scroll', bos);
 document.getElementById('reset').addEventListener('click', () => {
-    localStorage.clear();
-    location.href = location.href.split('#')[0];
+    if (require) {
+        let electron = require('electron');
+        electron.ipcRenderer.send('DBInitDatabase', Object.keys(JSON.parse(localStorage.getItem('tables'))));
+        electron.ipcRenderer.once('OKDBInitDatabase', (e) => {
+            localStorage.clear();
+            location.href = location.href.split('#')[0];
+        });
+    }
+    else {
+        localStorage.clear();
+        location.href = location.href.split('#')[0];
+    }
 });
 
 document.getElementById('wsff').addEventListener('scroll', () => {

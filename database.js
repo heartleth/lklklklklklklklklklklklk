@@ -39,7 +39,7 @@ function setupIpc() {
         if (safeName == 'id') {
             return;
         }
-        db.run(`ALTER TABLE ${safeTableName} ADD COLUMN ${safeName} ${databaseColumnTypes[type]}`, (err) => {
+        db.run(`ALTER TABLE ${safeTableName} ADD COLUMN retype_${safeName} ${databaseColumnTypes[type]}`, (err) => {
             if (!err) { e.reply('OKDBTableAlterTypeColumn'); }
             else {
                 console.log('?????');
@@ -58,9 +58,19 @@ function setupIpc() {
             }
         });
     });
-    // ipcMain.on('DBTableGetColumns', (e, tableName, name) => {
-    //     getTableInfo();
-    // });
+    ipcMain.on('DBInitDatabase', async (e, tables) => {
+        await Promise.all([...tables.map(table => new Promise(p => db.run(`DROP TABLE IF EXISTS ` + table, (err) => { p() })))]);
+        await new Promise(p=>{
+            db.run('CREATE TABLE student(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(100), age int)', (e) => {
+                console.log(e);
+                p()
+            })
+        });
+        e.reply('OKDBInitDatabase');
+    });
+    ipcMain.on('DBTableGetColumns', (e, tableName, name) => {
+        e.reply('GetColumns', getTableInfo());
+    });
 }
 
 function getTableInfo() {

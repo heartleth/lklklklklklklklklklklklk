@@ -23,7 +23,7 @@ function databaseMenu(ws) {
     ]);
     for (const tableName in window.tables) {
         ws.appendChild(make('db-table-inspector').set('tableName', tableName).elem);
-        let newTableDiv = make('div');
+        let newTableDiv = make('div').elem;
 
         ws.appendChild(newTableDiv);
     }
@@ -47,10 +47,10 @@ class DBTableInspector extends HTMLElement {
         this.appendChild(wse.br());
 
         for (const column in table) {
-            this.appendChild(wse.label(column).attr('style', 'display: inline-block;width: 40px;').elem);
+            this.appendChild(make('text').addClass('tableColName').set('value', column).elem);
             let colType = make('select').opts(databaseColumnTypes).elem;
             colType.value = table[column];
-            colType.style.width = 'calc(100% - 73px)';
+            colType.style.width = 'calc(100% - 130px)';
             colType.addEventListener('change', () => dbTableAlterTypeColumn(this.tableName, column, colType.value, this));
             this.appendChild(colType);
             let delButton = make('button').text('-').addClass('newstate').elem;
@@ -60,10 +60,10 @@ class DBTableInspector extends HTMLElement {
             this.appendChild(wse.br());
         }
         
-        let newCol = make('text').attr('style', 'display: inline-block; width: 30px; margin-right: 1px;').elem;
+        let newCol = make('text').attr('style', 'display: inline-block; width: 86px; margin-right: 5px;').elem;
         this.appendChild(newCol);
         let colType = make('select').opts(databaseColumnTypes).elem;
-        colType.style.width = 'calc(100% - 73px)';
+        colType.style.width = 'calc(100% - 130px)';
         this.appendChild(colType);
         let addButton = make('button').text('+').addClass('newstate').elem;
         addButton.addEventListener('click', () => dbTableAddColumn(this.tableName, newCol.value, colType.value, this));
@@ -89,7 +89,7 @@ function dbTableAlterTypeColumn(tableName, name, type, rerender) {
         let electron = require('electron');
         electron.ipcRenderer.send('DBTableAlterTypeColumn', tableName, name, type);
         electron.ipcRenderer.once('OKDBTableAlterTypeColumn', (e) => {
-            window.tables[tableName][name] = type;
+            window.tables[tableName]['retype_' + name] = type;
             rerender.render();
             save();
         });

@@ -61,6 +61,19 @@ async function load() {
                 })
             };
         }
+
+        for (let table of Object.keys(window.tables)) {
+            blockmap['INSERTINTO' + table] = {
+                html: 'Insert values ' + Object.keys(window.tables[table]).map(e=>e+':?T') + 'INTO ' + table,
+                category: 'db',
+                isArgs: false,
+                exp: (e) => `#${e}`,
+                exec: ((stc, local, ...params) => {
+                    
+                    console.log('Insert values ' + Object.keys(window.tables[table]).map(e=>e+': ... ') + 'INTO ' + table);
+                })
+            };
+        }
         window.actions = JSON.parse(localStorage.getItem(page + 'actions'));
         window.states = JSON.parse(localStorage.getItem(page + 'states'));
         document.querySelector('wsbody').innerHTML = localStorage.getItem(page + 'page');

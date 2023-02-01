@@ -57,6 +57,11 @@ div > function-edit-block.code {
     background: linear-gradient(90deg, rgb(0, 0, 0) 5px, rgb(41, 41, 41) 1px);
 }
 
+function-edit-window > function-edit-block.db,
+div > function-edit-block.db {
+    background: linear-gradient(90deg, rgb(251, 255, 0) 5px, rgb(41, 41, 41) 1px);
+}
+
 function-edit-window > function-edit-block::after, function-edit-window > function-edit-block.control > div::after {
     background-color: rgb(0, 0, 0);
     border: solid 1.5px #ddd;

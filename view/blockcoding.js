@@ -181,6 +181,7 @@ function registerBlocks(d) {
     let navs = [
         make('div').attr('category', 'ui').text('UI').elem,
         make('div').attr('category', 'value').text('Value').elem,
+        make('div').attr('category', 'db').text('DB').elem,
         make('div').attr('category', 'control').text('Flow').elem,
         make('div').attr('category', 'style').text('Style').elem,
         make('div').attr('category', 'code').text('Code').elem
