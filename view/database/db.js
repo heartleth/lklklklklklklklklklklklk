@@ -22,11 +22,14 @@ function databaseMenu(ws) {
         wstitle('Database')
     ]);
     for (const tableName in window.tables) {
-        ws.appendChild(make('db-inspector').set('tableName', tableName).elem);
+        ws.appendChild(make('db-table-inspector').set('tableName', tableName).elem);
+        let newTableDiv = make('div');
+
+        ws.appendChild(newTableDiv);
     }
 }
 
-class DBInspector extends HTMLElement {
+class DBTableInspector extends HTMLElement {
     connectedCallback() {
         this.style.border = 'solid 1px black';
         this.style.marginTop = '8px';
@@ -48,10 +51,11 @@ class DBInspector extends HTMLElement {
             let colType = make('select').opts(databaseColumnTypes).elem;
             colType.value = table[column];
             colType.style.width = 'calc(100% - 73px)';
+            colType.addEventListener('change', () => dbTableAlterTypeColumn(this.tableName, column, colType.value, this));
             this.appendChild(colType);
             let delButton = make('button').text('-').addClass('newstate').elem;
             delButton.style.width = '21px';
-            delButton.addEventListener('click', () => dbRemoveColumn(this.tableName, column, this));
+            delButton.addEventListener('click', () => dbTableRemoveColumn(this.tableName, column, this));
             this.appendChild(delButton);
             this.appendChild(wse.br());
         }
@@ -62,30 +66,42 @@ class DBInspector extends HTMLElement {
         colType.style.width = 'calc(100% - 73px)';
         this.appendChild(colType);
         let addButton = make('button').text('+').addClass('newstate').elem;
-        addButton.addEventListener('click', () => dbAddColumn(this.tableName, newCol.value, colType.value, this));
+        addButton.addEventListener('click', () => dbTableAddColumn(this.tableName, newCol.value, colType.value, this));
         this.appendChild(addButton);
     }
 }
-window.customElements.define('db-inspector', DBInspector);
+window.customElements.define('db-table-inspector', DBTableInspector);
 
-function dbAddColumn(tableName, name, type, rerender) {
+function dbTableAddColumn(tableName, name, type, rerender) {
     if (require) {
         let electron = require('electron');
-        window.tables[tableName][name] = type;
         electron.ipcRenderer.send('DBTableAddColumn', tableName, name, type);
         electron.ipcRenderer.once('OKDBTableAddColumn', (e) => {
+            window.tables[tableName][name] = type;
             rerender.render();
             save();
         });
     }
 }
 
-function dbRemoveColumn(tableName, name, rerender) {
+function dbTableAlterTypeColumn(tableName, name, type, rerender) {
     if (require) {
         let electron = require('electron');
-        delete window.tables[tableName][name];
+        electron.ipcRenderer.send('DBTableAlterTypeColumn', tableName, name, type);
+        electron.ipcRenderer.once('OKDBTableAlterTypeColumn', (e) => {
+            window.tables[tableName][name] = type;
+            rerender.render();
+            save();
+        });
+    }
+}
+
+function dbTableRemoveColumn(tableName, name, rerender) {
+    if (require) {
+        let electron = require('electron');
         electron.ipcRenderer.send('DBTableRemoveColumn', tableName, name);
         electron.ipcRenderer.once('OKDBTableRemoveColumn', (e) => {
+            delete window.tables[tableName][name];
             rerender.render();
             save();
         });
