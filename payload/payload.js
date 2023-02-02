@@ -178,10 +178,11 @@ let blockmap = {
 };
 
 (async () => {
-    let { builtComponents, actions, states } = await (await fetch('/functions' + location.pathname)).json();
+    let { builtComponents, actions, states, tables } = await (await fetch('/functions' + location.pathname)).json();
     window.builtComponents = builtComponents;
     window.actions = actions;
     window.states = states;
+    window.tables = tables;
     for (let bc of Object.keys(window.builtComponents)) {
         let attrs = window.builtComponents[bc].attributes;
         blockmap['ComponentCreate' + bc] = {
@@ -191,6 +192,20 @@ let blockmap = {
             exp: (e) => `#${e}`,
             exec: ((stc, local, ...params) => {
                 return make('user-built-component').set('attrs', params).set('componentName', bc).elem;
+            })
+        };
+    }
+    for (let table of Object.keys(window.tables)) {
+        blockmap['INSERTINTO' + table] = {
+            html: 'Insert values ' + Object.keys(window.tables[table]).map(e=>e+':?T') + 'INTO ' + table,
+            category: 'db',
+            isArgs: false,
+            exp: (e) => `#${e}`,
+            exec: ((stc, local, ...params) => {
+                let columns = Object.keys(window.tables[table]);
+                let i = 0;
+                
+                console.log('Insert values ' + Object.keys(window.tables[table]).map(e=>e+': ... ') + 'INTO ' + table);
             })
         };
     }

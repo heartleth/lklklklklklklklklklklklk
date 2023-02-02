@@ -36,7 +36,6 @@ let blockmap = {
         html: 'Id:?T',
         category: 'ui',
         isArgs: true,
-        exp: (e) => `#${e}`,
         exec: ((stc, local, e) => {
             return '#' + getValue(e, local);
         })
@@ -53,7 +52,6 @@ let blockmap = {
         html: 'State:%',
         category: 'value',
         isArgs: true,
-        exp: (e) => `#${e}`,
         exec: ((stc, local, s) => {
             return window.states[s];
         })
@@ -62,7 +60,6 @@ let blockmap = {
         html: 'Local:?T',
         category: 'value',
         isArgs: true,
-        exp: (e) => `#${e}`,
         exec: ((stc, local, s) => {
             return window.locals[local][s];
         })
@@ -71,7 +68,6 @@ let blockmap = {
         html: '?T ?{+,-,*,/,mod} ?T',
         category: 'value',
         isArgs: true,
-        exp: (e) => `#${e}`,
         exec: ((stc, local, ta, op, tb) => {
             const a = parseFloat(getValue(ta, local));
             const b = parseFloat(getValue(tb, local));
@@ -119,6 +115,7 @@ let blockmap = {
     'SetState': {
         html: 'Set state % as ?T',
         category: 'value',
+        
         exec: ((stc, local, st, text) => {
             stc.push(st);
             window.states[st] = getValue(text, local);
@@ -221,4 +218,25 @@ function getValue(v, local) {
         }
     }
     return v;
+}
+
+function isServerAction(actions) {
+    for (let action of actions) {
+        if (!action) continue;
+        if (action.substring) continue;
+        if (blockmap[action.name].category == 'db') {
+            return true;
+        }
+        if (action.params) {
+            if (isServerAction(action.params)) {
+                return true;
+            }
+        }
+        if (action.child) {
+            if (isServerAction(action.child)) {
+                return true;
+            }
+        }
+    }
+    return false;
 }

@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
-const express = require('express');
 const { setupIpc } = require('./database');
+const express = require('express');
 let port = 5252;
 
 // const db = new sqlite3.Database(':memory:');
@@ -36,14 +36,16 @@ app.whenReady().then(() => {
         let expressApp = express();
         expressApp.use(express.static('payload'));
         for (const routeName of localStorage.route.split(',')) {
-            const route = '/' + routeName;
-            const builtComponents = JSON.parse(localStorage[route + '.components']);
+            const route = (routeName[0]=='/' ? '' : '/') + routeName;   
+            console.log('"' + route + '"');
+            const builtComponents = JSON.parse(localStorage[route + '.components'] ?? '{}');
             const actions = JSON.parse(localStorage[route + '.actions']);
             const states = JSON.parse(localStorage[route + '.states']);
+            const tables = JSON.parse(localStorage['tables']);
             const html = localStorage[route + '.page'];
         
             expressApp.get('/functions' + route, (req, res) => {
-                res.send(JSON.stringify({ builtComponents, actions, states }));
+                res.send(JSON.stringify({ builtComponents, actions, states, tables }));
             });
             expressApp.get(route, (req, res) => {
                 res.send('<meta name="viewport" content="width=device-width, initial-scale=1.0">' + html + '<script src="/payload.js"></script><link rel="stylesheet" href="default.css">');
@@ -61,3 +63,31 @@ app.on('window-all-closed', () => {
         app.quit();
     }
 });
+
+function isServerAction(actions) {
+    for (let action of actions) {
+        if (!action) continue;
+        if (action.substring) continue;
+        if (action.name.startsWith('INSERTINTO')) {
+            return true;
+        }
+        if (action.params) {
+            if (isServerAction(action.params)) {
+                return true;
+            }
+        }
+        if (action.child) {
+            if (isServerAction(action.child)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function makeServerAction(actionName, actions) {
+    for (let action of actions) {
+        
+    }
+    
+}

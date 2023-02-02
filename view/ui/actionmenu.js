@@ -474,6 +474,7 @@ class FunctionEditWindow extends HTMLElement {
         if (this.start) {
             if (this.start.down) {
                 window.actions[this.actionName].code = this.start.down.makeCode();
+                console.log(isServerAction(window.actions[this.actionName].code));
             }
             else {
                 window.actions[this.actionName].code = [];
