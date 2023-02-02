@@ -178,7 +178,8 @@ let blockmap = {
 };
 
 (async () => {
-    let { builtComponents, actions, states, tables } = await (await fetch('/functions' + location.pathname)).json();
+    let { builtComponents, actions, states, tables, serverSidePostActions } = await (await fetch('/functions' + location.pathname)).json();
+    window.serverSidePostActions = serverSidePostActions;
     window.builtComponents = builtComponents;
     window.actions = actions;
     window.states = states;
@@ -206,6 +207,31 @@ let blockmap = {
                 let i = 0;
                 
                 console.log('Insert values ' + Object.keys(window.tables[table]).map(e=>e+': ... ') + 'INTO ' + table);
+            })
+        };
+    }
+    for (let ssa of window.serverSidePostActions) {
+        actions[ssa.name].code = [{ name: 'ssa_' + ssa.name, params: [] }];
+        blockmap['ssa_' + ssa.name] = {
+            category: 'ssa',
+            exec: (async (stc, local) => {
+                let body = {};
+                for (const t of ssa.ses) {
+                    if (t[0] == '#State') {
+                        body['#State:' + t[1]] = window.states[t[1]];
+                    }
+                    else if (t[0] == '#Find') {
+                        body['#Elements:' + t[2]] = document.querySelectorAll(getValue(t[1], local));
+                    }
+                }
+                const res = await fetch(`./serverside/${ssa.name}`, {
+                    method: 'post',
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8",
+                    },
+                    body: JSON.stringify(body)
+                }).then(e=>e.text());
+                console.log(res);
             })
         };
     }

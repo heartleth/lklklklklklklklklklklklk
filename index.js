@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { compileAction } = require('./compile');
 const { setupIpc } = require('./database');
 const express = require('express');
 let port = 5252;
@@ -34,21 +35,32 @@ app.whenReady().then(() => {
     ipcMain.on('openExpress', (e, html, builtComponents, actions, states, localStorage) => {
         port += 1;
         let expressApp = express();
+        // expressApp.use(express.urlencoded({ extended: false }));
+        expressApp.use(express.json());
         expressApp.use(express.static('payload'));
         for (const routeName of localStorage.route.split(',')) {
-            const route = (routeName[0]=='/' ? '' : '/') + routeName;   
-            console.log('"' + route + '"');
+            const route = (routeName[0]=='/' ? '' : '/') + routeName;
             const builtComponents = JSON.parse(localStorage[route + '.components'] ?? '{}');
             const actions = JSON.parse(localStorage[route + '.actions']);
             const states = JSON.parse(localStorage[route + '.states']);
             const tables = JSON.parse(localStorage['tables']);
             const html = localStorage[route + '.page'];
-        
+            let serverSidePostActions = [];
+            for (let an in actions) {
+                if (isServerAction(actions[an].code)) {
+                    let compiled = compileAction(an, actions[an].code);
+                    serverSidePostActions.push({ name: an, ses: compiled.sendInputs });
+                    const ssurl = (route + '/serverside/' + an).replace(/\/+/g, '/');
+                    expressApp.post(ssurl, (req, res) => {
+                        res.setHeader('Content-Type', 'text/html; charset=utf-8').send('조까!');
+                    });
+                }
+            }
             expressApp.get('/functions' + route, (req, res) => {
-                res.send(JSON.stringify({ builtComponents, actions, states, tables }));
+                res.send(JSON.stringify({ builtComponents, actions, states, tables, serverSidePostActions }));
             });
             expressApp.get(route, (req, res) => {
-                res.send('<meta name="viewport" content="width=device-width, initial-scale=1.0">' + html + '<script src="/payload.js"></script><link rel="stylesheet" href="default.css">');
+                res.setHeader('Content-Type', 'text/html; charset=utf-8').send('<meta name="viewport" content="width=device-width, initial-scale=1.0">' + html + '<script src="/payload.js"></script><link rel="stylesheet" href="default.css">');
             });
         }
         expressApp.listen(port);
@@ -83,11 +95,4 @@ function isServerAction(actions) {
         }
     }
     return false;
-}
-
-function makeServerAction(actionName, actions) {
-    for (let action of actions) {
-        
-    }
-    
 }
