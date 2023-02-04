@@ -1,22 +1,65 @@
 let blockmap = {
     'return': { category: 'value' },
     'JavaScript': { category: 'code' },
-    'ConsoleLog': { category: 'code' },
-    'Alert': { category: 'ui' },
-    'Href': { category: 'ui' },
+    'ConsoleLog': {
+        category: 'code',
+        exec: (cas, text) => {
+            const t = getValue(text, cas.local);
+            console.log(t);
+            cas.clientActs.push(['ConsoleLog', t]);
+        }
+    },
+    'Alert': {
+        category: 'ui',
+        exec: (cas, text) => {
+            const t = getValue(text, cas.local);
+            cas.clientActs.push(['Alert', t]);
+        }
+    },
+    'Href': {
+        category: 'ui',
+        exec: (cas, url) => {
+            const t = getValue(url, cas.local);
+            cas.clientActs.push(['Href', t]);
+        }
+    },
     'HasId': { category: 'ui' },
-    'ValueOf': { category: 'ui' },
-    'State': { category: 'value' },
-    'Local': { category: 'value' },
-    'PlusMinus': { category: 'value'},
-    'Find': { category: 'ui' },
-    'Hide': { category: 'ui' },
-    'Show': { category: 'ui' },
-    'AppendHTML': { category: 'ui' },
-    'SetState': { category: 'value' },
-    'SetLocal': { category: 'value' },
-    'IfOrd': { category: 'control' },
-    'WhileOrd': { category: 'control' }
+    'ValueOf': {
+        category: 'ui'
+    },
+    'State': {
+        category: 'value'
+    },
+    'Local': {
+        category: 'value'
+    },
+    'PlusMinus': {
+        category: 'value'
+    },
+    'Find': {
+        category: 'ui'
+    },
+    'Hide': {
+        category: 'ui'
+    },
+    'Show': {
+        category: 'ui'
+    },
+    'AppendHTML': {
+        category: 'ui'
+    },
+    'SetState': {
+        category: 'value'
+    },
+    'SetLocal': {
+        category: 'value'
+    },
+    'IfOrd': {
+        category: 'control'
+    },
+    'WhileOrd': {
+        category: 'control'
+    }
 };
 
 function getActionType(name) {
@@ -52,3 +95,18 @@ function compileAction(actionName, actions) {
 }
 
 module.exports = { compileAction };
+
+function getValue(v, local) {
+    if (!v.substring && v.name) {
+        return blockmap[v.name].exec([], local, ...v.params.map(e=>getValue(e, local)));
+    }
+    if (v.startsWith) {
+        if (v.startsWith('#Local:')) {
+            return window.locals[local][v.substring(7)];
+        }
+        else if (v.startsWith('#State:')) {
+            return window.states[v.substring(7)];
+        }
+    }
+    return v;
+}

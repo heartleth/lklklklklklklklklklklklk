@@ -52,6 +52,8 @@ app.whenReady().then(() => {
                     serverSidePostActions.push({ name: an, ses: compiled.sendInputs });
                     const ssurl = (route + '/serverside/' + an).replace(/\/+/g, '/');
                     expressApp.post(ssurl, (req, res) => {
+                        console.log(req.body);
+                        
                         res.setHeader('Content-Type', 'text/html; charset=utf-8').send('조까!');
                     });
                 }
