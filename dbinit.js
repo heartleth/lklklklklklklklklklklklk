@@ -7,4 +7,4 @@ const db = new sqlite3.Database('./workspace-db/ws.db');
 //     console.log([...b[0].sql.substring(15 + tnl).split(',')].map(e=>e.trim().split(' ')));
 // });
 
-db.run('ALTER TABLE student ADD COLUMN __TEMP_ALTER__name Text',(a,b)=>console.log(a,b));
+db.get('SELECT * from student', (a, b)=>console.log(a, b));

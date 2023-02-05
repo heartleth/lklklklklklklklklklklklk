@@ -196,20 +196,6 @@ let blockmap = {
             })
         };
     }
-    for (let table of Object.keys(window.tables)) {
-        blockmap['INSERTINTO' + table] = {
-            html: 'Insert values ' + Object.keys(window.tables[table]).map(e=>e+':?T') + 'INTO ' + table,
-            category: 'db',
-            isArgs: false,
-            exp: (e) => `#${e}`,
-            exec: ((stc, local, ...params) => {
-                let columns = Object.keys(window.tables[table]);
-                let i = 0;
-                
-                console.log('Insert values ' + Object.keys(window.tables[table]).map(e=>e+': ... ') + 'INTO ' + table);
-            })
-        };
-    }
     for (let ssa of window.serverSidePostActions) {
         actions[ssa.name].code = [{ name: 'ssa_' + ssa.name, params: [] }];
         blockmap['ssa_' + ssa.name] = {
@@ -221,7 +207,13 @@ let blockmap = {
                         body['#State:' + t[1]] = window.states[t[1]];
                     }
                     else if (t[0] == '#Find') {
-                        body['#Elements:' + t[2]] = document.querySelectorAll(getValue(t[1], local));
+                        let selector = getValue(t[1], local);
+                        let elem = document.querySelector(selector);
+                        const metaElem = {
+                            value: elem.value,
+                            selector
+                        };
+                        body['#Elements:' + t[2]] = metaElem;
                     }
                 }
                 const res = await fetch(`./serverside/${ssa.name}`, {

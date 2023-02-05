@@ -104,7 +104,7 @@ let blockmap = {
         })
     },
     'AppendHTML': {
-        html: 'Append HTML ?T to ?T',
+        html: 'Append Element ?T to ?T',
         category: 'ui',
         exec: ((stc, local, html, v) => {
             if (window.locals[local][v][0].classList) {
@@ -115,7 +115,6 @@ let blockmap = {
     'SetState': {
         html: 'Set state % as ?T',
         category: 'value',
-        
         exec: ((stc, local, st, text) => {
             stc.push(st);
             window.states[st] = getValue(text, local);

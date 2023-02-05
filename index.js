@@ -1,5 +1,5 @@
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
-const { compileAction } = require('./compile');
+const { compileAction, execAction } = require('./compile');
 const { setupIpc } = require('./database');
 const express = require('express');
 let port = 5252;
@@ -53,8 +53,8 @@ app.whenReady().then(() => {
                     const ssurl = (route + '/serverside/' + an).replace(/\/+/g, '/');
                     expressApp.post(ssurl, (req, res) => {
                         console.log(req.body);
-                        
-                        res.setHeader('Content-Type', 'text/html; charset=utf-8').send('조까!');
+                        let reply = execAction(actions[an].code, req.body, tables);
+                        res.setHeader('Content-Type', 'text/html; charset=utf-8').send(reply);
                     });
                 }
             }
