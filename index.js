@@ -51,9 +51,9 @@ app.whenReady().then(() => {
                     let compiled = compileAction(an, actions[an].code);
                     serverSidePostActions.push({ name: an, ses: compiled.sendInputs });
                     const ssurl = (route + '/serverside/' + an).replace(/\/+/g, '/');
-                    expressApp.post(ssurl, (req, res) => {
+                    expressApp.post(ssurl, async (req, res) => {
                         console.log(req.body);
-                        let reply = execAction(actions[an].code, req.body, tables);
+                        let reply = await execAction(actions[an].code, req.body, tables);
                         res.setHeader('Content-Type', 'text/html; charset=utf-8').send(reply);
                     });
                 }
@@ -82,7 +82,7 @@ function isServerAction(actions) {
     for (let action of actions) {
         if (!action) continue;
         if (action.substring) continue;
-        if (action.name.startsWith('INSERTINTO')) {
+        if (action.name.startsWith('INSERTINTO') || action.name.startsWith('SELECTFROM')) {
             return true;
         }
         if (action.params) {

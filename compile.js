@@ -3,50 +3,50 @@ let blockmap = {
     'JavaScript': { category: 'code' },
     'ConsoleLog': {
         category: 'code',
-        exec: (cas, text) => {
-            const t = getValue(text, cas);
+        exec: async (cas, text) => {
+            const t = await getValue(text, cas);
             console.log(t);
             cas.clientActs.push(['ConsoleLog', t]);
         }
     },
     'Alert': {
         category: 'ui',
-        exec: (cas, text) => {
-            const t = getValue(text, cas);
+        exec: async (cas, text) => {
+            const t = await getValue(text, cas);
             cas.clientActs.push(['Alert', t]);
         }
     },
     'Href': {
         category: 'ui',
-        exec: (cas, url) => {
-            const t = getValue(url, cas);
+        exec: async (cas, url) => {
+            const t = await getValue(url, cas);
             cas.clientActs.push(['Href', t]);
         }
     },
     'HasId': { category: 'ui' },
     'ValueOf': {
         category: 'ui',
-        exec: (cas, elem) => {
+        exec: async (cas, elem) => {
             return elem;
         }
     },
     'State': {
         category: 'value',
-        exec: (cas, e) => {
+        exec: async (cas, e) => {
             return cas.states[e];
         }
     },
     'Local': {
         category: 'value',
-        exec: (cas, e) => {
+        exec: async (cas, e) => {
             return cas.local[e];
         }
     },
     'PlusMinus': {
         category: 'value',
-        exec: (cas, ta, op, tb) => {
-            const a = parseFloat(getValue(ta, cas));
-            const b = parseFloat(getValue(tb, cas));
+        exec: async (cas, ta, op, tb) => {
+            const a = parseFloat(await getValue(ta, cas));
+            const b = parseFloat(await getValue(tb, cas));
             if (op == '+') return a + b;
             if (op == '-') return a - b;
             if (op == '*') return a * b;
@@ -56,46 +56,46 @@ let blockmap = {
     },
     'Find': {
         category: 'ui',
-        exec: (cas, selector, into) => {
+        exec: async (cas, selector, into) => {
             // cas.locals[into] = cas.sentElements[selector];
             cas.locals[into] = cas.elements[into];
         }
     },
     'Hide': {
         category: 'ui',
-        exec: (cas, v) => {
-            cas.clientActs.push(['Hide', getValue(v, cas)]);
+        exec: async (cas, v) => {
+            cas.clientActs.push(['Hide', await getValue(v, cas)]);
         }
     },
     'Show': {
         category: 'ui',
-        exec: (cas, v) => {
-            cas.clientActs.push(['Show', getValue(v, cas)]);
+        exec: async (cas, v) => {
+            cas.clientActs.push(['Show', await getValue(v, cas)]);
         }
     },
     'AppendHTML': {
         category: 'ui',
-        exec: (cas, html, under) => {
-            cas.clientActs.push(['AppendHTML', under, getValue(html, cas)]);
+        exec: async (cas, html, under) => {
+            cas.clientActs.push(['AppendHTML', under, await getValue(html, cas)]);
         }
     },
     'SetState': {
         category: 'value',
-        exec: (cas, st, text) => {
-            cas.states[st] = getValue(text, cas);
+        exec: async (cas, st, text) => {
+            cas.states[st] = await getValue(text, cas);
         }
     },
     'SetLocal': {
         category: 'value',
-        exec: (cas, v, text) => {
-            cas.local[v] = getValue(text, cas);
+        exec: async (cas, v, text) => {
+            cas.local[v] = await getValue(text, cas);
         }
     },
     'IfOrd': {
         category: 'control',
-        exec: ((cas, child, ta, operator, tb) => {
-            let a = getValue(ta, cas);
-            let b = getValue(tb, cas);
+        exec: (async (cas, child, ta, operator, tb) => {
+            let a = await getValue(ta, cas);
+            let b = await getValue(tb, cas);
             let condition = ((a == b) && operator=='=')
                 ||((a != b) && operator=='≠')
                 ||((a < b) && operator=='<')
@@ -104,16 +104,16 @@ let blockmap = {
                 ||((a > b) && operator=='>');
             if (condition) {
                 if (child) {
-                    child.run(cas);
+                    await child.run(cas);
                 }
             }
         })
     },
     'WhileOrd': {
         category: 'control',
-        exec: ((cas, child, ta, operator, tb) => {
-            let a = getValue(ta, cas);
-            let b = getValue(tb, cas);
+        exec: (async (cas, child, ta, operator, tb) => {
+            let a = await getValue(ta, cas);
+            let b = await getValue(tb, cas);
             let condition = ((a == b) && operator=='=')
                 ||((a != b) && operator=='≠')
                 ||((a < b) && operator=='<')
@@ -122,10 +122,10 @@ let blockmap = {
                 ||((a > b) && operator=='>');
             while (condition) {
                 if (child) {
-                    child.run(cas);
+                    await child.run(cas);
                 }
-                a = getValue(ta, cas);
-                b = getValue(tb, cas);
+                a = await getValue(ta, cas);
+                b = await getValue(tb, cas);
                 condition = ((a == b) && operator=='=')
                     ||((a < b) && operator=='<')
                     ||((a != b) && operator=='≠')
@@ -172,9 +172,19 @@ function compileAction(actionName, actions) {
     return clientAction;
 }
 
-function getValue(v, cas) {
+async function getValue(v, cas) {
     if (!v.substring && v.name) {
-        return blockmap[v.name].exec(cas, ...v.params.map(e=>getValue(e, cas)));
+        if (v.name.startsWith('SELECTFROM')) {
+            const table = v.name.substring(10);
+            const values = Object.keys(cas.tables[table]).filter((e, i) => v.params[i]=='y');
+            const query = `SELECT ${values.join([', '])} FROM ${table}`;
+            console.log(query);
+            return await new Promise(p => db.all(query, (err, rows) => {
+                console.log(err, rows);
+                if (!err) { p(rows); }
+            }));
+        }
+        return await blockmap[v.name].exec(cas, ...await Promise.all(v.params.map(e=>getValue(e, cas))));
     }
     if (v.startsWith) {
         if (v.startsWith('#Local:')) {
@@ -187,7 +197,7 @@ function getValue(v, cas) {
     return v;
 }
 
-function execAction(code, sentInputs, tables) {
+async function execAction(code, sentInputs, tables) {
     let clientActs = [];
     let elements = {};
     let states = {};
@@ -201,32 +211,31 @@ function execAction(code, sentInputs, tables) {
         }
     }
     let cas = { states, locals, clientActs, tables };
-    runActionSequence(code, cas);
+    await runActionSequence(code, cas);
     return cas;
 }
 
-function runActionSequence(seq, cas) {
+async function runActionSequence(seq, cas) {
     for (let code of seq) {
         if (!blockmap[code.name]) {
             if (code.name.startsWith('INSERTINTO')) {
                 const table = code.name.substring(10);
                 const values = Object.keys(cas.tables[table]).map((e, i) => [e, getValue(code.params[i], cas)]);
                 const query = `INSERT INTO ${table} (${values.map(e=>e[0]).join([', '])}) VALUES (${values.map(e=>'?').join([', '])})`;
-                console.log(query, [...values.map(e=>e[1])]);
-                db.run(query, [...values.map(e=>e[1])], (res, err) => {
-                    console.log(res, err);
-                });
+                let realValues = await Promise.all([...values.map(e=>e[1])]);
+                console.log(query, realValues);
+                await new Promise(p => db.run(query, realValues, (err) => { console.log(err); p(0); }));
             }
             continue;
         }
         if (blockmap[code.name].category == 'control') {
             const child = {
-                run: (cas) => code.child ? runActionSequence(code.child, cas):''
+                run: async (cas) => code.child ? (await runActionSequence(code.child, cas)):''
             };
-            blockmap[code.name].exec(cas, child, ...code.params);
+            await blockmap[code.name].exec(cas, child, ...code.params);
         }
         else {
-            blockmap[code.name].exec(cas, ...code.params);
+            await blockmap[code.name].exec(cas, ...code.params);
         }
     }
 }

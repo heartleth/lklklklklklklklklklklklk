@@ -7,4 +7,4 @@ const db = new sqlite3.Database('./workspace-db/ws.db');
 //     console.log([...b[0].sql.substring(15 + tnl).split(',')].map(e=>e.trim().split(' ')));
 // });
 
-db.get('SELECT * from student', (a, b)=>console.log(a, b));
+db.all('SELECT * from student', (a, b)=>console.log(a, b));

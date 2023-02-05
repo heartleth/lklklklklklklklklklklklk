@@ -64,13 +64,19 @@ async function load() {
 
         for (let table of Object.keys(window.tables)) {
             blockmap['INSERTINTO' + table] = {
-                html: 'Insert values ' + Object.keys(window.tables[table]).map(e=>e+':?T') + 'INTO ' + table,
+                html: 'Insert values ' + Object.keys(window.tables[table]).map(e=>e+':?T').join(' ') + ' into ' + table,
                 category: 'db',
                 isArgs: false,
-                exp: (e) => `#${e}`,
-                exec: ((stc, local, ...params) => {
-                    
+                exec: ((stc, local, ...params) => {                    
                     console.log('Insert values ' + Object.keys(window.tables[table]).map(e=>e+': ... ') + 'INTO ' + table);
+                })
+            };
+            blockmap['SELECTFROM' + table] = {
+                html: `Select ${Object.keys(window.tables[table]).map(e=>e+'?{y,n}').join(' ')} from ${table}`,
+                category: 'db',
+                isArgs: true,
+                exec: ((stc, local, ...cols) => {
+                    console.log('SELECT ' + Object.keys(window.tables[table]).filter((e, i)=>cols[i]=='y').join(', ') + 'FROM' + table);
                 })
             };
         }
