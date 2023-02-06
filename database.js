@@ -68,8 +68,14 @@ function setupIpc() {
         });
         e.reply('OKDBInitDatabase');
     });
-    ipcMain.on('DBTableGetColumns', (e, tableName, name) => {
-        e.reply('GetColumns', getTableInfo());
+    ipcMain.on('DBTableShowSome', (e, tables) => {
+        db.all('', (err, r) => {
+            console.log(err, r);
+            e.reply('OKDBTableShowSome', r);
+        })
+    });
+    ipcMain.on('DBTableGetColumns', async (e, tableName, name) => {
+        e.reply('GetColumns', await getTableInfo());
     });
 }
 
