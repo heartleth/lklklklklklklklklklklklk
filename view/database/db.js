@@ -68,6 +68,19 @@ class DBTableInspector extends HTMLElement {
         let addButton = make('button').text('+').addClass('newstate').elem;
         addButton.addEventListener('click', () => dbTableAddColumn(this.tableName, newCol.value, colType.value, this));
         this.appendChild(addButton);
+
+        if (require) {
+            let electron = require('electron');
+            electron.ipcRenderer.send('DBTableShowSome', this.tableName);
+            electron.ipcRenderer.once('OKDBTableShowSome', (e, r) => {
+                let cols = ['id'].concat(Object.keys(table));
+                this.appendChild(wse.br());
+                this.appendChild(make('table').html(`<tbody>
+                <tr>${cols.map(e=>`<th>${e}</th>`).join('')}</tr>
+                ${r.map(row=>`<tr>${cols.map(e=>`<td>${row[e]}</td>`).join('')}</tr>`).join('')}
+                </tbody>`).elem);
+            });
+        }
     }
 }
 window.customElements.define('db-table-inspector', DBTableInspector);

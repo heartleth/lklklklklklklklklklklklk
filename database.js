@@ -68,9 +68,9 @@ function setupIpc() {
         });
         e.reply('OKDBInitDatabase');
     });
-    ipcMain.on('DBTableShowSome', (e, tables) => {
-        db.all('', (err, r) => {
-            console.log(err, r);
+    ipcMain.on('DBTableShowSome', (e, table) => {
+        db.all('SELECT * FROM ' + table + ' LIMIT 5', (err, r) => {
+            console.log(err);
             e.reply('OKDBTableShowSome', r);
         })
     });

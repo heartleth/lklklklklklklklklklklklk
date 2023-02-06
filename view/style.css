@@ -595,3 +595,16 @@ db-table-inspector {
     display: inline-block;
     color: white;
 }
+
+table {
+    background-color: white;
+    max-height: 100px;
+    margin-top: 8px;
+    color: black;
+    width: 100%;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
