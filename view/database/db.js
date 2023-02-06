@@ -18,14 +18,42 @@ window.tables = {
 };
 
 function databaseMenu(ws) {
+    let saveDB = make('input').setId('moveDBTo').attr('type', 'file').elem;
     addChilds(ws, [
-        wstitle('Database')
+        wstitle('Database'),
+        wse.label('Move Database File').attr('for','moveDBTo').addClass('moveDB').elem,
+        saveDB,
     ]);
+    saveDB.addEventListener('click', e => {
+        e.preventDefault();
+        if (require) {
+            let electron = require('electron');
+            electron.ipcRenderer.send('DBCopyDatabaseFile');
+        }
+    })
+    let newTableDiv = make('div').elem;
+    let newTableName;
+    let newTableButton;
+    addChilds(newTableDiv, [
+        wstitle('CREATE TABLE'),
+        wse.br(),
+        newTableName=make('text').attr('style', 'width: 100px; height: 16px;').elem,
+        newTableButton=make('button').text('CREATE').addClass('newstate').elem
+    ]);
+    newTableButton.addEventListener('click', ()=>{
+        if (require) {
+            let electron = require('electron');
+            electron.ipcRenderer.send('DBCreateTable', newTableName.value);
+            electron.ipcRenderer.once('OKDBCreateTable', (e, s) => {
+                window.tables[s] = {};
+                ws.innerHTML = '';
+                databaseMenu(ws);
+            });
+        }
+    });
+    ws.appendChild(newTableDiv);
     for (const tableName in window.tables) {
         ws.appendChild(make('db-table-inspector').set('tableName', tableName).elem);
-        let newTableDiv = make('div').elem;
-
-        ws.appendChild(newTableDiv);
     }
 }
 
@@ -43,9 +71,10 @@ class DBTableInspector extends HTMLElement {
     render() {
         this.innerHTML = '';
         const table = window.tables[this.tableName];
+        let dropTableButton = make('button').text('DROP TABLE').addClass('newstate').elem;
         this.appendChild(wstitle(this.tableName));
+        this.appendChild(dropTableButton);
         this.appendChild(wse.br());
-
         for (const column in table) {
             this.appendChild(make('text').addClass('tableColName').set('value', column).elem);
             let colType = make('select').opts(databaseColumnTypes).elem;
@@ -71,14 +100,33 @@ class DBTableInspector extends HTMLElement {
 
         if (require) {
             let electron = require('electron');
-            electron.ipcRenderer.send('DBTableShowSome', this.tableName);
-            electron.ipcRenderer.once('OKDBTableShowSome', (e, r) => {
-                let cols = ['id'].concat(Object.keys(table));
-                this.appendChild(wse.br());
-                this.appendChild(make('table').html(`<tbody>
-                <tr>${cols.map(e=>`<th>${e}</th>`).join('')}</tr>
-                ${r.map(row=>`<tr>${cols.map(e=>`<td>${row[e]}</td>`).join('')}</tr>`).join('')}
-                </tbody>`).elem);
+            let showDatas = make('button').addClass('newstate').text('View Table').elem;
+            let dataTable = make('table').elem;
+            showDatas.addEventListener('click', () => {
+                if (showDatas.innerText[0] == 'H') {
+                    dataTable.innerHTML = '';
+                    showDatas.innerText = 'View Table';
+                    return;
+                }
+                electron.ipcRenderer.send('DBTableShowSome', this.tableName);
+                electron.ipcRenderer.once('OKDBTableShowSome', (e, r) => {
+                    let cols = ['id'].concat(Object.keys(table));
+                    dataTable.innerHTML = `<tbody>
+                    <tr>${cols.map(e=>`<th>${e}</th>`).join('')}</tr>
+                    ${r.map(row=>`<tr>${cols.map(e=>`<td>${row[e]}</td>`).join('')}</tr>`).join('')}
+                    </tbody>`;
+                });
+                showDatas.innerText = 'Hide Table';
+            });
+            this.appendChild(wse.br());
+            this.appendChild(showDatas);
+            this.appendChild(dataTable);
+            dropTableButton.addEventListener('click', () => {
+                electron.ipcRenderer.send('DBDropTable', this.tableName);
+                electron.ipcRenderer.once('OKDBDropTable', (e, r) => {
+                    delete window.tables[r];
+                    this.remove();
+                });
             });
         }
     }

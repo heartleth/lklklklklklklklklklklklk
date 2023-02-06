@@ -19,10 +19,11 @@ const createWindow = () => {
     });
 
     win.loadFile('view/index.html');
+    return win;
 };
 
 app.whenReady().then(() => {
-    createWindow();
+    let win = createWindow();
     
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -30,8 +31,7 @@ app.whenReady().then(() => {
         }
     });
 
-    setupIpc();
-    
+    setupIpc(win);
     ipcMain.on('openExpress', (e, html, builtComponents, actions, states, localStorage) => {
         port += 1;
         let expressApp = express();

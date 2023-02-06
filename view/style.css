@@ -608,3 +608,25 @@ table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
 }
+
+input[type=file] {
+    clip: rect(0, 0, 0, 0);
+    overflow: hidden;
+    position: absolute;
+    margin: -1px;
+    height: 1px;
+    padding: 0;
+    width: 1px;
+    border: 0;
+}
+
+.moveDB {
+    border: 1px solid #ebebeb;
+    background-color: #222;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    display: block;
+    padding: 8px;
+    color: white;
+}

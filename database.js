@@ -1,6 +1,8 @@
-const { ipcMain } = require('electron');
-
+const { ipcMain, dialog } = require('electron');
 const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
+const fs = require('fs');
+
 const db = new sqlite3.Database('./workspace-db/ws.db');
 
 const databaseColumnTypes = {
@@ -18,7 +20,7 @@ function asSafe(s) {
     return s.replace(/[^a-zA-Z0-9_]/g, '');
 }
 
-function setupIpc() {
+function setupIpc(mainWindow) {
     ipcMain.on('DBTableAddColumn', (e, tableName, name, type) => {
         const safeTableName = asSafe(tableName);
         const safeName = asSafe(name);
@@ -32,6 +34,34 @@ function setupIpc() {
                 console.log(err);
             }
         });
+    });
+    ipcMain.on('DBCreateTable', (e, tableName) => {
+        const safeTableName = asSafe(tableName);
+        db.run(`CREATE TABLE IF NOT EXISTS ${safeTableName} (id INTEGER PRIMARY KEY AUTOINCREMENT)`, (err) => {
+            if (!err) { e.reply('OKDBCreateTable', safeTableName); }
+            else {
+                console.log('?????');
+                console.log(err);
+            }
+        });
+    });
+    ipcMain.on('DBDropTable', (e, tableName) => {
+        dialog.showMessageBox({
+            buttons: [ "Yes", "No" ],
+            message: `This operation cannot be undone. Would you like to proceed "Drop Table ${tableName}"?`
+        }).then((res) => {
+            if (res.response === 0) {
+                const safeTableName = asSafe(tableName);
+                db.run(`DROP TABLE ${safeTableName};`, (err) => {
+                    if (!err) { e.reply('OKDBDropTable', safeTableName); }
+                    else {
+                        console.log('?????');
+                        console.log(err);
+                    }
+                });
+            }
+        });
+       
     });
     ipcMain.on('DBTableAlterTypeColumn', (e, tableName, name, type) => {
         const safeTableName = asSafe(tableName);
@@ -76,6 +106,14 @@ function setupIpc() {
     });
     ipcMain.on('DBTableGetColumns', async (e, tableName, name) => {
         e.reply('GetColumns', await getTableInfo());
+    });
+    ipcMain.on('DBCopyDatabaseFile', (e, tableName, name) => {
+        dialog.showOpenDialog(mainWindow, {properties: [ 'openDirectory' ]}).then(res => {
+            if (res.filePaths.length) {
+                console.log(__dirname);
+                fs.copyFileSync(path.join(__dirname, 'workspace-db/ws.db'), path.join(res.filePaths[0], 'Copied.db'))
+            }
+        })
     });
 }
 
