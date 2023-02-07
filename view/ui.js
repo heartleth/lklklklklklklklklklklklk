@@ -424,3 +424,19 @@ document.getElementById('toPage').addEventListener('click', () => {
     wsb.innerHTML = localStorage.getItem('page');
     wsb.setAttribute('mode', 'Page');
 });
+
+document.getElementById('makeServer').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (require) {
+        let electron = require('electron');
+        let wsb = document.querySelector('wsbody');
+        wsb.setAttribute('mode', 'Page');
+        electron.ipcRenderer.send('makeServer',
+            wsb.innerHTML,
+            window.builtComponents,
+            window.actions,
+            window.states,
+            { ...localStorage }
+        );
+    }
+});

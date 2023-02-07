@@ -9,7 +9,7 @@ function getPage() {
 }
 
 async function save() {
-    setTimeout(()=>{
+    setTimeout(() => {
         const page = getPage();
         localStorage.setItem('tables', JSON.stringify(window.tables));
         let mode = document.querySelector('wsbody').getAttribute('mode');
@@ -19,6 +19,7 @@ async function save() {
         else {
             localStorage.setItem(page + 'page', document.querySelector('wsbody').innerHTML);
         }
+        localStorage.setItem('route', '/');
         localStorage.setItem(page + 'components', JSON.stringify(window.builtComponents));
         localStorage.setItem(page + 'states', JSON.stringify(window.states));
         localStorage.setItem(page + 'actions', JSON.stringify(window.actions));

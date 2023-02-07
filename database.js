@@ -110,7 +110,6 @@ function setupIpc(mainWindow) {
     ipcMain.on('DBCopyDatabaseFile', (e, tableName, name) => {
         dialog.showOpenDialog(mainWindow, {properties: [ 'openDirectory' ]}).then(res => {
             if (res.filePaths.length) {
-                console.log(__dirname);
                 fs.copyFileSync(path.join(__dirname, 'workspace-db/ws.db'), path.join(res.filePaths[0], 'Copied.db'))
             }
         })

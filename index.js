@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const { compileAction, execAction } = require('./compile');
+const { ipcSetupMakeServer } = require('./makeserver');
 const { setupIpc } = require('./database');
 const express = require('express');
 let port = 5252;
@@ -32,6 +33,7 @@ app.whenReady().then(() => {
     });
 
     setupIpc(win);
+    ipcSetupMakeServer(win);
     ipcMain.on('openExpress', (e, html, builtComponents, actions, states, localStorage) => {
         port += 1;
         let expressApp = express();
