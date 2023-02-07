@@ -222,8 +222,11 @@ let blockmap = {
                         "Content-Type": "application/json; charset=utf-8",
                     },
                     body: JSON.stringify(body)
-                }).then(e=>e.text());
-                console.log(res);
+                }).then(e=>e.json());
+                for (let code of res) {
+                    console.log(code);
+                    blockmap[code[0]].exec(stc, local, ...code.slice(1));
+                }
             })
         };
     }
