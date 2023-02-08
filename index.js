@@ -19,7 +19,8 @@ const createWindow = () => {
         autoHideMenuBar: true
     });
 
-    win.loadFile('view/index.html');
+    // win.loadFile('view/index.html');
+    win.loadFile('view/projects.html');
     return win;
 };
 
