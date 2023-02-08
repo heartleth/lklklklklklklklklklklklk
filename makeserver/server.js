@@ -1,6 +1,7 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
-const fs = require('fs');
+import pkg from 'sqlite3';
+const sqlite3 = pkg.verbose();
+// const path = require('path');
+// const fs = require('fs');
 
 const db = new sqlite3.Database('./site.db');
 

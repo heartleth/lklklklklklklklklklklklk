@@ -21,16 +21,19 @@ function ipcSetupMakeServer(mainWindow) {
                 fs.copyFileSync(path.join(__dirname, 'payload/default.css'), path.join(targetPath, 'payload/default.css'));
                 fs.copyFileSync(path.join(__dirname, 'makeserver/_package.json'), path.join(targetPath, 'package.json'));
                 fs.copyFileSync(path.join(__dirname, 'makeserver/README.txt'), path.join(targetPath, 'README.txt'));
+                fs.copyFileSync(path.join(__dirname, 'makeserver/server.js'), path.join(targetPath, 'server.js'));
                 fs.copyFileSync(path.join(__dirname, 'makeserver/run.bat'), path.join(targetPath, 'server.bat'));
                 let i = 0;
+                const tables = localStorage['tables'];
                 let indexJS = `
-                    import { compileAction, execAction } from './server';
+                    import { compileAction, execAction } from './server.js';
                     import express from 'express';
                     import path from 'path';
                     const __dirname = path.resolve();
                     let app = express();
                     app.use(express.json());
                     app.use(express.static('payload'));
+                    let tables = ${tables};
                 `;
                 
                 for (const routeName of (localStorage.route ?? '/').split(',')) {
@@ -38,7 +41,6 @@ function ipcSetupMakeServer(mainWindow) {
                     const builtComponents = localStorage[route + '.components'] ?? '{}';
                     const actions = JSON.parse(localStorage[route + '.actions']);
                     const states = JSON.parse(localStorage[route + '.states']);
-                    const tables = JSON.parse(localStorage['tables']);
                     let html = localStorage[route + '.page'];
 
                     let actionsJS = plb + 'window.builtComponents=' + builtComponents + ';\nfunction metaElem(selector) { let e = document.querySelector(selector); return { value: e.value, selector }; }';
@@ -53,12 +55,12 @@ function ipcSetupMakeServer(mainWindow) {
                                     return `"#Elements:${t[2]}":metaElem(${asExp(t[1])})`
                                 }
                             }).join(',') + '}';
-                            actionsJS += `function ${action}() { let stc = []; let local = {}; let res = await fetch('./serverside/${action}', { method: 'post', body: JSON.stringify(${bodyExp}) }).then(e=>e.json()); for (let code of res.clientActs) { blockmap[code[0]].exec(stc, local, ...code.slice(1)); } for (let st in res.states) { stc.push(st); window.states[st] = res.states[st]; } updateState(stc); }`;
-                            const ssurl = (route + '/serverside/' + an).replace(/\/+/g, '/');
+                            actionsJS += `async function ${action}() { let stc = []; let local = {}; let res = await fetch('./serverside/${action}', { method: 'post', body: JSON.stringify(${bodyExp}) }).then(e=>e.json()); for (let code of res.clientActs) { blockmap[code[0]].exec(stc, local, ...code.slice(1)); } for (let st in res.states) { stc.push(st); window.states[st] = res.states[st]; } updateState(stc); }`;
+                            const ssurl = (route + '/serverside/' + action).replace(/\/+/g, '/');
                             indexJS += `app.post("${ssurl}", async (req, res) => {
-                                let reply = await execAction(actions[an].code, req.body, tables);
+                                let reply = await execAction(${JSON.stringify(actions[action].code)}, req.body, tables);
                                 res.send(reply);
-                            })`;
+                            });`;
                         }
                         else {
                             actionsJS += `function ${action}() { let local = {}; let stc = []; ${actions[action].code.map(asExp).join(' ')}; updateState(stc); }`;

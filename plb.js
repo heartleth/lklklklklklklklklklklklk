@@ -2,7 +2,7 @@ module.exports = `const blockmap = {
     'ConsoleLog': {
         html: 'console log ?T',
         category: 'code',
-        exec: ((stc, local, text) => console.log(text)
+        exec: ((stc, local, text) => console.log(text))
     },
     'Alert': {
         html: 'Alert ?T',
