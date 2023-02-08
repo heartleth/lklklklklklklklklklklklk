@@ -223,9 +223,14 @@ let blockmap = {
                     },
                     body: JSON.stringify(body)
                 }).then(e=>e.json());
-                for (let code of res) {
+                console.log(res);
+                for (let code of res.clientActs) {
                     console.log(code);
                     blockmap[code[0]].exec(stc, local, ...code.slice(1));
+                }
+                for (let st in res.states) {
+                    stc.push(st);
+                    window.states[st] = res.states[st];
                 }
             })
         };

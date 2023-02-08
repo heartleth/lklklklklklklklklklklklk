@@ -1,6 +1,7 @@
 const { compileAction } = require('./compile');
 let { ipcMain, dialog } = require('electron');
 const path = require('path');
+const plb = require('./plb');
 const fs = require('fs');
 
 function ipcSetupMakeServer(mainWindow) {
@@ -23,10 +24,12 @@ function ipcSetupMakeServer(mainWindow) {
                 fs.copyFileSync(path.join(__dirname, 'makeserver/run.bat'), path.join(targetPath, 'server.bat'));
                 let i = 0;
                 let indexJS = `
+                    import { compileAction, execAction } from './server';
                     import express from 'express';
                     import path from 'path';
                     const __dirname = path.resolve();
                     let app = express();
+                    app.use(express.json());
                     app.use(express.static('payload'));
                 `;
                 
@@ -38,7 +41,7 @@ function ipcSetupMakeServer(mainWindow) {
                     const tables = JSON.parse(localStorage['tables']);
                     let html = localStorage[route + '.page'];
 
-                    let actionsJS = 'window.builtComponents=' + builtComponents + ';\nfunction metaElem(selector) { let e = document.querySelector(selector); return { value: e.value, selector }; }';
+                    let actionsJS = plb + 'window.builtComponents=' + builtComponents + ';\nfunction metaElem(selector) { let e = document.querySelector(selector); return { value: e.value, selector }; }';
                     for (let action in actions) {
                         if (action.length == 0) continue;
                         if (isServerAction(actions[action].code)) {
@@ -50,10 +53,11 @@ function ipcSetupMakeServer(mainWindow) {
                                     return `"#Elements:${t[2]}":metaElem(${asExp(t[1])})`
                                 }
                             }).join(',') + '}';
-                            actionsJS += `function ${action}() { fetch('./serverside/${action}', { method: 'post', body: JSON.stringify(${bodyExp}) }); }`;
+                            actionsJS += `function ${action}() { let stc = []; let local = {}; let res = await fetch('./serverside/${action}', { method: 'post', body: JSON.stringify(${bodyExp}) }).then(e=>e.json()); for (let code of res.clientActs) { blockmap[code[0]].exec(stc, local, ...code.slice(1)); } for (let st in res.states) { stc.push(st); window.states[st] = res.states[st]; } updateState(stc); }`;
                             const ssurl = (route + '/serverside/' + an).replace(/\/+/g, '/');
                             indexJS += `app.post("${ssurl}", async (req, res) => {
-                                // TODO
+                                let reply = await execAction(actions[an].code, req.body, tables);
+                                res.send(reply);
                             })`;
                         }
                         else {
@@ -76,7 +80,7 @@ function ipcSetupMakeServer(mainWindow) {
                     i += 1;
                 }
                 
-                indexJS += 'app.listen(process.env.PORT || 8000, () => {console.log("Server is started at port " + process.env.PORT || 8000)});'
+                indexJS += 'app.listen(process.env.PORT || 8000, () => {console.log("Server is started at port " + (process.env.PORT || 8000))});'
                 fs.writeFileSync(path.join(targetPath, 'index.js'), indexJS);
             }
         });

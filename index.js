@@ -56,7 +56,7 @@ app.whenReady().then(() => {
                     expressApp.post(ssurl, async (req, res) => {
                         console.log(req.body);
                         let reply = await execAction(actions[an].code, req.body, tables);
-                        res.setHeader('Content-Type', 'text/html; charset=utf-8').send(reply);
+                        res.send(reply);
                     });
                 }
             }
@@ -70,8 +70,6 @@ app.whenReady().then(() => {
         expressApp.listen(port);
         shell.openExternal(`http://localhost:${port}/`);
     });
-
-
 });
 
 app.on('window-all-closed', () => {
