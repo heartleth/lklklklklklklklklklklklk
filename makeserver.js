@@ -16,10 +16,11 @@ function ipcSetupMakeServer(mainWindow) {
                 
                 fs.mkdirSync(path.join(targetPath, 'views'));
                 fs.mkdirSync(path.join(targetPath, 'payload'));
+                fs.copyFileSync(path.join(__dirname, 'makeserver/payload.js'), path.join(targetPath, 'payload/payload.js'));
                 fs.copyFileSync(path.join(__dirname, 'payload/default.css'), path.join(targetPath, 'payload/default.css'));
                 fs.copyFileSync(path.join(__dirname, 'makeserver/_package.json'), path.join(targetPath, 'package.json'));
-                fs.copyFileSync(path.join(__dirname, 'makeserver/run.bat'), path.join(targetPath, 'server.bat'));
                 fs.copyFileSync(path.join(__dirname, 'makeserver/README.txt'), path.join(targetPath, 'README.txt'));
+                fs.copyFileSync(path.join(__dirname, 'makeserver/run.bat'), path.join(targetPath, 'server.bat'));
                 let i = 0;
                 let indexJS = `
                     import express from 'express';
@@ -31,14 +32,15 @@ function ipcSetupMakeServer(mainWindow) {
                 
                 for (const routeName of (localStorage.route ?? '/').split(',')) {
                     const route = (routeName[0]=='/' ? '' : '/') + routeName;
-                    const builtComponents = JSON.parse(localStorage[route + '.components'] ?? '{}');
+                    const builtComponents = localStorage[route + '.components'] ?? '{}';
                     const actions = JSON.parse(localStorage[route + '.actions']);
                     const states = JSON.parse(localStorage[route + '.states']);
                     const tables = JSON.parse(localStorage['tables']);
-                    const html = localStorage[route + '.page'];
+                    let html = localStorage[route + '.page'];
 
-                    let actionsJS = 'function metaElem(selector) { let e = document.querySelector(selector); return { value: e.value, selector }; }';
+                    let actionsJS = 'window.builtComponents=' + builtComponents + ';\nfunction metaElem(selector) { let e = document.querySelector(selector); return { value: e.value, selector }; }';
                     for (let action in actions) {
+                        if (action.length == 0) continue;
                         if (isServerAction(actions[action].code)) {
                             let bodyExp = '{' + compileAction(action, actions[action].code).sendInputs.map(t => {
                                 if (t[0] == '#State') {
@@ -55,8 +57,9 @@ function ipcSetupMakeServer(mainWindow) {
                             })`;
                         }
                         else {
-                            actionsJS += `function ${action}() { let locals = {}; ${actions[action].code.map(asExp).join(' ')} }`;
+                            actionsJS += `function ${action}() { let local = {}; let stc = []; ${actions[action].code.map(asExp).join(' ')}; updateState(stc); }`;
                         }
+                        html = html.replace((new RegExp(`callfunctionwithus\\('${action}'\\)`)), (r)=>action + '()');
                     }
                     fs.writeFileSync(path.join(targetPath, 'views/v' + i + '.html'), `
                     <!doctype html>
@@ -64,12 +67,10 @@ function ipcSetupMakeServer(mainWindow) {
                         <head>
                             <meta name="viewport" content="width=device-width, initial-scale=1.0">
                             <link rel="stylesheet" href="default.css">
-                        </head>
-                        <body>
-                            ${html}
                             <script src="/payload.js"></script>
                             <script>${actionsJS}</script>
-                        </body>
+                        </head>
+                        <body>${html}</body>
                     </html>`);
                     indexJS += `app.get("${route}", (req, res) => { res.sendFile(__dirname + '/views/v${i}.html'); });`;
                     i += 1;
@@ -116,19 +117,19 @@ const blockmap = {
     },
     'State': {
         category: 'value',
-        exp: (e) => `window.states[${e}]`
+        exp: (e) => `window.states['${e}']`
     },
     'Local': {
         category: 'value',
-        exp: (e) => `local[${e}]`
+        exp: (e) => `local['${e}']`
     },
     'PlusMinus': {
         category: 'value',
-        exp: (ta, op, tb) => `(${asExp(ta)} ${op=='mod'?'%':mod} ${asExp(tb)})`
+        exp: (ta, op, tb) => `(${asExp(ta)} ${op=='mod'?'%':op} ${asExp(tb)})`
     },
     'Find': {
         category: 'ui',
-        exp: (selector, into) => `local[${into}]=[...document.querySelectorAll(${asExp(selector)})]`
+        exp: (selector, into) => `local['${into}']=[...document.querySelectorAll(${asExp(selector)})];`
     },
     'Hide': {
         category: 'ui',
@@ -140,15 +141,15 @@ const blockmap = {
     },
     'AppendHTML': {
         category: 'ui',
-        exp: (html, under) => `local[${under}].forEach(e=>e.appendChild(${asExp(html)}));`
+        exp: (html, under) => `local['${under}'].forEach(e=>e.appendChild(${asExp(html)}));`
     },
     'SetState': {
         category: 'value',
-        exp: (st, val) => `window.states[${st}]=${asExp(val)};`
+        exp: (st, val) => `window.states['${st}']=${asExp(val)};stc.push('${st}');`
     },
     'SetLocal': {
         category: 'value',
-        exp: (v, val) => `local[${v}]=${asExp(val)};`
+        exp: (v, val) => `local['${v}']=${asExp(val)};`
     },
     'IfOrd': {
         category: 'control',
@@ -162,10 +163,36 @@ const blockmap = {
 
 function asExp(j) {
     if (!j) return '';
-    if (j.substring) return j;
+    if (j.substring) {
+        if (/^[0-9.]+$/.test(j)) return j;
+        else return '"' + j + '"';
+    }
     if (!blockmap[j.name]) {
-
+        if (j.name.startsWith('ComponentCreate')) {
+            return `makeUBC('${j.name.substring(15)}', [${j.params.map(asExp).join(', ')}])`;
+        }
     }
     if (blockmap[j.name].category == 'control') return blockmap[j.name].exp(j.child, ...j.params);
     return blockmap[j.name].exp(...j.params);
+}
+
+function isServerAction(actions) {
+    for (let action of actions) {
+        if (!action) continue;
+        if (action.substring) continue;
+        if (action.name.startsWith('INSERTINTO') || action.name.startsWith('SELECTFROM')) {
+            return true;
+        }
+        if (action.params) {
+            if (isServerAction(action.params)) {
+                return true;
+            }
+        }
+        if (action.child) {
+            if (isServerAction(action.child)) {
+                return true;
+            }
+        }
+    }
+    return false;
 }

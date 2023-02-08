@@ -118,9 +118,9 @@ function openComponent(componentName) {
     closebutton.addEventListener('click', e => {
         e.stopPropagation();
         k.remove();
-        save();
-        wsb.innerHTML = localStorage.getItem('page');
+        wsb.innerHTML = localStorage.getItem(getPage() + 'page');
         wsb.setAttribute('mode', 'Page');
+        save();
     });
     k.appendChild(closebutton);
     k.addEventListener('click', () => {
@@ -132,5 +132,7 @@ function openComponent(componentName) {
         return;
     }
     document.querySelector('#wsnav').appendChild(k);
+    save();
+    wsb.innerHTML = window.builtComponents[componentName].html;
     wsb.setAttribute('mode', componentName);
 }

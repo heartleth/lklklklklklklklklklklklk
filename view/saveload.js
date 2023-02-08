@@ -3,37 +3,36 @@ function getPage() {
         return '/.';
     }
     else if (location.hash[1] != '/') {
-        return '/' + location.hash.substring(1) + '.';
+        return ('/' + location.hash.substring(1)).replace(/\/+/g, '/') + '.';
     }
-    return location.hash.substring(1) + '.';
+    return location.hash.substring(1).replace(/\/+/g, '/') + '.';
 }
 
-async function save() {
-    setTimeout(() => {
-        const page = getPage();
-        localStorage.setItem('tables', JSON.stringify(window.tables));
-        let mode = document.querySelector('wsbody').getAttribute('mode');
-        if (mode != 'Page') {
-            window.builtComponents[mode].html = document.querySelector('wsbody').innerHTML;
+// async function save() {
+function save() {
+    const page = getPage();
+    localStorage.setItem('tables', JSON.stringify(window.tables));
+    let mode = document.querySelector('wsbody').getAttribute('mode');
+    if (mode != 'Page') {
+        window.builtComponents[mode].html = document.querySelector('wsbody').innerHTML;
+    }
+    else {
+        localStorage.setItem(page + 'page', document.querySelector('wsbody').innerHTML);
+    }
+    // localStorage.setItem('route', '/');
+    localStorage.setItem(page + 'components', JSON.stringify(window.builtComponents));
+    localStorage.setItem(page + 'actions', JSON.stringify(window.actions));
+    localStorage.setItem(page + 'states', JSON.stringify(window.states));
+    localStorage.setItem(page + 'menus', JSON.stringify([...document.getElementById('menus').children].map(e=>{
+        let { top, left, right, width, height } = e.style;
+        let an = e.actionName;
+        let type = e.getAttribute('name');
+        let x = 0;
+        if (e.fixdiv !== undefined) {
+            x = e.fixdiv.parentElement.id.substring(2);
         }
-        else {
-            localStorage.setItem(page + 'page', document.querySelector('wsbody').innerHTML);
-        }
-        localStorage.setItem('route', '/');
-        localStorage.setItem(page + 'components', JSON.stringify(window.builtComponents));
-        localStorage.setItem(page + 'states', JSON.stringify(window.states));
-        localStorage.setItem(page + 'actions', JSON.stringify(window.actions));
-        localStorage.setItem(page + 'menus', JSON.stringify([...document.getElementById('menus').children].map(e=>{
-            let { top, left, right, width, height } = e.style;
-            let an = e.actionName;
-            let type = e.getAttribute('name');
-            let x = 0;
-            if (e.fixdiv !== undefined) {
-                x = e.fixdiv.parentElement.id.substring(2);
-            }
-            return [top, left, right, width, height, type, x, an];
-        })));
-    },0);
+        return [top, left, right, width, height, type, x, an];
+    })));
 }
 
 async function load() {

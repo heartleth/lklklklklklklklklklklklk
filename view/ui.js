@@ -421,7 +421,7 @@ document.getElementById('wsff').addEventListener('scroll', () => {
 document.getElementById('toPage').addEventListener('click', () => {
     let wsb = document.querySelector('wsbody');
     save();
-    wsb.innerHTML = localStorage.getItem('page');
+    wsb.innerHTML = localStorage.getItem(getPage() + 'page');
     wsb.setAttribute('mode', 'Page');
 });
 
