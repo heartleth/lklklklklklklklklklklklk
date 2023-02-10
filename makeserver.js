@@ -13,16 +13,17 @@ function ipcSetupMakeServer(mainWindow) {
                 }
                 fs.mkdirSync(path.join(res.filePaths[0], 'siteTarget'));
                 const targetPath = path.join(res.filePaths[0], 'siteTarget');
-                fs.copyFileSync(path.join(__dirname, 'workspace-db/ws.db'), path.join(targetPath, 'site.db'));
+                const appdata = process.env.AppData;
+                fs.copyFileSync(path.join(appdata, 'lklklklk/workspace-db/ws.db'), path.join(targetPath, 'site.db'));
                 
-                fs.mkdirSync(path.join(targetPath, 'views'));
                 fs.mkdirSync(path.join(targetPath, 'payload'));
-                fs.copyFileSync(path.join(__dirname, 'makeserver/payload.js'), path.join(targetPath, 'payload/payload.js'));
-                fs.copyFileSync(path.join(__dirname, 'payload/default.css'), path.join(targetPath, 'payload/default.css'));
-                fs.copyFileSync(path.join(__dirname, 'makeserver/_package.json'), path.join(targetPath, 'package.json'));
-                fs.copyFileSync(path.join(__dirname, 'makeserver/README.txt'), path.join(targetPath, 'README.txt'));
-                fs.copyFileSync(path.join(__dirname, 'makeserver/server.js'), path.join(targetPath, 'server.js'));
-                fs.copyFileSync(path.join(__dirname, 'makeserver/run.bat'), path.join(targetPath, 'server.bat'));
+                fs.mkdirSync(path.join(targetPath, 'views'));
+                fs.copyFileSync(path.join(appdata, 'lklklklk/makeserver/payload.js'), path.join(targetPath, 'payload/payload.js'));
+                fs.copyFileSync(path.join(appdata, 'lklklklk/payload/default.css'), path.join(targetPath, 'payload/default.css'));
+                fs.copyFileSync(path.join(appdata, 'lklklklk/makeserver/_package.json'), path.join(targetPath, 'package.json'));
+                fs.copyFileSync(path.join(appdata, 'lklklklk/makeserver/README.txt'), path.join(targetPath, 'README.txt'));
+                fs.copyFileSync(path.join(appdata, 'lklklklk/makeserver/server.js'), path.join(targetPath, 'server.js'));
+                fs.copyFileSync(path.join(appdata, 'lklklklk/makeserver/run.bat'), path.join(targetPath, 'server.bat'));
                 let i = 0;
                 const tables = localStorage['tables'];
                 let indexJS = `
@@ -46,6 +47,7 @@ function ipcSetupMakeServer(mainWindow) {
                     let actionsJS = plb + 'window.builtComponents=' + builtComponents + ';\nfunction metaElem(selector) { let e = document.querySelector(selector); return { value: e.value, selector }; }';
                     for (let action in actions) {
                         if (action.length == 0) continue;
+                        if (!actions[action].code) continue;
                         if (isServerAction(actions[action].code)) {
                             let bodyExp = '{' + compileAction(action, actions[action].code).sendInputs.map(t => {
                                 if (t[0] == '#State') {

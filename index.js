@@ -3,10 +3,10 @@ const { compileAction, execAction } = require('./compile');
 const { ipcSetupMakeServer } = require('./makeserver');
 const { setupIpc } = require('./database');
 const express = require('express');
+const https = require('https');
 const path = require('path');
+const fs = require('fs');
 let port = 5252;
-
-// const db = new sqlite3.Database(':memory:');
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -17,7 +17,7 @@ const createWindow = () => {
             nodeIntegration: true,
             contextIsolation: false,
         },
-        icon: path.join(__dirname, 'icon.png'),
+        icon: path.join(__dirname, 'icon/icon.png'),
         autoHideMenuBar: true
     });
 
@@ -26,14 +26,56 @@ const createWindow = () => {
     return win;
 };
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
     let win = createWindow();
-    
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow();
         }
     });
+    const appdata = process.env.AppData;
+    if (!fs.existsSync(path.join(appdata, 'lklklklk/payload/default.css'))) {
+        if (!fs.existsSync(path.join(appdata, 'lklklklk'))) {
+            fs.mkdirSync(path.join(appdata, 'lklklklk'));
+        }
+        if (!fs.existsSync(path.join(appdata, 'lklklklk/payload'))) {
+            fs.mkdirSync(path.join(appdata, 'lklklklk/payload'));
+            const requirements = [
+                'default.css',
+                'payload.js'
+            ];
+            for (let filename of requirements) {
+                const file = fs.createWriteStream(path.join(appdata, 'lklklklk/payload/' + filename));
+                const request = https.get("https://vvvv.onrender.com/public/payload/" + filename, function(response) {
+                    response.pipe(file);
+                    file.on("finish", () => {
+                        file.close();
+                        console.log("Download Completed! " + filename);
+                    });
+                });
+            }
+        }
+        if (!fs.existsSync(path.join(appdata, 'lklklklk/makeserver'))) {
+            fs.mkdirSync(path.join(appdata, 'lklklklk/makeserver'));
+            const requirements = [
+                '_package.json',
+                'payload.js',
+                'README.txt',
+                'server.js',
+                'run.bat',
+            ];
+            for (let filename of requirements) {
+                const file = fs.createWriteStream(path.join(appdata, 'lklklklk/makeserver/' + filename));
+                const request = https.get("https://vvvv.onrender.com/public/makeserver/" + filename, function(response) {
+                    response.pipe(file);
+                    file.on("finish", () => {
+                        file.close();
+                        console.log("Download Completed! " + filename);
+                    });
+                });
+            }
+        }
+    }
 
     setupIpc(win);
     ipcSetupMakeServer(win);
@@ -42,7 +84,7 @@ app.whenReady().then(() => {
         let expressApp = express();
         // expressApp.use(express.urlencoded({ extended: false }));
         expressApp.use(express.json());
-        expressApp.use(express.static('payload'));
+        expressApp.use(express.static(path.join(appdata, 'lklklklk/payload')));
         for (const routeName of (localStorage.route || '/').split(',')) {
             const route = (routeName[0]=='/' ? '' : '/') + routeName;
             const builtComponents = JSON.parse(localStorage[route + '.components'] ?? '{}');
@@ -52,6 +94,9 @@ app.whenReady().then(() => {
             const html = localStorage[route + '.page'];
             let serverSidePostActions = [];
             for (let an in actions) {
+                if (!actions[an].code) {
+                    continue;
+                }
                 if (isServerAction(actions[an].code)) {
                     let compiled = compileAction(an, actions[an].code);
                     serverSidePostActions.push({ name: an, ses: compiled.sendInputs });
@@ -82,6 +127,7 @@ app.on('window-all-closed', () => {
 });
 
 function isServerAction(actions) {
+    console.log(actions);
     for (let action of actions) {
         if (!action) continue;
         if (action.substring) continue;

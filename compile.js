@@ -136,7 +136,27 @@ let blockmap = {
 };
 
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./workspace-db/ws.db');
+const path = require('path');
+const fs = require('fs');
+let db = undefined;
+(async () => {
+    const appdata = process.env.AppData;
+    if (!fs.existsSync(path.join(appdata, 'lklklklk/workspace-db/ws.db'))) {
+        if (!fs.existsSync(path.join(appdata, 'lklklklk'))) {
+            fs.mkdirSync(path.join(appdata, 'lklklklk'));
+        }
+        if (!fs.existsSync(path.join(appdata, 'lklklklk/workspace-db'))) {
+            fs.mkdirSync(path.join(appdata, 'lklklklk/workspace-db'));
+        }
+        fs.writeFileSync(path.join(appdata, 'lklklklk/workspace-db/ws.db'), '');
+        await new Promise(p => {
+            setTimeout(() => {
+                p(0);
+            }, 300);
+        });
+    }
+    db = new sqlite3.Database(path.join(appdata, 'lklklklk/workspace-db/ws.db'));
+})();
 
 function getActionType(name) {
     if (name.startsWith('INSERTINTO')) return 'db';
@@ -144,6 +164,7 @@ function getActionType(name) {
 }
 
 function compileAction(actionName, actions) {
+    if (db === undefined) return;
     let clientAction = {
         name: 'ServerSideAction',
         sendInputs: [],
@@ -173,6 +194,7 @@ function compileAction(actionName, actions) {
 }
 
 async function getValue(v, cas) {
+    if (db === undefined) return;
     if (!v.substring && v.name) {
         if (v.name.startsWith('SELECTFROM')) {
             const table = v.name.substring(10);
@@ -198,6 +220,7 @@ async function getValue(v, cas) {
 }
 
 async function execAction(code, sentInputs, tables) {
+    if (db === undefined) return;
     let clientActs = [];
     let elements = {};
     let states = {};
