@@ -3,6 +3,7 @@ const { compileAction, execAction } = require('./compile');
 const { ipcSetupMakeServer } = require('./makeserver');
 const { setupIpc } = require('./database');
 const express = require('express');
+const path = require('path');
 let port = 5252;
 
 // const db = new sqlite3.Database(':memory:');
@@ -16,6 +17,7 @@ const createWindow = () => {
             nodeIntegration: true,
             contextIsolation: false,
         },
+        icon: path.join(__dirname, 'icon.png'),
         autoHideMenuBar: true
     });
 

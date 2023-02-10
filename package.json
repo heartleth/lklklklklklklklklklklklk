@@ -9,7 +9,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
-  "author": "moon",
+  "author": "Moon",
   "license": "ISC",
   "devDependencies": {
     "@electron-forge/cli": "^6.0.4",
