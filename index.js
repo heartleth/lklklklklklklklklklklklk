@@ -43,7 +43,7 @@ app.whenReady().then(() => {
         // expressApp.use(express.urlencoded({ extended: false }));
         expressApp.use(express.json());
         expressApp.use(express.static('payload'));
-        for (const routeName of localStorage.route.split(',')) {
+        for (const routeName of (localStorage.route || '/').split(',')) {
             const route = (routeName[0]=='/' ? '' : '/') + routeName;
             const builtComponents = JSON.parse(localStorage[route + '.components'] ?? '{}');
             const actions = JSON.parse(localStorage[route + '.actions']);
