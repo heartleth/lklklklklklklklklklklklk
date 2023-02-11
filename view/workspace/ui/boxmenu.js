@@ -1,3 +1,10 @@
+const boxStyleOptions = [
+    'shadow',
+    'round',
+    'thick-outline',
+    'outlineless'
+];
+
 function boxmenu(ws) {
     let div = new ElementComponent('div', [
         ['#background-color', '@#boxColor/val'],
@@ -9,10 +16,11 @@ function boxmenu(ws) {
         ['#minHeight', '@#boxH/cells'],
         ['#minWidth', '@#boxW/cells'],
         ['#width', 'fit-content'],
-        [':id', '@#boxId/val']
+        [':id', '@#boxId/val'],
+        [':boxStyle', '@#boxStyle/val']
     ]);
     // let ac = addc(['#boxColor', '#boxMinHeight', '#boxMargin', '#boxId', '#boxClass'], [div]);
-    let ac = addc(['#boxColor', '#boxW', '#boxH', '#boxId', '#boxClass'], [div]);
+    let ac = addc(['#boxColor', '#boxW', '#boxH', '#boxId', '#boxClass', '#boxStyle'], [div]);
     addChilds(ws, [
         wstitle('Box'),
         ac,
@@ -28,6 +36,11 @@ function boxmenu(ws) {
         make('show-hide-button').elem,
         wse.br(),
         make('value-input').setId('boxColor').set('defaultText', 'white').elem,
+        wse.label('Box Style').elem,
+        make('show-hide-button').elem,
+        wse.br(),
+        make('checkbox-options').set('options', boxStyleOptions).setId('boxStyle').elem,
+        wse.br(),
         wse.label('Width').elem,
         make('show-hide-button').elem,
         wse.br(),

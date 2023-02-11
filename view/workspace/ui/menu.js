@@ -255,3 +255,35 @@ class ElementComponent {
         this.elem.setAttribute('depstates', depstates);
     }
 }
+
+class CheckBoxOptions extends HTMLElement {
+    connectedCallback() {
+        this.options = this.options ?? ['Value'];
+        this.inputs = [];
+        for (const option of this.options) {
+            let x = Math.floor(1000 * Math.random());
+            this.appendChild(wse.label(option).attr('for', 'bo' + x).elem);
+            let i = make('input').attr('type', 'checkbox').setId('bo' + x).elem;
+            this.inputs[option] = i;
+            this.appendChild(i);
+            this.appendChild(wse.br());
+        }
+    }
+
+    get val() {
+        if (this.inputs) {
+            let ret = [];
+            for (const i in this.inputs) {
+                if (this.inputs[i].checked) {
+                    ret.push(i);
+                }
+            }
+            return ret.join(' ');
+        }
+    }
+
+    get usingStates() {
+        return [];
+    }
+}
+window.customElements.define('checkbox-options', CheckBoxOptions);

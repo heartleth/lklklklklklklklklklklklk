@@ -396,7 +396,9 @@ document.getElementById('wsleft').addEventListener('scroll', bos);
 document.getElementById('reset').addEventListener('click', () => {
     if (require) {
         let electron = require('electron');
-        electron.ipcRenderer.send('DBInitDatabase', Object.keys(JSON.parse(localStorage.getItem('tables') || '{}')));
+        let tables = localStorage.getItem('tables');
+        if (tables === null || tables == 'null') tables = '{}';
+        electron.ipcRenderer.send('DBInitDatabase', Object.keys(JSON.parse(tables)));
         electron.ipcRenderer.once('OKDBInitDatabase', (e) => {
             localStorage.clear();
             location.href = location.href.split('#')[0];
