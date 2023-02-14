@@ -21,7 +21,7 @@ class ValueInput extends HTMLElement {
     render() {
         this.innerHTML = '';
         let modeSelect = null;
-        if (!this.onlyState) {
+        if (!this.onlyState && !this.onlyText) {
             modeSelect = make('select').opts(['Text', 'State', 'Attr']).elem;
             modeSelect.addEventListener('change', v => {
                 this.mode = modeSelect.value;
@@ -31,8 +31,10 @@ class ValueInput extends HTMLElement {
         }
         
         if (this.mode == 'Text') {
-            modeSelect.children[0].selected = 'selected';
-            this.appendChild(make('br').elem);
+            if (modeSelect) {
+                modeSelect.children[0].selected = 'selected';
+                this.appendChild(make('br').elem);
+            }
             if (this.lengthInput) {
                 this.appendChild(make('length-input').set('defaultValue', this.defaultText ?? '').elem);
             }
@@ -111,10 +113,6 @@ class ValueInput extends HTMLElement {
             if (mode != 'Page') {
                 this.appendChild(make('select').opts(window.builtComponents[mode].attributes).addClass('useStates').elem);
             }
-            // this.appendChild(make('text').addClass('useStates').elem);
-            // this.appendChild(make('line').elem);
-            // this.appendChild(wse.label('Expression').elem);
-            // this.appendChild(make('text').addClass('expression').set('value', this.defaultText ?? '0').elem);
         }
     }
     
@@ -122,6 +120,9 @@ class ValueInput extends HTMLElement {
         if (this.mode == 'Text') {
             if (this.children[2]) {
                 return this.lengthInput ? this.children[2].val : this.children[2].value;
+            }
+            else if (this.children[0]) {
+                return this.lengthInput ? this.children[0].val : this.children[0].value;
             }
         }
         else if (this.mode == 'State') {

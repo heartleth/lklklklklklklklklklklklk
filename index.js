@@ -26,6 +26,8 @@ const createWindow = () => {
     return win;
 };
 
+let listening = undefined;
+
 app.whenReady().then(async () => {
     let win = createWindow();
     app.on('activate', () => {
@@ -79,10 +81,13 @@ app.whenReady().then(async () => {
 
     setupIpc(win);
     ipcSetupMakeServer(win);
+
     ipcMain.on('openExpress', (e, html, builtComponents, actions, states, localStorage) => {
-        port += 1;
+        // port += 1;
+        if (listening !== undefined) {
+            listening.close();
+        }
         let expressApp = express();
-        // expressApp.use(express.urlencoded({ extended: false }));
         expressApp.use(express.json());
         expressApp.use(express.static(path.join(appdata, 'lklklklk/payload')));
         for (const routeName of (localStorage.route || '/').split(',')) {
@@ -115,7 +120,7 @@ app.whenReady().then(async () => {
                 res.setHeader('Content-Type', 'text/html; charset=utf-8').send('<meta name="viewport" content="width=device-width, initial-scale=1.0">' + html + '<script src="/payload.js"></script><link rel="stylesheet" href="default.css">');
             });
         }
-        expressApp.listen(port);
+        listening = expressApp.listen(port);
         shell.openExternal(`http://localhost:${port}/`);
     });
 });

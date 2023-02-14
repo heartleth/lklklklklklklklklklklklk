@@ -22,8 +22,9 @@ function createMenu(ws, name, n) {
     else if (name == 'edit functor') {
         functoreditmenu(ws, n);
     }
-    else if (name == 'input text') {
-        uiMenus('input text', ws);
+    else if (name == 'text field') {
+        // uiMenus('input text', ws);
+        inputMenu(ws);
     }
     else if (name == 'library') {
         compLib(ws);
@@ -215,7 +216,7 @@ class ElementComponent {
                 let refinfo = ref.substring(1).split('/');
                 let refelem = document.querySelector(refinfo[0]);
                 if (refelem) {
-                    const us = refelem.usingStates;
+                    const us = refelem.usingStates ?? [];
                     depstates = depstates.concat(us);
                     if (us.length > 0) {
                         this.elem.setAttribute(`updateforstate-${us[0]}`, property);
