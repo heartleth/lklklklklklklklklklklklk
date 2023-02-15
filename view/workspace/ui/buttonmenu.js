@@ -6,7 +6,8 @@ function buttonMenu(ws) {
         [':onclick', '@#buttonOnClick/functor'],
         ['innerHTML', '@#buttonText/val'],
         [':class', '@#buttonClass/val'],
-        [':id', '@#buttonId/val']
+        [':id', '@#buttonId/val'],
+        [':boxStyle', '@#buttonStyle/val']
     ]);
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'button';
@@ -16,6 +17,7 @@ function buttonMenu(ws) {
         make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 2).elem,
         make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', 1).elem,
         make('value-input').set('fname', ['Color', 1]).set('defaultText', 'white').elem,
+        make('checkbox-options').set('fname', ['Style', 1, 'Box Style']).set('options', boxStyleOptions).elem,
         make('value-input').set('fname', ['Id', 2, 'ID']).set('onlyText', true).elem,
         make('value-input').set('fname', ['Class', 2]).set('onlyText', true).elem
     ];

@@ -352,7 +352,10 @@ window.onkeydown = (k) => {
         }
         if (k.key == 'Backspace') {
             if (!window.isBack) {
-                [...wsbody.querySelectorAll('*')].forEach(h=>{
+                [...wsbody.querySelectorAll('*')].forEach(h => {
+                    if (h.parentElement.tagName == 'USER-BUILT-COMPONENT') {
+                        return;
+                    }
                     let rect = h.getClientRects()[0];
                     let closeButton = document.createElement('button');
                     h.classList.add('outline');
@@ -360,10 +363,18 @@ window.onkeydown = (k) => {
                     closeButton.innerHTML = '-';
                     h.closeButton = closeButton;
                     closeButton.onclick = (e) => {
-                        h.querySelectorAll('*').forEach(e=>e.closeButton.onclick());
+                        h.querySelectorAll('*').forEach(e=>{
+                            if (e.closeButton) {
+                                e.closeButton.onclick();
+                            }
+                            else {
+                                e.remove();
+                            }
+                        });
                         closeButton.remove();
                         h.remove();
                         save();
+                        drawCanvas();
                     };
                     closeButton.style.left = rect.x + rect.width - 20 + 'px';
                     closeButton.style.top = rect.y + 'px';

@@ -89,7 +89,7 @@ app.whenReady().then(async () => {
         }
         let expressApp = express();
         expressApp.use(express.json());
-        expressApp.use(express.static(path.join(appdata, 'lklklklk/payload')));
+        expressApp.use(express.static(path.join(appdata, 'yghdatas/payload')));
         for (const routeName of (localStorage.route || '/').split(',')) {
             const route = (routeName[0]=='/' ? '' : '/') + routeName;
             const builtComponents = JSON.parse(localStorage[route + '.components'] ?? '{}');

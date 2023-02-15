@@ -27,7 +27,7 @@ let blockmap = {
     'ValueOf': {
         category: 'ui',
         exec: async (cas, elem) => {
-            return elem;
+            return cas.locals[elem].value;
         }
     },
     'State': {
@@ -39,7 +39,7 @@ let blockmap = {
     'Local': {
         category: 'value',
         exec: async (cas, e) => {
-            return cas.local[e];
+            return cas.locals[e];
         }
     },
     'PlusMinus': {
@@ -88,7 +88,7 @@ let blockmap = {
     'SetLocal': {
         category: 'value',
         exec: async (cas, v, text) => {
-            cas.local[v] = await getValue(text, cas);
+            cas.locals[v] = await getValue(text, cas);
         }
     },
     'IfOrd': {
@@ -132,6 +132,19 @@ let blockmap = {
                     ||((a > b) && operator=='>');
             }
         })
+    },
+    'IterateOver': {
+        html: 'Each ?T in ?T',
+        category: 'control',
+        exec: (async (cas, child, iterName, arrc) => {
+            let arr = await getValue(arrc, cas);
+            for (let iter of arr) {
+                cas.locals[iterName] = iter;
+                if (child) {
+                    await child.run(cas);
+                }
+            }
+        })
     }
 };
 
@@ -141,21 +154,21 @@ const fs = require('fs');
 let db = undefined;
 (async () => {
     const appdata = process.env.AppData;
-    if (!fs.existsSync(path.join(appdata, 'lklklklk/workspace-db/ws.db'))) {
-        if (!fs.existsSync(path.join(appdata, 'lklklklk'))) {
-            fs.mkdirSync(path.join(appdata, 'lklklklk'));
+    if (!fs.existsSync(path.join(appdata, 'yghdatas/workspace-db/ws.db'))) {
+        if (!fs.existsSync(path.join(appdata, 'yghdatas'))) {
+            fs.mkdirSync(path.join(appdata, 'yghdatas'));
         }
-        if (!fs.existsSync(path.join(appdata, 'lklklklk/workspace-db'))) {
-            fs.mkdirSync(path.join(appdata, 'lklklklk/workspace-db'));
+        if (!fs.existsSync(path.join(appdata, 'yghdatas/workspace-db'))) {
+            fs.mkdirSync(path.join(appdata, 'yghdatas/workspace-db'));
         }
-        fs.writeFileSync(path.join(appdata, 'lklklklk/workspace-db/ws.db'), '');
+        fs.writeFileSync(path.join(appdata, 'yghdatas/workspace-db/ws.db'), '');
         await new Promise(p => {
             setTimeout(() => {
                 p(0);
             }, 300);
         });
     }
-    db = new sqlite3.Database(path.join(appdata, 'lklklklk/workspace-db/ws.db'));
+    db = new sqlite3.Database(path.join(appdata, 'yghdatas/workspace-db/ws.db'));
 })();
 
 function getActionType(name) {
@@ -231,9 +244,10 @@ async function execAction(code, sentInputs, tables) {
         }
         else if (v.startsWith('#Elements:')) {
             elements[v.substring(10)] = sentInputs[v];
+            console.log(v.substring(10), sentInputs[v]);
         }
     }
-    let cas = { states, locals, clientActs, tables };
+    let cas = { states, locals, clientActs, tables, elements };
     await runActionSequence(code, cas);
     return cas;
 }
@@ -246,6 +260,7 @@ async function runActionSequence(seq, cas) {
                 const values = Object.keys(cas.tables[table]).map((e, i) => [e, getValue(code.params[i], cas)]);
                 const query = `INSERT INTO ${table} (${values.map(e=>e[0]).join([', '])}) VALUES (${values.map(e=>'?').join([', '])})`;
                 let realValues = await Promise.all([...values.map(e=>e[1])]);
+                console.log(code.params);
                 console.log(query, realValues);
                 await new Promise(p => db.run(query, realValues, (err) => { console.log(err); p(0); }));
             }

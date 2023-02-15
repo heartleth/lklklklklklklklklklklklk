@@ -112,6 +112,15 @@ let blockmap = {
             }
         })
     },
+    'EmptyElement': {
+        html: 'Empty Element ?T',
+        category: 'ui',
+        exec: ((stc, local, html, v) => {
+            if (window.locals[local][v][0].classList) {
+                window.locals[local][v].forEach(e=>e.innerHTML='');
+            }
+        })
+    },
     'SetState': {
         html: 'Set state % as ?T',
         category: 'value',
@@ -168,6 +177,19 @@ let blockmap = {
                     ||((a < b) && operator=='<')
                     ||((a != b) && operator=='≠')
                     ||((a > b) && operator=='>');
+            }
+        })
+    },
+    'IterateOver': {
+        html: 'Each ?T in ?T',
+        category: 'control',
+        exec: ((stc, local, child, iterName, arrc) => {
+            let arr = getValue(arrc, local);
+            for (let iter of arr) {
+                window.locals[local][iterName] = iter;
+                if (child) {
+                    child.run(stc, local);
+                }
             }
         })
     }
