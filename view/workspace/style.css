@@ -630,3 +630,33 @@ input[type=file] {
     padding: 8px;
     color: white;
 }
+
+ui-edit {
+    display: block;
+    background-color: #222;
+    margin-bottom: 8px;
+    outline: solid 1px white;
+    border-radius: 8px;
+}
+
+.uieditcatdiv {
+    display: flex;
+    justify-content: space-around;
+}
+
+.uieditcatdiv > div {
+    width: calc(100% / 3);
+    text-align: center;
+    border-radius: 8px 8px 0px 0px;
+}
+
+.uieditcatdiv > div:hover {
+    background-color: #555 !important;
+}
+
+.miniws {
+    background-color: #777;
+    min-height: 20px;
+    border-radius: 0px 0px 8px 8px;
+    padding: 4px;
+}

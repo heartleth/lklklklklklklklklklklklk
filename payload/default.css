@@ -14,7 +14,6 @@ button.natural {
     border: none;
     text-align: center;
     user-select: none;
-
 }
 
 button.natural:hover {
@@ -23,8 +22,7 @@ button.natural:hover {
 }
 
 div.natural {
-    outline: solid 1.5px rgb(128, 128, 128) !important;
-    border-radius: 12px !important;
+    outline: solid 1.5px rgb(128, 128, 128);
     overflow: auto;
 }
 
@@ -35,4 +33,24 @@ h1.natural, h2.natural, h3.natural, h4.natural, h5.natural, h6.natural {
     text-align: center;
     user-select: none;
     display: block;
+}
+
+[boxStyle~="round"] {
+    border-radius: 12px;
+}
+
+[boxStyle~="outlineless"] {
+    outline: none !important;
+}
+
+[boxStyle~="thick-outline"] {
+    outline: solid 3px black !important;
+}
+
+[boxStyle~="shadow"] {
+    box-shadow: 0px 4px 8px 0px rgb(118, 118, 118);
+}
+
+input.natural {
+    display: block !important;
 }

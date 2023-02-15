@@ -8,59 +8,25 @@ const boxStyleOptions = [
 function boxmenu(ws) {
     let div = new ElementComponent('div', [
         ['#background-color', '@#boxColor/val'],
-        // ['#min-height', '@#boxMinHeight/val'],
-        // ['#padding', '@#boxPadding/val'],
-        // ['#margin', '@#boxMargin/val'],
         [':class', '@#boxClass/val'],
-        // ['#height', 'fit-content'],
         ['#minHeight', '@#boxH/cells'],
         ['#minWidth', '@#boxW/cells'],
         ['#width', 'fit-content'],
         [':id', '@#boxId/val'],
         [':boxStyle', '@#boxStyle/val']
     ]);
-    // let ac = addc(['#boxColor', '#boxMinHeight', '#boxMargin', '#boxId', '#boxClass'], [div]);
-    let ac = addc(['#boxColor', '#boxW', '#boxH', '#boxId', '#boxClass', '#boxStyle'], [div]);
-    addChilds(ws, [
-        wstitle('Box'),
-        ac,
-        wse.label('ID').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').set('then', ac).setId('boxId').set('defaultText', '').set('onlyText', true).elem,
-        wse.label('Class').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').set('then', ac).setId('boxClass').set('defaultText', '').set('onlyText', true).elem,
-        wse.label('Color').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').setId('boxColor').set('defaultText', 'white').elem,
-        wse.label('Box Style').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('checkbox-options').set('options', boxStyleOptions).setId('boxStyle').elem,
-        wse.br(),
-        wse.label('Width').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').setId('boxW').set('defaultText', '5').elem,
-        wse.label('Height').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').setId('boxH').set('defaultText', '3').elem,
-        // wse.label('Min Height').elem,
-        // make('show-hide-button').elem,
-        // wse.br(),
-        // make('value-input').set('then', ac).set('lengthInput', true).setId('boxMinHeight').set('defaultText', 50).elem,
-        // wse.label('Margin').elem,
-        // make('show-hide-button').elem,
-        // wse.br(),
-        // make('value-input').set('then', ac).set('lengthInput', true).setId('boxMargin').set('defaultText', 8).elem,
-        // wse.label('Padding').elem,
-        // make('show-hide-button').elem,
-        // wse.br(),
-        // make('value-input').set('then', ac).set('lengthInput', true).setId('boxPadding').set('defaultText', 4).elem
-    ]);
+    let uiedit = make('ui-edit').elem;
+    uiedit.name = 'box';
+    uiedit.content = [
+        make('value-input').set('fname', ['Id', 2, 'ID']).set('defaultText', '').set('onlyText', true).elem,
+        make('value-input').set('fname', ['Class', 2]).set('defaultText', '').set('onlyText', true).elem,
+        make('value-input').set('fname', ['Color', 1]).set('defaultText', 'white').elem,
+        make('checkbox-options').set('fname', ['Style', 1, 'Box Style']).set('options', boxStyleOptions).elem,
+        make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', '5').elem,
+        make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', '3').elem
+    ];
+    let ac = addc(uiedit.addc(), [div]);
+    uiedit.then = ac;
+    addChilds(ws, [wstitle('Box'), ac, uiedit]);
     ac.updateref();
 }

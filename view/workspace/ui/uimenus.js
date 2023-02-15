@@ -25,62 +25,38 @@
 //     }
 // }
 
+const inputTypes = [
+    'text',
+    'password',
+    'email',
+    'number',
+    'checkbox',
+    'date'
+];
+
 function inputMenu(ws) {
     let bt = new ElementComponent('input', [
         [':id', '@#inputId/val'],
         [':class', '@#inputClass/val'],
         ['#height', '@#inputH/cells'],
         ['#width', '@#inputW/cells'],
-        [':placeholder', '@#inputPlaceHolder/val'],
+        [':placeholder', '@#inputPlaceholder/val'],
         [':type', '@#inputType/value'],
         ['value', '@#inputDefaultValue/val']
     ]);
-    let ac = addc(['#inputType', '#inputClass', '#inputH', '#inputW', '#inputId', '#inputPlaceHolder', '#inputDefaultValue'], [bt]);
-    
-    addChilds(ws, [
-        wstitle('Text Field'),
-        ac,
-
-        wse.label('Type').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('select').set('then', ac).opts(['text', 'password', 'email', 'number', 'checkbox', 'date']).setId('inputType').elem,
-        wse.br(),
-        
-        wse.label('ID').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').set('then', ac).setId('inputId').set('onlyText', true).elem,
-
-        wse.label('Placeholder').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').set('then', ac).setId('inputPlaceHolder').set('onlyText', true).elem,
-
-        wse.label('Default Value').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').set('then', ac).setId('inputDefaultValue').elem,
-
-        wse.label('Class').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').set('then', ac).setId('inputClass').set('onlyText', true).elem,
-
-        wse.label('Height').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').set('then', ac).setId('inputH').set('defaultText', 1).elem,
-
-        wse.label('Width').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').set('then', ac).setId('inputW').set('defaultText', 5).elem,
-        
-        // wse.label('Padding').elem,
-        // make('show-hide-button').elem,
-        // wse.br(),
-        // make('value-input').set('then', ac).set('lengthInput', true).setId('buttonPadding').set('defaultText', '2').elem,
-    ]);
+    let uiedit = make('ui-edit').elem;
+    uiedit.name = 'input';
+    uiedit.content = [
+        make('select').set('fname', ['Type', 0]).opts(inputTypes).elem,
+        make('value-input').set('fname', ['Placeholder', 0]).set('onlyText', true).elem,
+        make('value-input').set('fname', ['DefaultValue', 0, 'Default Value']).elem,
+        make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 5).elem,
+        make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', 1).elem,
+        make('value-input').set('fname', ['Id', 2, 'ID']).set('onlyText', true).elem,
+        make('value-input').set('fname', ['Class', 2]).set('onlyText', true).elem
+    ];
+    let ac = addc(uiedit.addc(), [bt]);
+    uiedit.then = ac;
+    addChilds(ws, [wstitle('Text Field'), ac, uiedit]);
     ac.updateref();
 }

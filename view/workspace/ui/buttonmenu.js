@@ -4,42 +4,24 @@ function buttonMenu(ws) {
         ['#minHeight', '@#buttonH/cells'],
         ['#minWidth', '@#buttonW/cells'],
         [':onclick', '@#buttonOnClick/functor'],
-        ['innerHTML', '@#buttonText/val']
+        ['innerHTML', '@#buttonText/val'],
+        [':class', '@#buttonClass/val'],
+        [':id', '@#buttonId/val']
     ]);
-    let ac = addc(['#buttonText', '#buttonColor', '#buttonH', '#buttonW', '#buttonOnClick'], [bt]);
-    
-    addChilds(ws, [
-        wstitle('Button'),
-        ac,
-        make('label').text('Text').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').set('then', ac).set('defaultText', 'Click!').setId('buttonText').elem,
-        
-        wse.label('On Click').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('action-input').set('then', ac).setId('buttonOnClick').set('defaultText', 'state = parseInt(state) + 1').set('mode', 'Value').elem,
+    let uiedit = make('ui-edit').elem;
+    uiedit.name = 'button';
+    uiedit.content = [
+        make('value-input').set('fname', ['Text', 0]).set('defaultText', 'Click!').elem,
+        make('action-input').set('fname', ['OnClick', 0, 'Click Action']).elem,
+        make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 2).elem,
+        make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', 1).elem,
+        make('value-input').set('fname', ['Color', 1]).set('defaultText', 'white').elem,
+        make('value-input').set('fname', ['Id', 2, 'ID']).set('onlyText', true).elem,
+        make('value-input').set('fname', ['Class', 2]).set('onlyText', true).elem
+    ];
+    let ac = addc(uiedit.addc(), [bt]);
+    uiedit.then = ac;
 
-        wse.label('Width').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').set('then', ac).setId('buttonW').set('defaultText', 2).elem,
-
-        wse.label('Height').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').set('then', ac).setId('buttonH').set('defaultText', 1).elem,
-        
-        wse.label('Color').elem,
-        make('show-hide-button').elem,
-        wse.br(),
-        make('value-input').set('then', ac).setId('buttonColor').set('defaultText', 'white').elem,
-        
-        // wse.label('Padding').elem,
-        // make('show-hide-button').elem,
-        // wse.br(),
-        // make('value-input').set('then', ac).set('lengthInput', true).setId('buttonPadding').set('defaultText', '2').elem,
-    ]);
+    addChilds(ws, [wstitle('Button'), ac, uiedit]);
     ac.updateref();
 }

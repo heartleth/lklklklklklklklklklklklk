@@ -288,3 +288,65 @@ class CheckBoxOptions extends HTMLElement {
     }
 }
 window.customElements.define('checkbox-options', CheckBoxOptions);
+
+class UIEdit extends HTMLElement {
+    connectedCallback() {
+        let categoryFlex = make('div').addClass('uieditcatdiv').elem;
+        this.appendChild(categoryFlex);
+        categoryFlex.appendChild(make('div').text('normal').elem);
+        categoryFlex.appendChild(make('div').text('style').elem);
+        categoryFlex.appendChild(make('div').text('selector').elem);
+        this.mode = 'normal';
+        [...categoryFlex.children].forEach(e => e.addEventListener('click', () => {
+            this.mode = e.innerText;
+            this.render();
+        }));
+        this.miniws = make('div').addClass('miniws').elem;
+        this.appendChild(this.miniws);
+        for (let c of this.content) {
+            this.miniws.appendChild(wse.label(c.fname[2] ?? c.fname[0]).set('mcat', ['inline', c.fname[1]]).elem);
+            this.miniws.appendChild(make('show-hide-button').set('mcat', ['inline-block', c.fname[1]]).elem);
+            this.miniws.appendChild(make('br').set('mcat', ['inline', c.fname[1]]).elem);
+            c.mcat = ['block', c.fname[1]];
+            this.miniws.appendChild(c);
+        }
+        this.render();
+    }
+
+    render() {
+        let shmode = {
+            'normal': 0,
+            'style': 1,
+            'selector': 2
+        };
+        [...this.children[0].children].forEach(e => {
+            if (e.innerText == this.mode) {
+                e.style.backgroundColor = '#777';
+            }
+            else {
+                e.style.backgroundColor = 'unset';
+            }
+        });
+        for (let c of this.miniws.children) {
+            if (c.mcat[1] == shmode[this.mode]) {
+                c.style.display = c.mcat[0];
+            }
+            else {
+                c.style.display = 'none';
+            }
+        }
+    }
+
+    addc() {
+        let ret = [];
+        for (let c of this.content) {
+            if (c.fname) {
+                ret.push('#' + this.name + c.fname[0]);
+                c.then = this.then;
+                c.setAttribute('id', this.name + c.fname[0]);
+            }
+        }
+        return ret;
+    }
+}
+window.customElements.define('ui-edit', UIEdit);

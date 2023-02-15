@@ -184,7 +184,7 @@ window.addEventListener('mousemove', (e)=>{
             const boxRect = me.box.getClientRects()[0];
             let cnty = boxRect.y;
             me.box.style.height = Math.max(e.clientY - cnty, 180) + 'px';
-            me.box.fixdiv.style.height = e.clientY - cnty + 8 + 'px';
+            // me.box.fixdiv.style.height = e.clientY - cnty + 8 + 'px';
             resizeMenu(0, 0, false, false);
         }
         else if (this.isClicked == 3) {
