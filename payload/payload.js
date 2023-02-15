@@ -73,6 +73,8 @@ let blockmap = {
         isArgs: true,
         exp: (e) => `#${e}`,
         exec: ((stc, local, ta, op, tb) => {
+            console.log(ta);
+            console.log(tb);
             const a = parseFloat(getValue(ta, local));
             const b = parseFloat(getValue(tb, local));
             if (op == '+') return a + b;
@@ -86,7 +88,7 @@ let blockmap = {
         html: 'Find selector ?T into ?T',
         category: 'ui',
         exec: ((stc, local, s, into) => {
-            window.locals[local][into] = document.getElementById('workspace').querySelectorAll(getValue(s, local));
+            window.locals[local][into] = document.querySelectorAll(getValue(s, local));
         })
     },
     'Hide': {

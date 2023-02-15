@@ -6,21 +6,21 @@ const fs = require('fs');
 let db = undefined;
 (async () => {
     const appdata = process.env.AppData;
-    if (!fs.existsSync(path.join(appdata, 'lklklklk/workspace-db/ws.db'))) {
-        if (!fs.existsSync(path.join(appdata, 'lklklklk'))) {
-            fs.mkdirSync(path.join(appdata, 'lklklklk'));
+    if (!fs.existsSync(path.join(appdata, 'yghdatas/workspace-db/ws.db'))) {
+        if (!fs.existsSync(path.join(appdata, 'yghdatas'))) {
+            fs.mkdirSync(path.join(appdata, 'yghdatas'));
         }
-        if (!fs.existsSync(path.join(appdata, 'lklklklk/workspace-db'))) {
-            fs.mkdirSync(path.join(appdata, 'lklklklk/workspace-db'));
+        if (!fs.existsSync(path.join(appdata, 'yghdatas/workspace-db'))) {
+            fs.mkdirSync(path.join(appdata, 'yghdatas/workspace-db'));
         }
-        fs.writeFileSync(path.join(appdata, 'lklklklk/workspace-db/ws.db'), '');
+        fs.writeFileSync(path.join(appdata, 'yghdatas/workspace-db/ws.db'), '');
         await new Promise(p => {
             setTimeout(() => {
                 p(0);
             }, 300);
         });
     }
-    db = new sqlite3.Database(path.join(appdata, 'lklklklk/workspace-db/ws.db'));
+    db = new sqlite3.Database(path.join(appdata, 'yghdatas/workspace-db/ws.db'));
 })();
 
 const databaseColumnTypes = {

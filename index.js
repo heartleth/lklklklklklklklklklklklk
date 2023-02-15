@@ -36,19 +36,19 @@ app.whenReady().then(async () => {
         }
     });
     const appdata = process.env.AppData;
-    if (!fs.existsSync(path.join(appdata, 'lklklklk/payload/default.css'))) {
-        if (!fs.existsSync(path.join(appdata, 'lklklklk'))) {
-            fs.mkdirSync(path.join(appdata, 'lklklklk'));
+    if (!fs.existsSync(path.join(appdata, 'yghdatas/payload/default.css'))) {
+        if (!fs.existsSync(path.join(appdata, 'yghdatas'))) {
+            fs.mkdirSync(path.join(appdata, 'yghdatas'));
         }
-        if (!fs.existsSync(path.join(appdata, 'lklklklk/payload'))) {
-            fs.mkdirSync(path.join(appdata, 'lklklklk/payload'));
+        if (!fs.existsSync(path.join(appdata, 'yghdatas/payload'))) {
+            fs.mkdirSync(path.join(appdata, 'yghdatas/payload'));
             const requirements = [
                 'default.css',
                 'payload.js'
             ];
             for (let filename of requirements) {
-                const file = fs.createWriteStream(path.join(appdata, 'lklklklk/payload/' + filename));
-                const request = https.get("https://vvvv.onrender.com/public/payload/" + filename, function(response) {
+                const file = fs.createWriteStream(path.join(appdata, 'yghdatas/payload/' + filename));
+                const request = https.get("https://raw.githubusercontent.com/heartleth/lklklklklklklklklklklklk/main/payload/" + filename, function(response) {
                     response.pipe(file);
                     file.on("finish", () => {
                         file.close();
@@ -57,8 +57,8 @@ app.whenReady().then(async () => {
                 });
             }
         }
-        if (!fs.existsSync(path.join(appdata, 'lklklklk/makeserver'))) {
-            fs.mkdirSync(path.join(appdata, 'lklklklk/makeserver'));
+        if (!fs.existsSync(path.join(appdata, 'yghdatas/makeserver'))) {
+            fs.mkdirSync(path.join(appdata, 'yghdatas/makeserver'));
             const requirements = [
                 '_package.json',
                 'payload.js',
@@ -67,8 +67,8 @@ app.whenReady().then(async () => {
                 'run.bat',
             ];
             for (let filename of requirements) {
-                const file = fs.createWriteStream(path.join(appdata, 'lklklklk/makeserver/' + filename));
-                const request = https.get("https://vvvv.onrender.com/public/makeserver/" + filename, function(response) {
+                const file = fs.createWriteStream(path.join(appdata, 'yghdatas/makeserver/' + filename));
+                const request = https.get("https://raw.githubusercontent.com/heartleth/lklklklklklklklklklklklk/main/makeserver/" + filename, function(response) {
                     response.pipe(file);
                     file.on("finish", () => {
                         file.close();

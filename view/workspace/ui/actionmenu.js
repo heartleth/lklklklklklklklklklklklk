@@ -49,7 +49,6 @@ class ActionInput extends HTMLElement {
         this.appendChild(make('line').elem);
         this.fe = make('function-edit').attr('actionName', this.actionNameInput.value).elem;
         this.appendChild(this.fe);
-
         this.actionNameInput.addEventListener('change', () => {
             this.fe.actionName = this.actionNameInput.value;
             this.fe.render();
