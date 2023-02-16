@@ -83,6 +83,14 @@ async function load() {
                     console.log('SELECT ' + Object.keys(window.tables[table]).filter((e, i)=>cols[i]=='y').join(', ') + 'FROM' + table);
                 })
             };
+            blockmap['GETCOL' + table] = {
+                html: `Column ?{${Object.keys(window.tables[table]).join(',')}} of ?T from ${table}`,
+                category: 'db',
+                isArgs: true,
+                exec: ((stc, local, col, obj) => {
+                    return getValue(obj, local)[col];
+                })
+            };
         }
         window.actions = JSON.parse(localStorage.getItem(page + 'actions'));
         window.states = JSON.parse(localStorage.getItem(page + 'states'));

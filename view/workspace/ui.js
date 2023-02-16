@@ -453,3 +453,24 @@ document.getElementById('makeServer').addEventListener('click', (e) => {
         );
     }
 });
+
+document.getElementById('saveAsFile').addEventListener('click', () => {
+    if (require) {
+        let electron = require('electron');
+        electron.ipcRenderer.send('saveAsFile', { ...localStorage });
+    }
+});
+
+document.getElementById('loadFromFile').addEventListener('click', () => {
+    if (require) {
+        let electron = require('electron');
+        electron.ipcRenderer.send('loadFile', { ...localStorage });
+        electron.ipcRenderer.once('loadedLS', (e, lc) => {
+            localStorage.clear();
+            for (let k in lc) {
+                localStorage.setItem(k, JSON.stringify(lc));
+            }
+            location.reload();
+        });
+    }
+});

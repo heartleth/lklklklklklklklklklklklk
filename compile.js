@@ -208,6 +208,7 @@ function compileAction(actionName, actions) {
 
 async function getValue(v, cas) {
     if (db === undefined) return;
+    if (!v) return;
     if (!v.substring && v.name) {
         if (v.name.startsWith('SELECTFROM')) {
             const table = v.name.substring(10);
@@ -218,6 +219,12 @@ async function getValue(v, cas) {
                 console.log(err, rows);
                 if (!err) { p(rows); }
             }));
+        }
+        else if (v.name.startsWith('GETCOL')) {
+            console.log(v);
+            let obj = await getValue(v.params[1], cas);
+            console.log(obj, await getValue(v.params[0]));
+            return await obj[v.params[0]];
         }
         return await blockmap[v.name].exec(cas, ...await Promise.all(v.params.map(e=>getValue(e, cas))));
     }

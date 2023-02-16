@@ -308,6 +308,7 @@ function updateState(stateNames) {
 }
 
 function getValue(v, local) {
+    if (!v) return;
     if (!v.substring && v.name) {
         return blockmap[v.name].exec([], local, ...v.params.map(e=>getValue(e, local)));
     }

@@ -82,6 +82,21 @@ app.whenReady().then(async () => {
     setupIpc(win);
     ipcSetupMakeServer(win);
 
+    ipcMain.on('saveAsFile', (e, localStorage) => {
+        dialog.showOpenDialog(mainWindow, {properties: [ 'openDirectory' ]}).then(res => {
+            if (res.filePaths.length) {
+                fs.writeFileSync(path.join(res.filePaths[0], 'saveFile.json'), JSON.stringify(localStorage));
+            }
+        });
+    });
+    ipcMain.on('loadFile', (e, localStorage) => {
+        dialog.showOpenDialog(mainWindow, {properties: [ 'openFile' ]}).then(res => {
+            if (res.filePaths.length) {
+                let lc = JSON.parse(fs.readFileSync(res.filePaths[0]).toString());
+                e.reply('loadedLS', lc);
+            }
+        });
+    });
     ipcMain.on('openExpress', (e, html, builtComponents, actions, states, localStorage) => {
         // port += 1;
         if (listening !== undefined) {

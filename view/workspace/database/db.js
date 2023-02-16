@@ -23,6 +23,8 @@ function databaseMenu(ws) {
         wstitle('Database'),
         wse.label('Move Database File').attr('for','moveDBTo').addClass('moveDB').elem,
         saveDB,
+        wse.label('Use online database (not supported)').elem,
+        
     ]);
     saveDB.addEventListener('click', e => {
         e.preventDefault();
@@ -168,3 +170,18 @@ function dbTableRemoveColumn(tableName, name, rerender) {
         });
     }
 }
+
+// wse.label('Host').elem,
+// make('input').attr('type', 'text').elem,
+// wse.br(),
+// wse.label('Port').elem,
+// make('input').attr('type', 'number').elem,
+// wse.br(),
+// wse.label('user').elem,
+// make('input').attr('type', 'text').elem,
+// wse.br(),
+// wse.label('database').elem,
+// make('input').attr('type', 'text').elem,
+// wse.br(),
+// wse.label('password').elem,
+// make('input').attr('type', 'password').elem,
