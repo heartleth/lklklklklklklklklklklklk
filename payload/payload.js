@@ -218,6 +218,7 @@ let blockmap = {
                         body['#Elements:' + t[2]] = metaElem;
                     }
                 }
+                console.log(body);
                 const res = await fetch(`./serverside/${ssa.name}`, {
                     method: 'post',
                     headers: {
@@ -228,7 +229,22 @@ let blockmap = {
                 console.log(res);
                 for (let code of res.clientActs) {
                     console.log(code);
-                    blockmap[code[0]].exec(stc, local, ...code.slice(1));
+                    if (code[0].startsWith('AppendHTML')) {
+                        const selector = code[2][1][code[1]].selector;
+                        document.querySelectorAll(selector).forEach(e=>{
+                            for (let k in code[2][1]) {
+                                window.locals[local][k] = code[2][1][k];
+                            }
+                            e.appendChild(getValue(code[2][0], local));
+                        });
+                    }
+                    else if (code[0].startsWith('EmptyElement')) {
+                        const selector = code[1][1][code[1][0]].selector;
+                        document.querySelectorAll(selector).forEach(e=>e.innerHTML='');
+                    }
+                    else {
+                        blockmap[code[0]].exec(stc, local, ...code.slice(1));
+                    }
                 }
                 for (let st in res.states) {
                     stc.push(st);
@@ -245,6 +261,7 @@ class UserBuiltComponent extends HTMLElement {
             let componentInfo = window.builtComponents[this.componentName];
             this.innerHTML = componentInfo.html;
             let i = 0;
+            console.log(this);
             this.querySelectorAll('*').forEach(e=>e.classList.remove('outline'));
             for (let attr of componentInfo.attributes) {
                 [...this.querySelectorAll(`[attributeslot-${attr}]`)].forEach(e=>{
@@ -310,6 +327,11 @@ function updateState(stateNames) {
 function getValue(v, local) {
     if (!v) return;
     if (!v.substring && v.name) {
+        if (v.name.startsWith('GETCOL')) {
+            let v1 = getValue(v.params[1], local);
+            console.log(v1, v.params[0]);
+            return v1[v.params[0]];
+        }
         return blockmap[v.name].exec([], local, ...v.params.map(e=>getValue(e, local)));
     }
     if (v.startsWith) {

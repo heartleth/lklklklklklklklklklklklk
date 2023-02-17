@@ -76,8 +76,15 @@ let blockmap = {
     'AppendHTML': {
         category: 'ui',
         exec: async (cas, html, under) => {
-            cas.clientActs.push(['AppendHTML', under, await getValue(html, cas)]);
+            cas.clientActs.push(['AppendHTML', under, [html, {...cas.locals}]]);
         }
+    },
+    'EmptyElement': {
+        html: 'Empty Element ?T',
+        category: 'ui',
+        exec: ((cas, v) => {
+            cas.clientActs.push(['EmptyElement', [v, {...cas.locals}]]);
+        })
     },
     'SetState': {
         category: 'value',

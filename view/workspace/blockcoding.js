@@ -115,7 +115,7 @@ let blockmap = {
     'EmptyElement': {
         html: 'Empty Element ?T',
         category: 'ui',
-        exec: ((stc, local, html, v) => {
+        exec: ((stc, local, v) => {
             if (window.locals[local][v][0].classList) {
                 window.locals[local][v].forEach(e=>e.innerHTML='');
             }

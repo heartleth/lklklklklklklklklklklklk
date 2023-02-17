@@ -10,10 +10,10 @@
 </head>
 <body>
     <div id="headbar">
-        <div onclick="save(); location.href = '../projects.html'">Home</div>
-        <div id="reset">Clear</div>
         <div id="saveAsFile">Save as file</div>
         <div id="loadFromFile">Load from file</div>
+        <div onclick="save(); location.href = '../projects.html'">Home</div>
+        <div id="reset">Clear</div>
         <div id="openServer">Open Server</div>
         <div><label for="makeServer">Make</label><input type="file" id="makeServer" /></div>
         <div id="gizmos">Gizmos</div>
@@ -82,7 +82,6 @@
     <script>
         if (window.require) {
             let electron = require('electron');
-
             let openServer = document.getElementById('openServer');
             openServer.addEventListener('click', () => {
                 let wsb = document.querySelector('wsbody');

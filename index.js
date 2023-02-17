@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Menu } = require('electron');
 const { compileAction, execAction } = require('./compile');
 const { ipcSetupMakeServer } = require('./makeserver');
 const { setupIpc } = require('./database');
@@ -29,6 +29,33 @@ const createWindow = () => {
 let listening = undefined;
 
 app.whenReady().then(async () => {
+    const template = [{
+        label: 'File',
+        submenu: [{
+            label: 'Save as file',
+            click() {
+                ipcMain.emit('SAF')
+                // Menu.sendActionToFirstResponder('SAF');
+            }
+        }, {
+            label: 'Load from file',
+            click() {
+                Menu.sendActionToFirstResponder('LFF');
+            }
+        }, {
+            label: 'Clear project',
+            click() {
+                Menu.sendActionToFirstResponder('ClearProject');
+            }
+        }]
+    }, {
+        label: 'View',
+        submenu: [{ label: 'Not supported yet' }]
+    }, {
+        label: 'Help',
+        submenu: [{ label: 'Not supported yet' }]
+    }];
+    // Menu.setApplicationMenu(Menu.buildFromTemplate(template));
     let win = createWindow();
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
