@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
 const { compileAction, execAction } = require('./compile');
 const { ipcSetupMakeServer } = require('./makeserver');
 const { setupIpc } = require('./database');
@@ -29,33 +29,6 @@ const createWindow = () => {
 let listening = undefined;
 
 app.whenReady().then(async () => {
-    const template = [{
-        label: 'File',
-        submenu: [{
-            label: 'Save as file',
-            click() {
-                ipcMain.emit('SAF')
-                // Menu.sendActionToFirstResponder('SAF');
-            }
-        }, {
-            label: 'Load from file',
-            click() {
-                Menu.sendActionToFirstResponder('LFF');
-            }
-        }, {
-            label: 'Clear project',
-            click() {
-                Menu.sendActionToFirstResponder('ClearProject');
-            }
-        }]
-    }, {
-        label: 'View',
-        submenu: [{ label: 'Not supported yet' }]
-    }, {
-        label: 'Help',
-        submenu: [{ label: 'Not supported yet' }]
-    }];
-    // Menu.setApplicationMenu(Menu.buildFromTemplate(template));
     let win = createWindow();
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -91,7 +64,7 @@ app.whenReady().then(async () => {
                 'payload.js',
                 'README.txt',
                 'server.js',
-                'run.bat',
+                'run.bat'
             ];
             for (let filename of requirements) {
                 const file = fs.createWriteStream(path.join(appdata, 'yghdatas/makeserver/' + filename));
@@ -111,11 +84,11 @@ app.whenReady().then(async () => {
 
     ipcMain.on('saveAsFile', (e, localStorage) => {
         if (localStorage.saveFilePath) {
-            fs.writeFileSync(path.join(res.filePaths[0], 'saveFile.json'), JSON.stringify(localStorage));
-                    e.reply('savedPath', false);
+            fs.writeFileSync(path.join(localStorage.saveFilePath, 'saveFile.json'), JSON.stringify(localStorage));
+            e.reply('savedPath', false);
         }
         else {
-            dialog.showOpenDialog(mainWindow, {properties: [ 'openDirectory' ]}).then(res => {
+            dialog.showOpenDialog(win, {properties: [ 'openDirectory' ]}).then(res => {
                 if (res.filePaths.length) {
                     fs.writeFileSync(path.join(res.filePaths[0], 'saveFile.json'), JSON.stringify(localStorage));
                     e.reply('savedPath', res.filePaths[0]);
@@ -127,7 +100,7 @@ app.whenReady().then(async () => {
         }
     });
     ipcMain.on('loadFile', (e, localStorage) => {
-        dialog.showOpenDialog(mainWindow, {properties: [ 'openFile' ]}).then(res => {
+        dialog.showOpenDialog(win, {properties: [ 'openFile' ]}).then(res => {
             if (res.filePaths.length) {
                 let lc = JSON.parse(fs.readFileSync(res.filePaths[0]).toString());
                 e.reply('loadedLS', lc);

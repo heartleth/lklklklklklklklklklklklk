@@ -307,7 +307,7 @@ class FunctionEditWindow extends HTMLElement {
                 else {
                     let px = e.clientX + me.offset[0] + 9;
                     let py = e.clientY + me.offset[1] + 22;
-                    me.style.left = Math.min(Math.max(9, px - boxRect.left), this.clientHeight-80-me.clientHeight) + 'px';
+                    me.style.left = Math.min(Math.max(9, px - boxRect.left), this.clientWidth-80-me.clientWidth) + 'px';
                     me.style.top =  Math.min(Math.max(22, py - boxRect.top), this.clientHeight-80-me.clientHeight) + 'px';
                     let mx = me.getBoundingClientRect().left;
                     let my = me.getBoundingClientRect().top;
@@ -363,7 +363,7 @@ class FunctionEditWindow extends HTMLElement {
             else {
                 let px = e.clientX + me.offset[0] + 9;
                 let py = e.clientY + me.offset[1] + 22;
-                me.style.left = Math.min(Math.max(9, px - boxRect.left), this.clientHeight-80-me.clientHeight) + 'px';
+                me.style.left = Math.min(Math.max(9, px - boxRect.left), this.clientWidth-80-me.clientWidth) + 'px';
                 me.style.top =  Math.min(Math.max(22, py - boxRect.top), this.clientHeight-80-me.clientHeight) + 'px';
                 for (let c of me.children) {
                     if (c.tagName == 'SMALL-VALUE') {

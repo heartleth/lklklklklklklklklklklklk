@@ -209,7 +209,7 @@ drag-menu button:hover {
     margin-top: 4px;
 }
 
-input[type="text"], textarea {
+input[type="text"]:not(.natural), textarea {
     border: solid 1px black;
     width: calc(100% - 10px);
     border-radius: 8px;

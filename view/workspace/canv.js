@@ -182,21 +182,21 @@ window.addEventListener('mousedown', (e) => {
                     };
                 }
             }
-            if (isInRect(mx - canvasRect.left, my - canvasRect.top, {
-                top: tl[1],
-                bottom: tl[1]+8,
-                left: tl[0],
-                right: tl[0]+8,
-            })) {
-                if (!div.style.marginRight && div.style.marginLeft) {
-                    div.style.marginRight = div.style.marginLeft;
-                    div.style.width = 'auto';
-                }
-                else if (div.style.marginRight && div.style.marginLeft) {
-                    div.style.marginRight = div.style.marginLeft = 'auto';
-                    div.style.width = 'fit-content';
-                }
-            }
+            // if (isInRect(mx - canvasRect.left, my - canvasRect.top, {
+            //     top: tl[1],
+            //     bottom: tl[1]+8,
+            //     left: tl[0],
+            //     right: tl[0]+8,
+            // })) {
+            //     if (!div.style.marginRight && div.style.marginLeft) {
+            //         div.style.marginRight = div.style.marginLeft;
+            //         div.style.width = 'auto';
+            //     }
+            //     else if (div.style.marginRight && div.style.marginLeft) {
+            //         div.style.marginRight = div.style.marginLeft = 'auto';
+            //         div.style.width = 'fit-content';
+            //     }
+            // }
         }
     }
 });

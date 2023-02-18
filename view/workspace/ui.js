@@ -221,7 +221,7 @@ window.addEventListener('mousemove', (e)=>{
         }
     }
     else if (this.resizing) {
-        let { ctx, element, direction, begin, original, drawOriginal, originalStyle } = this.resizing;
+        let { ctx, element, direction, begin, original, drawOriginal, originalStyle, ow } = this.resizing;
         const distX = Math.round((e.clientX - begin[0]) / cellSpacing) * cellSpacing;
         const distY = Math.round((e.clientY - begin[1]) / cellSpacing) * cellSpacing;
         ctx.strokeStyle = 'rgba(255, 101, 110, 0.9)';
@@ -255,6 +255,11 @@ window.addEventListener('mousemove', (e)=>{
             else {
                 element.style.minWidth = lpx(original.minWidth) + distX + 'px';
             }
+        }
+        else if (direction == 'right' && element.tagName[0] == 'H' && element.tagName.length == 2) {
+            let ow = Math.round((lpx(original.minWidth) || lpx(original.width)) / cellSpacing) * cellSpacing;
+            element.style.minWidth = ow + distX + 'px';
+            element.style.width = element.style.minWidth;
         }
         else if (direction == 'bottom' && isLen(originalStyle.minHeight)) {
             if (isLen(originalStyle.marginBottom)) {
@@ -454,7 +459,7 @@ document.getElementById('makeServer').addEventListener('click', (e) => {
     }
 });
 
-document.getElementById('saveAsFile').addEventListener('click', () => {
+function saveAsFile() {
     save();
     if (require) {
         let electron = require('electron');
@@ -465,7 +470,16 @@ document.getElementById('saveAsFile').addEventListener('click', () => {
             }
         })
     }
-});
+}
+
+document.getElementById('saveAsFile').addEventListener('click', () => saveAsFile());
+
+window.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key == 's') {
+        e.preventDefault();
+        saveAsFile();
+    }
+})
 
 document.getElementById('loadFromFile').addEventListener('click', () => {
     if (require) {
@@ -474,7 +488,7 @@ document.getElementById('loadFromFile').addEventListener('click', () => {
         electron.ipcRenderer.once('loadedLS', (e, lc) => {
             localStorage.clear();
             for (let k in lc) {
-                localStorage.setItem(k, JSON.stringify(lc));
+                localStorage.setItem(k, lc[k]);
             }
             location.reload();
         });

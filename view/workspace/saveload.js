@@ -19,7 +19,9 @@ function save() {
     else {
         localStorage.setItem(page + 'page', document.querySelector('wsbody').innerHTML);
     }
-    // localStorage.setItem('route', '/');
+    if (!localStorage.getItem('route')) {
+        localStorage.setItem('route', '/');
+    }
     localStorage.setItem(page + 'components', JSON.stringify(window.builtComponents));
     localStorage.setItem(page + 'actions', JSON.stringify(window.actions));
     localStorage.setItem(page + 'states', JSON.stringify(window.states));
