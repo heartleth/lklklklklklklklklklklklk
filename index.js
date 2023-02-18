@@ -110,11 +110,21 @@ app.whenReady().then(async () => {
     ipcSetupMakeServer(win);
 
     ipcMain.on('saveAsFile', (e, localStorage) => {
-        dialog.showOpenDialog(mainWindow, {properties: [ 'openDirectory' ]}).then(res => {
-            if (res.filePaths.length) {
-                fs.writeFileSync(path.join(res.filePaths[0], 'saveFile.json'), JSON.stringify(localStorage));
-            }
-        });
+        if (localStorage.saveFilePath) {
+            fs.writeFileSync(path.join(res.filePaths[0], 'saveFile.json'), JSON.stringify(localStorage));
+                    e.reply('savedPath', false);
+        }
+        else {
+            dialog.showOpenDialog(mainWindow, {properties: [ 'openDirectory' ]}).then(res => {
+                if (res.filePaths.length) {
+                    fs.writeFileSync(path.join(res.filePaths[0], 'saveFile.json'), JSON.stringify(localStorage));
+                    e.reply('savedPath', res.filePaths[0]);
+                }
+                else {
+                    e.reply('savedPath', false);
+                }
+            });
+        }
     });
     ipcMain.on('loadFile', (e, localStorage) => {
         dialog.showOpenDialog(mainWindow, {properties: [ 'openFile' ]}).then(res => {

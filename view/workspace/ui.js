@@ -455,9 +455,15 @@ document.getElementById('makeServer').addEventListener('click', (e) => {
 });
 
 document.getElementById('saveAsFile').addEventListener('click', () => {
+    save();
     if (require) {
         let electron = require('electron');
         electron.ipcRenderer.send('saveAsFile', { ...localStorage });
+        electron.ipcRenderer.once('savedPath', (e, path) => {
+            if (path) {
+                localStorage.setItem('saveFilePath', path);
+            }
+        })
     }
 });
 
