@@ -494,3 +494,10 @@ document.getElementById('loadFromFile').addEventListener('click', () => {
         });
     }
 });
+
+document.getElementById('help').addEventListener('click', () => {
+    if (require) {
+        let electron = require('electron');
+        electron.shell.openExternal('https://heartleth.github.io/lklklklklklklklklklklklk/docs');
+    }
+});
