@@ -34,7 +34,7 @@ let blockmap = {
     'ValueOf': {
         category: 'ui',
         exec: async (cas, elem) => {
-            return elem;
+            return cas.locals[elem].value;
         }
     },
     'State': {
@@ -46,7 +46,7 @@ let blockmap = {
     'Local': {
         category: 'value',
         exec: async (cas, e) => {
-            return cas.local[e];
+            return cas.locals[e];
         }
     },
     'PlusMinus': {
@@ -64,6 +64,7 @@ let blockmap = {
     'Find': {
         category: 'ui',
         exec: async (cas, selector, into) => {
+            // cas.locals[into] = cas.sentElements[selector];
             cas.locals[into] = cas.elements[into];
         }
     },
@@ -82,8 +83,15 @@ let blockmap = {
     'AppendHTML': {
         category: 'ui',
         exec: async (cas, html, under) => {
-            cas.clientActs.push(['AppendHTML', under, await getValue(html, cas)]);
+            cas.clientActs.push(['AppendHTML', under, [html, {...cas.locals}]]);
         }
+    },
+    'EmptyElement': {
+        html: 'Empty Element ?T',
+        category: 'ui',
+        exec: ((cas, v) => {
+            cas.clientActs.push(['EmptyElement', [v, {...cas.locals}]]);
+        })
     },
     'SetState': {
         category: 'value',
@@ -94,7 +102,7 @@ let blockmap = {
     'SetLocal': {
         category: 'value',
         exec: async (cas, v, text) => {
-            cas.local[v] = await getValue(text, cas);
+            cas.locals[v] = await getValue(text, cas);
         }
     },
     'IfOrd': {
@@ -136,6 +144,19 @@ let blockmap = {
                     ||((a < b) && operator=='<')
                     ||((a != b) && operator=='≠')
                     ||((a > b) && operator=='>');
+            }
+        })
+    },
+    'IterateOver': {
+        html: 'Each ?T in ?T',
+        category: 'control',
+        exec: (async (cas, child, iterName, arrc) => {
+            let arr = await getValue(arrc, cas);
+            for (let iter of arr) {
+                cas.locals[iterName] = iter;
+                if (child) {
+                    await child.run(cas);
+                }
             }
         })
     }
@@ -213,7 +234,7 @@ export async function execAction(code, sentInputs, tables) {
             elements[v.substring(10)] = sentInputs[v];
         }
     }
-    let cas = { states, locals, clientActs, tables };
+    let cas = { states, locals, clientActs, tables, elements };
     await runActionSequence(code, cas);
     return cas;
 }

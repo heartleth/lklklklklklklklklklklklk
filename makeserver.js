@@ -14,16 +14,16 @@ function ipcSetupMakeServer(mainWindow) {
                 fs.mkdirSync(path.join(res.filePaths[0], 'siteTarget'));
                 const targetPath = path.join(res.filePaths[0], 'siteTarget');
                 const appdata = process.env.AppData;
-                fs.copyFileSync(path.join(appdata, 'lklklklk/workspace-db/ws.db'), path.join(targetPath, 'site.db'));
+                fs.copyFileSync(path.join(appdata, 'yghdatas/workspace-db/ws.db'), path.join(targetPath, 'site.db'));
                 
                 fs.mkdirSync(path.join(targetPath, 'payload'));
                 fs.mkdirSync(path.join(targetPath, 'views'));
-                fs.copyFileSync(path.join(appdata, 'lklklklk/makeserver/payload.js'), path.join(targetPath, 'payload/payload.js'));
-                fs.copyFileSync(path.join(appdata, 'lklklklk/payload/default.css'), path.join(targetPath, 'payload/default.css'));
-                fs.copyFileSync(path.join(appdata, 'lklklklk/makeserver/_package.json'), path.join(targetPath, 'package.json'));
-                fs.copyFileSync(path.join(appdata, 'lklklklk/makeserver/README.txt'), path.join(targetPath, 'README.txt'));
-                fs.copyFileSync(path.join(appdata, 'lklklklk/makeserver/server.js'), path.join(targetPath, 'server.js'));
-                fs.copyFileSync(path.join(appdata, 'lklklklk/makeserver/run.bat'), path.join(targetPath, 'server.bat'));
+                fs.copyFileSync(path.join(appdata, 'yghdatas/makeserver/payload.js'), path.join(targetPath, 'payload/payload.js'));
+                fs.copyFileSync(path.join(appdata, 'yghdatas/payload/default.css'), path.join(targetPath, 'payload/default.css'));
+                fs.copyFileSync(path.join(appdata, 'yghdatas/makeserver/_package.json'), path.join(targetPath, 'package.json'));
+                fs.copyFileSync(path.join(appdata, 'yghdatas/makeserver/README.txt'), path.join(targetPath, 'README.txt'));
+                fs.copyFileSync(path.join(appdata, 'yghdatas/makeserver/server.js'), path.join(targetPath, 'server.js'));
+                fs.copyFileSync(path.join(appdata, 'yghdatas/makeserver/run.bat'), path.join(targetPath, 'server.bat'));
                 let i = 0;
                 const tables = localStorage['tables'];
                 let indexJS = `
@@ -57,7 +57,37 @@ function ipcSetupMakeServer(mainWindow) {
                                     return `"#Elements:${t[2]}":metaElem(${asExp(t[1])})`
                                 }
                             }).join(',') + '}';
-                            actionsJS += `async function ${action}() { let stc = []; let local = {}; let res = await fetch('./serverside/${action}', { method: 'post', body: JSON.stringify(${bodyExp}) }).then(e=>e.json()); for (let code of res.clientActs) { blockmap[code[0]].exec(stc, local, ...code.slice(1)); } for (let st in res.states) { stc.push(st); window.states[st] = res.states[st]; } updateState(stc); }`;
+                            actionsJS += `async function ${action}() {
+                                let stc = [];
+                                let local = {};
+                                let res = await fetch('./serverside/${action}', { method: 'post', body: JSON.stringify(${bodyExp}), headers: { "Content-Type": "application/json; charset=utf-8" } }).then(e=>e.json());
+
+                                console.log(res);
+                                for (let code of res.clientActs) {
+                                    console.log(code);
+                                    if (code[0].startsWith('AppendHTML')) {
+                                        const selector = code[2][1][code[1]].selector;
+                                        document.querySelectorAll(selector).forEach(e=>{
+                                            for (let k in code[2][1]) {
+                                                local[k] = code[2][1][k];
+                                            }
+                                            e.appendChild(getValue(code[2][0], local));
+                                        });
+                                    }
+                                    else if (code[0].startsWith('EmptyElement')) {
+                                        const selector = code[1][1][code[1][0]].selector;
+                                        document.querySelectorAll(selector).forEach(e=>e.innerHTML='');
+                                    }
+                                    else {
+                                        blockmap[code[0]].exec(stc, local, ...code.slice(1));
+                                    }
+                                }
+                                for (let st in res.states) {
+                                    stc.push(st);
+                                    window.states[st] = res.states[st];
+                                }
+                                updateState(stc);
+                            }`;
                             const ssurl = (route + '/serverside/' + action).replace(/\/+/g, '/');
                             indexJS += `app.post("${ssurl}", async (req, res) => {
                                 let reply = await execAction(${JSON.stringify(actions[action].code)}, req.body, tables);
@@ -117,7 +147,7 @@ const blockmap = {
     },
     'HasId': {
         category: 'ui',
-        exp: (id) => `#` + asExp(id)
+        exp: (id) => asExp('#' + id)
     },
     'ValueOf': {
         category: 'ui',
