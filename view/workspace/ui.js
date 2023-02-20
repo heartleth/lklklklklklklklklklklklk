@@ -86,7 +86,7 @@ class SomeMenu extends HTMLElement {
         this.ws = document.createElement('div');
         this.ws.classList.add('menuws');
         this.appendChild(this.ws);
-        createMenu(this.ws, this.getAttribute('name'), this.actionName);
+        createMenu(this.ws, this.getAttribute('name'), this.actionName, this.editing);
         this.appendChild(document.createElement('span-menu'));
         this.addEventListener('mousedown', this.onmousedown);
         if (!this.style.height) {
@@ -106,9 +106,10 @@ class SomeMenu extends HTMLElement {
 }
 customElements.define('some-menu', SomeMenu);
 
-function openMenu(menuname, actionName) {
+function openMenu(menuname, actionName, editing) {
     let k = document.createElement('some-menu');
     k.setAttribute('name', menuname);
+    k.editing = editing;
     if (actionName) {
         k.actionName = actionName;
     }

@@ -73,7 +73,8 @@ class ActionInput extends HTMLElement {
     }
 }
 
-function callfunctionwithus(c) {
+function callfunctionwithus(c, e) {
+    if (!window.actions[c]) return;
     let stc = [];
     let bp = getPage();
     let local = (Math.random() + 1).toString(36).substring(7);

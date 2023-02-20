@@ -48,10 +48,16 @@ h1.natural, h2.natural, h3.natural, h4.natural, h5.natural, h6.natural {
     box-shadow: 0px 4px 8px 0px rgb(118, 118, 118);
 }
 
-[boxStyle~="center align"] {
-    margin: 0 auto;
+[boxStyle~="center"] {
+    margin-right: auto !important;
+    margin-left: auto !important;
 }
 
-input.natural {
+input.natural, textarea.natural {
+    outline: solid 1.5px rgb(128, 128, 128);
+    word-break: break-word !important;
     display: block !important;
+    border: none !important;
+    padding: 0px;
+    resize: none;
 }

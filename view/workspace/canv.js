@@ -207,7 +207,12 @@ window.addEventListener('mousedown', (e) => {
                 }
             }
             if (isInRect(mx - canvasRect.left, my - canvasRect.top, rects[4])) {
-                console.log('ㄷㄷ');
+                if (div.tagName == 'DIV') {
+                    openMenu('box', undefined, div);
+                }
+                else if (div.tagName == 'BUTTON') {
+                    openMenu('button', undefined, div);
+                }
             }
 
             // if (isInRect(mx - canvasRect.left, my - canvasRect.top, {

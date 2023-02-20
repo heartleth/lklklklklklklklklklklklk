@@ -1,14 +1,14 @@
 const LengthInputHTML = `<input type="text" value="20"><select><option selected="px">px</option><option>cm</option><option>mm</option><option>em</option></select>`;
 
-function createMenu(ws, name, n) {
+function createMenu(ws, name, n, edt) {
     if (name == 'button') {
-        buttonMenu(ws);
+        buttonMenu(ws, edt);
     }
     else if (name == 'title') {
-        titlesmenu(ws);
+        titlesmenu(ws, edt);
     }
     else if (name == 'box') {
-        boxmenu(ws);
+        boxmenu(ws, edt);
     }
     else if (name == 'states') {
         statesmenu(ws);
@@ -24,7 +24,7 @@ function createMenu(ws, name, n) {
     }
     else if (name == 'text field') {
         // uiMenus('input text', ws);
-        inputMenu(ws);
+        inputMenu(ws, edt);
     }
     else if (name == 'library') {
         compLib(ws);
@@ -69,7 +69,7 @@ class AddComponent extends HTMLElement {
 
         this.innerHTML = '';
         for (let t of this.template) {
-            t.embody();
+            t.embody(this.edt);
             this.appendChild(t.elem);
         }
     }
@@ -184,8 +184,8 @@ let wse = {
     br: () => make('br').elem
 }
 
-function addc(refs, template) {
-    return make('add-component').set('refs', refs).set('template', template).elem;
+function addc(refs, template, edt) {
+    return make('add-component').set('refs', refs).set('template', template).set('edt', edt).elem;
 }
 
 class ElementComponent {
@@ -195,7 +195,7 @@ class ElementComponent {
         this.tag = tag;
     }
 
-    embody() {
+    embody(edt) {
         if (this.tag[0] == '@') {
             let refinfo = this.tag.substring(1).split('/');
             let refelem = document.querySelector(refinfo[0]);
@@ -220,32 +220,40 @@ class ElementComponent {
                     depstates = depstates.concat(us);
                     if (us.length > 0) {
                         this.elem.setAttribute(`updateforstate-${us[0]}`, property);
+                        if (edt) edt.setAttribute(`updateforstate-${us[0]}`, property);
                     }
                     let ua = refelem.usingAttrs;
                     if (ua) {
                         this.elem.setAttribute(`attributeSlot-${ua}`, property);
+                        if (edt) edt.setAttribute(`attributeSlot-${ua}`, property);
                     }
                     
                     if (property[0] == ':') {
                         this.elem.setAttribute(property.substring(1), refelem[refinfo[1]]);
+                        if (edt) edt.setAttribute(property.substring(1), refelem[refinfo[1]]);
                     }
                     else if (property[0] == '#') {
                         this.elem.style[property.substring(1)] = refelem[refinfo[1]];
+                        if (edt) edt.style[property.substring(1)] = refelem[refinfo[1]];
                     }
                     else {
                         this.elem[property] = refelem[refinfo[1]];
+                        if (edt) edt[property] = refelem[refinfo[1]];
                     }
                 }
             }
             else {
                 if (property[0] == ':') {
                     this.elem.setAttribute(property.substring(1), ref);
+                    if (edt) edt.setAttribute(property.substring(1), ref);
                 }
                 else if (property[0] == '#') {
                     this.elem.style[property.substring(1)] = ref;
+                    if (edt) edt.style[property.substring(1)] = ref;
                 }
                 else {
                     this.elem[property] = ref;
+                    if (edt) edt[property] = ref;
                 }
             }
         }
@@ -253,7 +261,8 @@ class ElementComponent {
             addChilds(this.elem, this.childs.map(e => { e.embody(); return e.elem; }));
         }
         this.elem.classList.add('natural');
-        this.elem.setAttribute('depstates', depstates);
+        if (edt) edt.classList.add('natural');
+        // this.elem.setAttribute('depstates', depstates);
     }
 }
 
@@ -261,10 +270,13 @@ class CheckBoxOptions extends HTMLElement {
     connectedCallback() {
         this.options = this.options ?? ['Value'];
         this.inputs = [];
+        this.optdf = this.optdf ? this.optdf.split(' ') : [];
         for (const option of this.options) {
             let x = Math.floor(1000 * Math.random());
             this.appendChild(wse.label(option).attr('for', 'bo' + x).elem);
-            let i = make('input').attr('type', 'checkbox').setId('bo' + x).elem;
+            let i = this.optdf.includes(option)
+                ? make('input').attr('type', 'checkbox').attr('checked', 'true').setId('bo' + x).elem
+                : make('input').attr('type', 'checkbox').setId('bo' + x).elem;
             this.inputs[option] = i;
             this.appendChild(i);
             this.appendChild(wse.br());
@@ -285,6 +297,14 @@ class CheckBoxOptions extends HTMLElement {
 
     get usingStates() {
         return [];
+    }
+
+    hide() {
+        this.classList.add('hide');
+    }
+
+    show() {
+        this.classList.remove('hide');
     }
 }
 window.customElements.define('checkbox-options', CheckBoxOptions);
