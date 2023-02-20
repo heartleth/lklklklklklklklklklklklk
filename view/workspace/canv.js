@@ -1,5 +1,6 @@
 const cellSpacing = 20;
 let ctx;
+let recc = [0, 0];
 
 function drawCanvas() {
     let canvas = document.querySelector('canvas');
@@ -78,70 +79,86 @@ function drawResizes(canvas, ctx) {
     const canvasRect = canvas.getBoundingClientRect();
     let wsb = document.querySelector('wsbody');
     for (let div of wsb.querySelectorAll('.natural')) {
-        if (div.classList.contains('dummy')) continue;
-        if (div.tagName == 'BR') continue;
-        
-        const divRect = div.getBoundingClientRect();
-        ctx.lineWidth = 2.5;
-        ctx.strokeStyle = 'rgba(50, 50, 255, 0.5)';
-        ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top, divRect.width, divRect.height);
-        if (div.id.length) {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-            ctx.font = '12px Consolas';
-            ctx.fillText('#' + div.id, divRect.left - canvasRect.left, divRect.top - canvasRect.top - 3);
-            ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top - 15, ctx.measureText('#' + div.id).width + 2, 15);
-        }
-        const tl = [divRect.left - canvasRect.left - 4, divRect.top - canvasRect.top - 4];
-        const wh = [8, 8]
-        const divH = divRect.height;
-        const divW = divRect.width;
-        let fns = (a, b) => {
-            ctx.fillRect(tl[0]+a, tl[1]+b, ...wh);
-            ctx.strokeRect(tl[0]+a, tl[1]+b, ...wh);
-        };
-        
-        ctx.strokeStyle = 'rgba(100, 145, 255, 0.3)'
-        if (div.style.marginTop) {
-            // ctx.lineWidth = divW;
-            ctx.lineWidth = 8;
-            ctx.beginPath();
-            ctx.moveTo(tl[0]+divW/2+4, tl[1], ...wh);
-            ctx.lineTo(tl[0]+divW/2+4, tl[1]-lpx(div.style.marginTop)+4, ...wh);
-            ctx.stroke();
-        }
-        if (div.style.marginBottom) {
-            // ctx.lineWidth = divW;
-            ctx.lineWidth = 8;
-            ctx.beginPath();
-            ctx.moveTo(tl[0]+divW/2+4, tl[1]+divH, ...wh);
-            ctx.lineTo(tl[0]+divW/2+4, tl[1]+divH+lpx(div.style.marginBottom)+4, ...wh);
-            ctx.stroke();
-        }
-        if (div.style.marginLeft) {
-            // ctx.lineWidth = divH;
-            ctx.lineWidth = 8;
-            ctx.beginPath();
-            ctx.moveTo(tl[0], tl[1]+divH/2+4, ...wh);
-            ctx.lineTo(tl[0]-lpx(div.style.marginLeft)+4, tl[1]+divH/2+4, ...wh);
-            ctx.stroke();
-        }
-        if (div.style.marginRight) {
-            // ctx.lineWidth = divH;
-            ctx.lineWidth = 8;
-            ctx.beginPath();
-            ctx.moveTo(tl[0]+divW, tl[1]+divH/2+4, ...wh);
-            ctx.lineTo(tl[0]+divW+lpx(div.style.marginRight)+4, tl[1]+divH/2+4, ...wh);
-            ctx.stroke();
-        }
-
-        ctx.lineWidth = 2;
-        ctx.fillStyle = 'white'
-        ctx.strokeStyle = 'blue'
-        fns(divW/2, 2);
-        fns(divW/2, divH-2);
-        fns(2, divH/2);
-        fns(divW-2, divH/2);
+        drawResizeOne(div, ctx, canvasRect);
     }
+}
+
+function drawResizeOne(div, ctx, canvasRect) {
+    if (div.classList.contains('dummy')) return;
+    if (div.tagName == 'BR') return;
+    
+    const divRect = div.getBoundingClientRect();
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = 'rgba(50, 50, 255, 0.5)';
+    ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top, divRect.width, divRect.height);
+    let tw = 0;
+    if (div.id.length) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+        ctx.font = '12px Consolas';
+        ctx.fillText('#' + div.id, divRect.left - canvasRect.left, divRect.top - canvasRect.top + 12);
+        tw = ctx.measureText('#' + div.id).width + 2;
+        ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top, tw, 15);
+    }
+    if (!isInRect(...recc, divRect)) {
+        return;
+    }
+    ctx.fillStyle = 'rgba(100, 145, 255)'
+    ctx.fillRect(divRect.left + tw - canvasRect.left, divRect.top - canvasRect.top, 15, 15);
+    ctx.strokeStyle = 'white'
+    ctx.beginPath();
+    ctx.moveTo(divRect.left + tw - canvasRect.left + 7.5, divRect.top - canvasRect.top + 3);
+    ctx.lineTo(divRect.left + tw - canvasRect.left + 7.5, divRect.top - canvasRect.top + 12);
+    ctx.moveTo(divRect.left + tw - canvasRect.left + 3, divRect.top - canvasRect.top + 7.5);
+    ctx.lineTo(divRect.left + tw - canvasRect.left + 12, divRect.top - canvasRect.top + 7.5);
+    ctx.stroke();
+    const tl = [divRect.left - canvasRect.left - 4, divRect.top - canvasRect.top - 4];
+    
+    const wh = [8, 8]
+    const divH = divRect.height;
+    const divW = divRect.width;
+    let fns = (a, b) => {
+        ctx.fillRect(tl[0]+a, tl[1]+b, ...wh);
+        ctx.strokeRect(tl[0]+a, tl[1]+b, ...wh);
+    };
+    
+    ctx.strokeStyle = 'rgba(100, 145, 255, 0.3)'
+    if (div.style.marginTop) {
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(tl[0]+divW/2+4, tl[1], ...wh);
+        ctx.lineTo(tl[0]+divW/2+4, tl[1]-lpx(div.style.marginTop)+4, ...wh);
+        ctx.stroke();
+    }
+    if (div.style.marginBottom) {
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(tl[0]+divW/2+4, tl[1]+divH, ...wh);
+        ctx.lineTo(tl[0]+divW/2+4, tl[1]+divH+lpx(div.style.marginBottom)+4, ...wh);
+        ctx.stroke();
+    }
+    if (div.style.marginLeft) {
+        // ctx.lineWidth = divH;
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(tl[0], tl[1]+divH/2+4, ...wh);
+        ctx.lineTo(tl[0]-lpx(div.style.marginLeft)+4, tl[1]+divH/2+4, ...wh);
+        ctx.stroke();
+    }
+    if (div.style.marginRight) {
+        // ctx.lineWidth = divH;
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(tl[0]+divW, tl[1]+divH/2+4, ...wh);
+        ctx.lineTo(tl[0]+divW+lpx(div.style.marginRight)+4, tl[1]+divH/2+4, ...wh);
+        ctx.stroke();
+    }
+    ctx.lineWidth = 2;
+    ctx.fillStyle = 'white'
+    ctx.strokeStyle = 'blue'
+    fns(divW/2, 2);
+    fns(divW/2, divH-2);
+    fns(2, divH/2);
+    fns(divW-2, divH/2);
 }
 
 window.addEventListener('mousedown', (e) => {
@@ -158,11 +175,18 @@ window.addEventListener('mousedown', (e) => {
             const divH = divRect.height;
             const divW = divRect.width;
             const wh = [8, 8];
+            let tw = div.id ? ctx.measureText('#' + div.id).width + 2 : 0;
             const rects = [
                 { top:tl[1]+divH/2, bottom:tl[1]+divH/2+wh[1], left:tl[0]+2, right:tl[0]+2+wh[0] },
                 { top:tl[1]+2, bottom:tl[1]+2+wh[1], left:tl[0]+divW/2, right:tl[0]+divW/2+wh[0] },
                 { top:tl[1]+divH/2, bottom:tl[1]+divH/2+wh[1], left:tl[0]+divW-2, right:tl[0]+divW-2+wh[0] },
-                { top:tl[1]+divH-2, bottom:tl[1]+divH-2+wh[1], left:tl[0]+divW/2, right:tl[0]+divW/2+wh[0] }
+                { top:tl[1]+divH-2, bottom:tl[1]+divH-2+wh[1], left:tl[0]+divW/2, right:tl[0]+divW/2+wh[0] },
+                {
+                    left: divRect.left + tw - canvasRect.left,
+                    top: divRect.top - canvasRect.top,
+                    right: divRect.left + tw - canvasRect.left + 15,
+                    bottom: divRect.top - canvasRect.top + 15
+                }
             ];
             for (let i = 0; i < 4; i++) {
                 if (isInRect(mx - canvasRect.left, my - canvasRect.top, rects[i])) {
@@ -182,6 +206,10 @@ window.addEventListener('mousedown', (e) => {
                     };
                 }
             }
+            if (isInRect(mx - canvasRect.left, my - canvasRect.top, rects[4])) {
+                console.log('ㄷㄷ');
+            }
+
             // if (isInRect(mx - canvasRect.left, my - canvasRect.top, {
             //     top: tl[1],
             //     bottom: tl[1]+8,

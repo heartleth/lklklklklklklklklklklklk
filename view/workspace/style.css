@@ -54,7 +54,6 @@ add-component {
     border: solid 2px rgb(89, 89, 89);
     background-color: gray;
     width: calc(100% - 20px);
-    border-radius: 8px;
     margin-bottom: 2px;
     user-select: none;
     text-align: left;
@@ -209,7 +208,7 @@ drag-menu button:hover {
     margin-top: 4px;
 }
 
-input[type="text"]:not(.natural), textarea {
+input[type="text"]:not(.natural, .newStateName), textarea:not(.natural, .newStateName) {
     border: solid 1px black;
     width: calc(100% - 10px);
     border-radius: 8px;
@@ -336,12 +335,14 @@ value-input.hide, action-input.hide  {
 value-input > .newStateName, action-input > .newStateName {
     background-color: rgb(29, 29, 29);
     border: solid 1px white;
-    border-radius: 80px;
+    width: 36px !important;
+    border-radius: 8px;
+    padding-left: 5px;
     margin-left: 3px;
     font-size: 12px;
     color: white;
     outline: none;
-    width: 36px;
+    height: 12px;
 }
 
 value-input p {
@@ -353,11 +354,11 @@ value-input select {
 }
 
 value-input .valuedefault {
+    width: calc(100% - 70px) !important;
     border: solid 1px black;
-    width: calc(100% - 70px);
-    border-radius: 80px;
+    border-radius: 8px;
     position: relative;
-    right: -23px;
+    right: -15px;
 }
 
 line {
@@ -418,6 +419,7 @@ show-hide-button {
     width: calc(100% - 96px);
     border-radius: 80px;
     margin-left: 0px;
+
 }
 
 value-input > input.useStates {

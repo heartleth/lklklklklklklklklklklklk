@@ -132,6 +132,7 @@ function setDStyle(d, dcs) {
 }
 
 window.addEventListener('mousemove', (e)=>{
+    recc = [e.clientX, e.clientY];
     if (!!this.isClicked) {
         let me = this.movingElement;
         if (this.isClicked == 1) {
@@ -266,6 +267,12 @@ window.addEventListener('mousemove', (e)=>{
                 element.style.marginBottom = Math.max(0, lpx(original.marginBottom) - distY) + 'px';
             }
             element.style.minHeight = lpx(original.minHeight) + distY + 'px';
+        }
+        else if (direction == 'bottom' && isLen(originalStyle.height)) {
+            if (isLen(originalStyle.marginBottom)) {
+                element.style.marginBottom = Math.max(0, lpx(original.marginBottom) - distY) + 'px';
+            }
+            element.style.height = lpx(original.height) + distY + 'px';
         }
     }
     return false;

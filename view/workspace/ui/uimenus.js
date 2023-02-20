@@ -35,10 +35,11 @@ const inputTypes = [
 ];
 
 function inputMenu(ws) {
-    let bt = new ElementComponent('input', [
+    let bt = new ElementComponent('textarea', [
         [':id', '@#inputId/val'],
         [':class', '@#inputClass/val'],
         ['#height', '@#inputH/cells'],
+        [':cols', '@#inputH/val'],
         ['#width', '@#inputW/cells'],
         [':placeholder', '@#inputPlaceholder/val'],
         [':type', '@#inputType/value'],
@@ -52,8 +53,8 @@ function inputMenu(ws) {
         make('value-input').set('fname', ['Placeholder', 0]).set('onlyText', true).elem,
         make('value-input').set('fname', ['DefaultValue', 0, 'Default Value']).elem,
         make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 5).elem,
-        make('checkbox-options').set('fname', ['Style', 1, 'Box Style']).set('options', boxStyleOptions).elem,
         make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', 1).elem,
+        make('checkbox-options').set('fname', ['Style', 1, 'Box Style']).set('options', boxStyleOptions).elem,
         make('value-input').set('fname', ['Id', 2, 'ID']).set('onlyText', true).elem,
         make('value-input').set('fname', ['Class', 2]).set('onlyText', true).elem
     ];

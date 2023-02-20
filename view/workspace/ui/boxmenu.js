@@ -2,7 +2,8 @@ const boxStyleOptions = [
     'shadow',
     'round',
     'thick-outline',
-    'outlineless'
+    'outlineless',
+    'center'
 ];
 
 function boxmenu(ws) {
