@@ -669,3 +669,7 @@ checkbox-options {
     padding: 4px;
     border-radius: 4px;
 }
+
+h1, h2, h3 {
+    user-select: none !important;
+}

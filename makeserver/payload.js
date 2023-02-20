@@ -1,4 +1,3 @@
-window.states = {};
 class UserBuiltComponent extends HTMLElement {
     connectedCallback() {
         if (this.componentName) {

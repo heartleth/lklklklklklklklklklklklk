@@ -95,21 +95,26 @@ function drawResizeOne(div, ctx, canvasRect) {
     if (div.id.length) {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
         ctx.font = '12px Consolas';
-        ctx.fillText('#' + div.id, divRect.left - canvasRect.left, divRect.top - canvasRect.top + 12);
+        ctx.fillText('#' + div.id, divRect.left - canvasRect.left, divRect.top - canvasRect.top-15 + 12);
         tw = ctx.measureText('#' + div.id).width + 2;
-        ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top, tw, 15);
+        ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top-15, tw, 15);
     }
-    if (!isInRect(...recc, divRect)) {
+    if (!isInRect(...recc, {
+        top: divRect.top -  15,
+        left: divRect.left,
+        right: divRect.right,
+        bottom: divRect.bottom
+    })) {
         return;
     }
     ctx.fillStyle = 'rgba(100, 145, 255)'
-    ctx.fillRect(divRect.left + tw - canvasRect.left, divRect.top - canvasRect.top, 15, 15);
+    ctx.fillRect(divRect.left + tw - canvasRect.left, divRect.top - canvasRect.top-15, 15, 15);
     ctx.strokeStyle = 'white'
     ctx.beginPath();
-    ctx.moveTo(divRect.left + tw - canvasRect.left + 7.5, divRect.top - canvasRect.top + 3);
-    ctx.lineTo(divRect.left + tw - canvasRect.left + 7.5, divRect.top - canvasRect.top + 12);
-    ctx.moveTo(divRect.left + tw - canvasRect.left + 3, divRect.top - canvasRect.top + 7.5);
-    ctx.lineTo(divRect.left + tw - canvasRect.left + 12, divRect.top - canvasRect.top + 7.5);
+    ctx.moveTo(divRect.left + tw - canvasRect.left + 7.5, divRect.top - canvasRect.top-15 + 3);
+    ctx.lineTo(divRect.left + tw - canvasRect.left + 7.5, divRect.top - canvasRect.top-15 + 12);
+    ctx.moveTo(divRect.left + tw - canvasRect.left + 3, divRect.top - canvasRect.top-15 + 7.5);
+    ctx.lineTo(divRect.left + tw - canvasRect.left + 12, divRect.top - canvasRect.top-15 + 7.5);
     ctx.stroke();
     const tl = [divRect.left - canvasRect.left - 4, divRect.top - canvasRect.top - 4];
     
@@ -183,9 +188,9 @@ window.addEventListener('mousedown', (e) => {
                 { top:tl[1]+divH-2, bottom:tl[1]+divH-2+wh[1], left:tl[0]+divW/2, right:tl[0]+divW/2+wh[0] },
                 {
                     left: divRect.left + tw - canvasRect.left,
-                    top: divRect.top - canvasRect.top,
+                    top: divRect.top - canvasRect.top - 15,
                     right: divRect.left + tw - canvasRect.left + 15,
-                    bottom: divRect.top - canvasRect.top + 15
+                    bottom: divRect.top - canvasRect.top
                 }
             ];
             for (let i = 0; i < 4; i++) {
@@ -212,6 +217,12 @@ window.addEventListener('mousedown', (e) => {
                 }
                 else if (div.tagName == 'BUTTON') {
                     openMenu('button', undefined, div);
+                }
+                else if (div.tagName[0] == 'H') {
+                    openMenu('title', undefined, div);
+                }
+                else if (div.tagName == 'TEXTAREA') {
+                    openMenu('text field', undefined, div);
                 }
             }
 

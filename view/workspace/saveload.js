@@ -85,8 +85,24 @@ async function load() {
                     console.log('SELECT ' + Object.keys(window.tables[table]).filter((e, i)=>cols[i]=='y').join(', ') + 'FROM' + table);
                 })
             };
+            blockmap['SFID' + table] = {
+                html: `Select ${Object.keys(window.tables[table]).join(',')} from ${table} at id ?T`,
+                category: 'db',
+                isArgs: true,
+                exec: ((stc, local, ...cols) => {
+                    console.log('얼럴럴러');
+                })
+            };
+            blockmap['UPID' + table] = {
+                html: `Update ${table} at id ?T as ` + Object.keys(window.tables[table]).map(e=>e+':?T').join(' '),
+                category: 'db',
+                isArgs: false,
+                exec: ((stc, local, ...cols) => {
+                    console.log('얼럴럴러');
+                })
+            };
             blockmap['GETCOL' + table] = {
-                html: `Column ?{${Object.keys(window.tables[table]).join(',')}} of ?T from ${table}`,
+                html: `Column ?{${Object.keys(window.tables[table]).join(',')},id} of ?T from ${table}`,
                 category: 'db',
                 isArgs: true,
                 exec: ((stc, local, col, obj) => {

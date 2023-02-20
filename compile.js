@@ -220,7 +220,7 @@ async function getValue(v, cas) {
         if (v.name.startsWith('SELECTFROM')) {
             const table = v.name.substring(10);
             const values = Object.keys(cas.tables[table]).filter((e, i) => v.params[i]=='y');
-            const query = `SELECT ${values.join([', '])} FROM ${table}`;
+            const query = `SELECT id, ${values.join([', '])} FROM ${table}`;
             console.log(query);
             return await new Promise(p => db.all(query, (err, rows) => {
                 console.log(err, rows);
@@ -230,8 +230,17 @@ async function getValue(v, cas) {
         else if (v.name.startsWith('GETCOL')) {
             console.log(v);
             let obj = await getValue(v.params[1], cas);
-            console.log(obj, await getValue(v.params[0]));
+            console.log(obj, await getValue(v.params[0], cas));
             return await obj[v.params[0]];
+        }
+        else if (v.name.startsWith('SFID')) {
+            const table = v.name.substring(4);
+            const query = `SELECT id, ${values.join([', '])} FROM ${table} WHERE id = ${await getValue(v.params[0], cas)}`;
+            console.log(query);
+            return await new Promise(p => db.all(query, (err, rows) => {
+                console.log(err, rows);
+                if (!err) { p(rows[0]); }
+            }));
         }
         return await blockmap[v.name].exec(cas, ...await Promise.all(v.params.map(e=>getValue(e, cas))));
     }
@@ -273,6 +282,15 @@ async function runActionSequence(seq, cas) {
                 const table = code.name.substring(10);
                 const values = Object.keys(cas.tables[table]).map((e, i) => [e, getValue(code.params[i], cas)]);
                 const query = `INSERT INTO ${table} (${values.map(e=>e[0]).join([', '])}) VALUES (${values.map(e=>'?').join([', '])})`;
+                let realValues = await Promise.all([...values.map(e=>e[1])]);
+                console.log(code.params);
+                console.log(query, realValues);
+                await new Promise(p => db.run(query, realValues, (err) => { console.log(err); p(0); }));
+            }
+            else if (code.name.startsWith('UPID')) {
+                const table = code.name.substring(4);
+                const values = Object.keys(cas.tables[table]).map((e, i) => [e, getValue(code.params[i+1], cas)]);
+                const query = `UPDATE ${table} SET ${values.map(e=>e[0]+'=?').join([', '])} WHERE id=` + await getValue(code.params[0], cas);
                 let realValues = await Promise.all([...values.map(e=>e[1])]);
                 console.log(code.params);
                 console.log(query, realValues);

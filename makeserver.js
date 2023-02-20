@@ -44,7 +44,7 @@ function ipcSetupMakeServer(mainWindow) {
                     const states = JSON.parse(localStorage[route + '.states']);
                     let html = localStorage[route + '.page'];
 
-                    let actionsJS = plb + 'window.builtComponents=' + builtComponents + ';\nfunction metaElem(selector) { let e = document.querySelector(selector); return { value: e.value, selector }; }';
+                    let actionsJS = plb + 'window.states=' + JSON.stringify(states) + ';window.builtComponents=' + builtComponents + ';\nfunction metaElem(selector) { let e = document.querySelector(selector); return { value: e.value, selector }; }';
                     for (let action in actions) {
                         if (action.length == 0) continue;
                         if (!actions[action].code) continue;

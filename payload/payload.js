@@ -261,8 +261,8 @@ class UserBuiltComponent extends HTMLElement {
             let componentInfo = window.builtComponents[this.componentName];
             this.innerHTML = componentInfo.html;
             let i = 0;
-            console.log(this);
             this.querySelectorAll('*').forEach(e=>e.classList.remove('outline'));
+            console.log(componentInfo.attributes);
             for (let attr of componentInfo.attributes) {
                 [...this.querySelectorAll(`[attributeslot-${attr}]`)].forEach(e=>{
                     let property = e.getAttribute(`attributeslot-${attr}`);

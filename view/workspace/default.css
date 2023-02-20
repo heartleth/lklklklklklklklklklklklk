@@ -64,9 +64,9 @@ input.natural, textarea.natural {
     border: none !important;
     padding: 0px;
     resize: none;
+    user-select: none !important;
 }
 
 button:hover {
     user-select: none !important;
-    
 }

@@ -211,6 +211,18 @@ class ElementComponent {
         }
         
         let depstates = [];
+        for (let att of this.elem.attributes) {
+            if (att.name.startsWith('attr')) {
+                this.elem.removeAttribute(att.name);
+            }
+        }
+        if (edt) {
+            for (let att of edt.attributes) {
+                if (att.name.startsWith('attr')) {
+                    edt.removeAttribute(att.name);
+                }
+            }
+        }
         for (let [property, ref] of this.updates) {
             if (ref[0] == '@') {
                 let refinfo = ref.substring(1).split('/');

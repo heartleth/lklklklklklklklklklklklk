@@ -34,31 +34,48 @@ const inputTypes = [
     'date'
 ];
 
-function inputMenu(ws) {
+function inputMenu(ws, edt) {
+    let tok = Math.floor(1000 * Math.random());
     let bt = new ElementComponent('textarea', [
-        [':id', '@#inputId/val'],
-        [':class', '@#inputClass/val'],
-        ['#height', '@#inputH/cells'],
-        [':cols', '@#inputH/val'],
-        ['#width', '@#inputW/cells'],
-        [':placeholder', '@#inputPlaceholder/val'],
-        [':type', '@#inputType/value'],
-        ['value', '@#inputDefaultValue/val'],
-        [':boxStyle', '@#inputStyle/val']
+        [':id', '@#b' + tok + 'Id/val'],
+        [':class', '@#b' + tok + 'Class/val'],
+        ['#height', '@#b' + tok + 'H/cells'],
+        [':cols', '@#b' + tok + 'H/val'],
+        ['#width', '@#b' + tok + 'W/cells'],
+        [':placeholder', '@#b' + tok + 'Placeholder/val'],
+        // [':type', '@#b' + tok + 'Type/value'],
+        ['#backgroundColor', '@#b' + tok + 'Color/val'],
+        ['value', '@#b' + tok + 'DefaultValue/val'],
+        [':boxStyle', '@#b' + tok + 'Style/val']
     ]);
     let uiedit = make('ui-edit').elem;
-    uiedit.name = 'input';
-    uiedit.content = [
-        make('select').set('fname', ['Type', 0]).opts(inputTypes).elem,
-        make('value-input').set('fname', ['Placeholder', 0]).set('onlyText', true).elem,
-        make('value-input').set('fname', ['DefaultValue', 0, 'Default Value']).elem,
-        make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 5).elem,
-        make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', 1).elem,
-        make('checkbox-options').set('fname', ['Style', 1, 'Box Style']).set('options', boxStyleOptions).elem,
-        make('value-input').set('fname', ['Id', 2, 'ID']).set('onlyText', true).elem,
-        make('value-input').set('fname', ['Class', 2]).set('onlyText', true).elem
-    ];
-    let ac = addc(uiedit.addc(), [bt]);
+    uiedit.name = 'b' + tok;
+    if (edt) {
+        uiedit.content = [
+            make('value-input').set('fname', ['Placeholder', 0]).set('onlyText', true).set('defaultText', edt.getAttribute('placeholder')).elem,
+            make('value-input').set('fname', ['DefaultValue', 0, 'Default Value']).set('defaultText', edt.value).elem,
+            make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', Math.round(lpx(edt.style.width) / cellSpacing)).elem,
+            make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', Math.round(lpx(edt.style.height) / cellSpacing)).elem,
+            make('value-input').set('fname', ['Color', 1]).set('defaultText', edt.style.backgroundColor).elem,
+            make('checkbox-options').set('fname', ['Style', 1, 'Box Style']).set('optdf', edt.getAttribute('boxStyle')).set('options', boxStyleOptions).elem,
+            make('value-input').set('fname', ['Id', 2, 'ID']).set('onlyText', true).set('defaultText', edt.id).elem,
+            make('value-input').set('fname', ['Class', 2]).set('onlyText', true).set('defaultText', edt.getAttribute('class').replace('natural', '')).elem
+        ];
+    }
+    else {
+        uiedit.content = [
+            // make('select').set('fname', ['Type', 0]).opts(inputTypes).elem,
+            make('value-input').set('fname', ['Placeholder', 0]).set('onlyText', true).elem,
+            make('value-input').set('fname', ['DefaultValue', 0, 'Default Value']).elem,
+            make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 5).elem,
+            make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', 1).elem,
+            make('value-input').set('fname', ['Color', 1]).set('defaultText', 'white').elem,
+            make('checkbox-options').set('fname', ['Style', 1, 'Box Style']).set('options', boxStyleOptions).elem,
+            make('value-input').set('fname', ['Id', 2, 'ID']).set('onlyText', true).elem,
+            make('value-input').set('fname', ['Class', 2]).set('onlyText', true).elem
+        ];
+    }
+    let ac = addc(uiedit.addc(), [bt], edt);
     uiedit.then = ac;
     addChilds(ws, [wstitle('Text Field'), ac, uiedit]);
     ac.updateref();
