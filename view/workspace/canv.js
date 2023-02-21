@@ -86,15 +86,14 @@ function drawResizes(canvas, ctx) {
 function drawResizeOne(div, ctx, canvasRect) {
     if (div.classList.contains('dummy')) return;
     if (div.tagName == 'BR') return;
-    
     const divRect = div.getBoundingClientRect();
     ctx.lineWidth = 2.5;
     ctx.strokeStyle = 'rgba(50, 50, 255, 0.5)';
     ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top, divRect.width, divRect.height);
+    ctx.font = '12px Consolas';
     let tw = 0;
     if (div.id.length) {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-        ctx.font = '12px Consolas';
         ctx.fillText('#' + div.id, divRect.left - canvasRect.left, divRect.top - canvasRect.top-15 + 12);
         tw = ctx.measureText('#' + div.id).width + 2;
         ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top-15, tw, 15);
@@ -107,15 +106,19 @@ function drawResizeOne(div, ctx, canvasRect) {
     })) {
         return;
     }
-    ctx.fillStyle = 'rgba(100, 145, 255)'
-    ctx.fillRect(divRect.left + tw - canvasRect.left, divRect.top - canvasRect.top-15, 15, 15);
-    ctx.strokeStyle = 'white'
-    ctx.beginPath();
-    ctx.moveTo(divRect.left + tw - canvasRect.left + 7.5, divRect.top - canvasRect.top-15 + 3);
-    ctx.lineTo(divRect.left + tw - canvasRect.left + 7.5, divRect.top - canvasRect.top-15 + 12);
-    ctx.moveTo(divRect.left + tw - canvasRect.left + 3, divRect.top - canvasRect.top-15 + 7.5);
-    ctx.lineTo(divRect.left + tw - canvasRect.left + 12, divRect.top - canvasRect.top-15 + 7.5);
-    ctx.stroke();
+    ctx.fillStyle = 'rgba(100, 145, 255)';
+    ctx.fillRect(divRect.left + tw - canvasRect.left, divRect.top - canvasRect.top-15, 33, 15);
+    ctx.fillRect(divRect.left + tw - canvasRect.left + 35, divRect.top - canvasRect.top-15, 33, 15);
+    ctx.font = '13px Consolas';
+    ctx.fillStyle = 'white';
+    ctx.fillText('edit', divRect.left + tw - canvasRect.left + 2, divRect.top - canvasRect.top - 3);
+    ctx.fillText('code', divRect.left + tw - canvasRect.left + 35, divRect.top - canvasRect.top - 3);
+    // ctx.beginPath();
+    // ctx.moveTo(divRect.left + tw - canvasRect.left + 7.5, divRect.top - canvasRect.top-15 + 3);
+    // ctx.lineTo(divRect.left + tw - canvasRect.left + 7.5, divRect.top - canvasRect.top-15 + 12);
+    // ctx.moveTo(divRect.left + tw - canvasRect.left + 3, divRect.top - canvasRect.top-15 + 7.5);
+    // ctx.lineTo(divRect.left + tw - canvasRect.left + 12, divRect.top - canvasRect.top-15 + 7.5);
+    // ctx.stroke();
     const tl = [divRect.left - canvasRect.left - 4, divRect.top - canvasRect.top - 4];
     
     const wh = [8, 8]
@@ -189,7 +192,13 @@ window.addEventListener('mousedown', (e) => {
                 {
                     left: divRect.left + tw - canvasRect.left,
                     top: divRect.top - canvasRect.top - 15,
-                    right: divRect.left + tw - canvasRect.left + 15,
+                    right: divRect.left + tw - canvasRect.left + 33,
+                    bottom: divRect.top - canvasRect.top
+                },
+                {
+                    left: divRect.left + tw - canvasRect.left + 35,
+                    top: divRect.top - canvasRect.top - 15,
+                    right: divRect.left + tw - canvasRect.left + 68,
                     bottom: divRect.top - canvasRect.top
                 }
             ];
@@ -224,6 +233,12 @@ window.addEventListener('mousedown', (e) => {
                 else if (div.tagName == 'TEXTAREA') {
                     openMenu('text field', undefined, div);
                 }
+            }
+            else if (isInRect(mx - canvasRect.left, my - canvasRect.top, rects[5])) {
+                if (!div.id) {
+                    div.id = 'e' + Math.floor(Math.random() * 99);
+                }
+                window.ojf = { element: div };
             }
 
             // if (isInRect(mx - canvasRect.left, my - canvasRect.top, {

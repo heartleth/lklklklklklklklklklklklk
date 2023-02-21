@@ -157,6 +157,37 @@ class FunctionEditWindow extends HTMLElement {
         this.init();
     }
     
+    elemToBlock(elem) {
+        let findas = make('function-edit-block')
+            .html(parseBlock(blockmap.Find.html))
+            .addClass(blockmap.Find.category)
+            .set('name', 'Find')
+            .set('params', [{ name: 'HasId', params: [elem.element.id] }, elem.element.id]).elem;
+        this.appendChild(findas);
+        findas.name = 'Find';
+        if (this.start.down) {
+            this.start.down.up = findas;
+            findas.down = this.start.down;
+            this.start.down = findas;
+            findas.up = this.start;
+        }
+        else {
+            this.start.down = findas;
+            findas.up = this.start;
+        }
+        this.start.render([], 1);
+
+        let lcl = make('function-edit-block')
+            .html(parseBlock(blockmap.Local.html))
+            .addClass(blockmap.Local.category)
+            .addClass('args')
+            .set('name', 'Local')
+            .set('params', [elem.element.id]).elem;
+        this.appendChild(lcl);
+        lcl.offset = [-5, -5];
+        this.movingElement = lcl;
+    }
+    
     init() {
         this.actionName = this.getAttribute('actionName');
         if (this.actionName) {
@@ -308,7 +339,7 @@ class FunctionEditWindow extends HTMLElement {
                 else {
                     let px = e.clientX + me.offset[0] + 9;
                     let py = e.clientY + me.offset[1] + 22;
-                    me.style.left = Math.min(Math.max(9, px - boxRect.left), this.clientWidth-80-me.clientWidth) + 'px';
+                    me.style.left = Math.min(Math.max(9, px - boxRect.left), this.clientWidth-10-me.clientWidth) + 'px';
                     me.style.top =  Math.min(Math.max(22, py - boxRect.top), this.clientHeight-80-me.clientHeight) + 'px';
                     let mx = me.getBoundingClientRect().left;
                     let my = me.getBoundingClientRect().top;
@@ -364,7 +395,7 @@ class FunctionEditWindow extends HTMLElement {
             else {
                 let px = e.clientX + me.offset[0] + 9;
                 let py = e.clientY + me.offset[1] + 22;
-                me.style.left = Math.min(Math.max(9, px - boxRect.left), this.clientWidth-80-me.clientWidth) + 'px';
+                me.style.left = Math.min(Math.max(9, px - boxRect.left), this.clientWidth-10-me.clientWidth) + 'px';
                 me.style.top =  Math.min(Math.max(22, py - boxRect.top), this.clientHeight-80-me.clientHeight) + 'px';
                 for (let c of me.children) {
                     if (c.tagName == 'SMALL-VALUE') {
@@ -706,7 +737,9 @@ class FunctionEditBlock extends HTMLElement {
             ret[0].child = this.child.makeCode();
         }
         if (this.down) {
-            ret = ret.concat(this.down.makeCode());
+            if (this.down != this) {
+                ret = ret.concat(this.down.makeCode());
+            }
         }
         return ret;
     }

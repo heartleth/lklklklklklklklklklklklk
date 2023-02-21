@@ -276,6 +276,17 @@ window.addEventListener('mousemove', (e)=>{
             element.style.height = lpx(original.height) + distY + 'px';
         }
     }
+    else if (this.ojf) {
+        let menus = document.getElementById('menus');
+        for (let menu of menus.children) {
+            if (menu.getAttribute('name') == 'edit functor') {
+                if (isInRect(...recc, menu.children[1].getClientRects()[0])) {
+                    menu.children[1].children[0].elemToBlock(this.ojf);
+                    this.ojf = false;
+                }
+            }
+        }
+    }
     return false;
 });
 
@@ -307,6 +318,7 @@ window.addEventListener('mouseup', (e) => {
     this.isClicked = false;
     this.resizing = false;
     this.isOut = false;
+    this.ojf = false;
     return false;
 });
 

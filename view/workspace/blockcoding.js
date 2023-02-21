@@ -96,27 +96,39 @@ let blockmap = {
     'Hide': {
         html: 'Hide ?T',
         category: 'ui',
-        exec: ((stc, local, v) => {
-            if (window.locals[local][v][0].classList) {
-                window.locals[local][v].forEach(e=>e.classList.add('hide'));
+        exec: ((stc, local, vt) => {
+            if (vt === undefined || vt === null) return;
+            let v = vt.substring ? window.locals[local][vt] : getValue(vt, local);
+            if (v[0]) {
+                if (v[0].classList) {
+                    v.forEach(e=>e.classList.add('hide'));
+                }
             }
         })
     },
     'Show': {
         html: 'Show ?T',
         category: 'ui',
-        exec: ((stc, local, v) => {
-            if (window.locals[local][v][0].classList) {
-                window.locals[local][v].forEach(e=>e.classList.remove('hide'));
+        exec: ((stc, local, vt) => {
+            if (vt === undefined || vt === null) return;
+            let v = vt.substring ? window.locals[local][vt] : getValue(vt, local);
+            if (v[0]) {
+                if (v[0].classList) {
+                    v.forEach(e=>e.classList.remove('hide'));
+                }
             }
         })
     },
     'AppendHTML': {
         html: 'Append Element ?T to ?T',
         category: 'ui',
-        exec: ((stc, local, html, v) => {
-            if (window.locals[local][v][0].classList) {
-                window.locals[local][v].forEach(e=>e.appendChild(getValue(html, local)));
+        exec: ((stc, local, html, vt) => {
+            if (vt === undefined || vt === null) return;
+            let v = vt.substring ? window.locals[local][vt] : getValue(vt, local);
+            if (v[0]) {
+                if (v[0].classList) {
+                    v.forEach(e=>e.appendChild(getValue(html, local)));
+                }
             }
         })
     },
