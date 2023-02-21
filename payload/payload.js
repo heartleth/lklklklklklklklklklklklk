@@ -1,7 +1,6 @@
 window.locals = {};
 let blockmap = {
     'return': {
-        html: '= ?T',
         category: 'value',
         exec: ((stc, local, v) => {
             window.locals[local]._returnValue = getValue(v, local);
@@ -9,40 +8,33 @@ let blockmap = {
         })
     },
     'JavaScript': {
-        html: 'JavaScript ?T',
         category: 'code',
         exec: ((stc, local, code) => eval(getValue(code, local)))
     },
     'ConsoleLog': {
-        html: 'console log ?T',
         category: 'code',
         exec: ((stc, local, code) => console.log(getValue(code, local)))
     },
     'Alert': {
-        html: 'Alert ?T',
         category: 'ui',
         exec: ((stc, local, text) => {
             alert(getValue(text, local));
         })
     },
     'Href': {
-        html: 'Open Page ?L',
         category: 'ui',
         exec: ((stc, local, text) => {
             location.href = getValue(text, local);
         })
     },
     'HasId': {
-        html: 'Id:?T',
         category: 'ui',
         isArgs: true,
-        exp: (e) => `#${e}`,
         exec: ((stc, local, e) => {
             return '#' + getValue(e, local);
         })
     },
     'ValueOf': {
-        html: 'Input value:?T',
         category: 'ui',
         isArgs: true,
         exec: ((stc, local, v) => {
@@ -50,28 +42,30 @@ let blockmap = {
         })
     },
     'State': {
-        html: 'State:%',
         category: 'value',
         isArgs: true,
-        exp: (e) => `#${e}`,
         exec: ((stc, local, s) => {
             return window.states[s];
         })
     },
-    'Local': {
-        html: 'Local:?T',
+    'Attr': {
+        html: 'Attr:?T',
         category: 'value',
         isArgs: true,
-        exp: (e) => `#${e}`,
+        exec: ((stc, local, s) => {
+            return JSON.parse(window.locals[local].elementThis.getAttribute('attrs'))[s];
+        })
+    },
+    'Local': {
+        category: 'value',
+        isArgs: true,
         exec: ((stc, local, s) => {
             return window.locals[local][s];
         })
     },
     'PlusMinus': {
-        html: '?T ?{+,-,*,/,mod} ?T',
         category: 'value',
         isArgs: true,
-        exp: (e) => `#${e}`,
         exec: ((stc, local, ta, op, tb) => {
             console.log(ta);
             console.log(tb);
@@ -204,6 +198,9 @@ let blockmap = {
             category: 'ssa',
             exec: (async (stc, local) => {
                 let body = {};
+                if (window.locals[local].elementThis.getAttribute('attrs')) {
+                    body['#Attrs'] = window.locals[local].elementThis.getAttribute('attrs');
+                }
                 for (const t of ssa.ses) {
                     if (t[0] == '#State') {
                         body['#State:' + t[1]] = window.states[t[1]];
@@ -262,7 +259,16 @@ class UserBuiltComponent extends HTMLElement {
             this.innerHTML = componentInfo.html;
             let i = 0;
             this.querySelectorAll('*').forEach(e=>e.classList.remove('outline'));
-            console.log(componentInfo.attributes);
+            let ta = {};
+            for (let attr of componentInfo.attributes) {
+                ta[attr] = this.attrs[i];
+                i += 1;
+            }
+            let sattrs = JSON.stringify(ta);
+            this.querySelectorAll('*').forEach(e => {
+                e.setAttribute('attrs', sattrs);
+            });
+            i = 0;
             for (let attr of componentInfo.attributes) {
                 [...this.querySelectorAll(`[attributeslot-${attr}]`)].forEach(e=>{
                     let property = e.getAttribute(`attributeslot-${attr}`);
@@ -284,10 +290,10 @@ class UserBuiltComponent extends HTMLElement {
 
 window.customElements.define('user-built-component', UserBuiltComponent);
 
-function callfunctionwithus(c) {
+function callfunctionwithus(c, elementThis) {
     let stc = [];
     let local = (Math.random() + 1).toString(36).substring(7);
-    window.locals[local] = {};
+    window.locals[local] = { elementThis };
     actfunctioncode(stc, local, window.actions[c].code);
     updateState(stc);
 }

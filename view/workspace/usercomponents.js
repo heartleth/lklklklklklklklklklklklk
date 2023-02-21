@@ -8,7 +8,10 @@ class UserBuiltComponent extends HTMLElement {
             if (componentInfo) {
                 this.innerHTML = componentInfo.html;
                 let i = 0;
-                this.querySelectorAll('*').forEach(e=>e.classList.remove('outline'));
+                let sattrs = JSON.stringify(this.attrs);
+                this.querySelectorAll('*').forEach(e => {
+                    e.setAttribute('attrs', sattrs);
+                });
                 for (let attr of componentInfo.attributes) {
                     [...this.querySelectorAll(`[attributeslot-${attr}]`)].forEach(e=>{
                         let property = e.getAttribute(`attributeslot-${attr}`);

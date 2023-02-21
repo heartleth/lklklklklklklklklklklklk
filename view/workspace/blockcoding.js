@@ -56,6 +56,14 @@ let blockmap = {
             return window.states[s];
         })
     },
+    'Attr': {
+        html: 'Attr:?T',
+        category: 'value',
+        isArgs: true,
+        exec: ((stc, local, s) => {
+            return JSON.parse(window.locals[local].elementThis.getAttribute('attrs'))[s];
+        })
+    },
     'Local': {
         html: 'Local:?T',
         category: 'value',

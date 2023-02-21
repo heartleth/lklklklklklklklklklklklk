@@ -69,16 +69,16 @@ class ActionInput extends HTMLElement {
     }
 
     get functor() {
-        return `callfunctionwithus('${this.actionNameInput.value}')`;
+        return `callfunctionwithus('${this.actionNameInput.value}', this)`;
     }
 }
 
-function callfunctionwithus(c, e) {
+function callfunctionwithus(c, elementThis) {
     if (!window.actions[c]) return;
     let stc = [];
     let bp = getPage();
     let local = (Math.random() + 1).toString(36).substring(7);
-    window.locals[local] = {};
+    window.locals[local] = { elementThis };
     actfunctioncode(stc, local, window.actions[c].code);
     let ap = getPage();
     if (bp == ap) {

@@ -42,11 +42,20 @@ let blockmap = {
             return cas.locals[e];
         }
     },
+    'Attr': {
+        category: 'value',
+        isArgs: true,
+        exec: ((cas, s) => {
+            return cas.attrs[s];
+        })
+    },
     'PlusMinus': {
         category: 'value',
         exec: async (cas, ta, op, tb) => {
-            const a = parseFloat(await getValue(ta, cas));
-            const b = parseFloat(await getValue(tb, cas));
+            const ga = await getValue(ta, cas);
+            const gb = await getValue(tb, cas);
+            const a = parseFloat(ga);
+            const b = parseFloat(gb);
             if (op == '+') return a + b;
             if (op == '-') return a - b;
             if (op == '*') return a * b;
@@ -180,6 +189,7 @@ let db = undefined;
 
 function getActionType(name) {
     if (name.startsWith('INSERTINTO')) return 'db';
+    if (name.startsWith('UPID')) return 'db';
     if (blockmap[name]) return blockmap[name].category;
 }
 
@@ -215,7 +225,7 @@ function compileAction(actionName, actions) {
 
 async function getValue(v, cas) {
     if (db === undefined) return;
-    if (!v) return;
+    if (v === undefined || v === null) return;
     if (!v.substring && v.name) {
         if (v.name.startsWith('SELECTFROM')) {
             const table = v.name.substring(10);
@@ -228,9 +238,7 @@ async function getValue(v, cas) {
             }));
         }
         else if (v.name.startsWith('GETCOL')) {
-            console.log(v);
             let obj = await getValue(v.params[1], cas);
-            console.log(obj, await getValue(v.params[0], cas));
             return await obj[v.params[0]];
         }
         else if (v.name.startsWith('SFID')) {
@@ -261,16 +269,20 @@ async function execAction(code, sentInputs, tables) {
     let elements = {};
     let states = {};
     let locals = {};
+    let attrs = {};
     for (let v in sentInputs) {
         if (v.startsWith('#State:')) {
             states[v.substring(7)] = sentInputs[v];
         }
+        else if (v.startsWith('#Attrs')) {
+            console.log(sentInputs[v]);
+            attrs = JSON.parse(sentInputs[v])
+        }
         else if (v.startsWith('#Elements:')) {
             elements[v.substring(10)] = sentInputs[v];
-            console.log(v.substring(10), sentInputs[v]);
         }
     }
-    let cas = { states, locals, clientActs, tables, elements };
+    let cas = { states, locals, clientActs, tables, elements, attrs };
     await runActionSequence(code, cas);
     return cas;
 }

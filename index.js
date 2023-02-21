@@ -161,7 +161,7 @@ function isServerAction(actions) {
     for (let action of actions) {
         if (!action) continue;
         if (action.substring) continue;
-        if (action.name.startsWith('INSERTINTO') || action.name.startsWith('SELECTFROM')) {
+        if (action.name.startsWith('INSERTINTO') || action.name.startsWith('SELECTFROM') || action.name.startsWith('UPID') || action.name.startsWith('SFID')) {
             return true;
         }
         if (action.params) {
