@@ -11,7 +11,6 @@ function buttonMenu(ws, edt) {
             [':class', '@#b' + tok + 'Class/val'],
             [':id', '@#b' + tok + 'Id/val'],
             [':boxStyle', '@#b' + tok + 'Style/val']
-            [':boxStyle', '@#' + tok + 'Style/val']
         ]);
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;

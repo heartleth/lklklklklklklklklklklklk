@@ -402,14 +402,14 @@ function elementPropertySet(edt) {
         return [
             make('value-input').set('fname', ['Id', 2, 'ID']).set('defaultText', edt.id).set('onlyText', true).elem,
             make('value-input').set('fname', ['Class', 2]).set('defaultText', edt.getAttribute('class').replace('natural', '')).set('onlyText', true).elem,
-            make('action-input').set('fname', ['OnLoad', 2, 'Load Action']).set('actionName', undefined).elem,
+            make('action-input').set('fname', ['OnLoad', 2, 'Load Action']).elem,
         ];
     }
     else {
         return [
             make('value-input').set('fname', ['Id', 2, 'ID']).set('defaultText', '').set('onlyText', true).elem,
             make('value-input').set('fname', ['Class', 2]).set('defaultText', '').set('onlyText', true).elem,
-            make('action-input').set('fname', ['OnLoad', 2, 'Load Action']).set('actionName', undefined).elem,
+            make('action-input').set('fname', ['OnLoad', 2, 'Load Action']).elem,
         ]
     }
 }

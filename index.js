@@ -142,7 +142,7 @@ app.whenReady().then(async () => {
                 res.send(JSON.stringify({ builtComponents, actions, states, tables, serverSidePostActions }));
             });
             expressApp.get(route, (req, res) => {
-                res.setHeader('Content-Type', 'text/html; charset=utf-8').send('<meta name="viewport" content="width=device-width, initial-scale=1.0">' + html + '<script src="/payload.js"></script><link rel="stylesheet" href="default.css">');
+                res.setHeader('Content-Type', 'text/html; charset=utf-8').send('<meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="/payload.js"></script><link rel="stylesheet" href="default.css">' + html);
             });
         }
         listening = expressApp.listen(port);

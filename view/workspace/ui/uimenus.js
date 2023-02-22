@@ -47,6 +47,7 @@ function inputMenu(ws, edt) {
         ['#backgroundColor', '@#b' + tok + 'Color/val'],
         ['value', '@#b' + tok + 'DefaultValue/val'],
         [':boxStyle', '@#b' + tok + 'Style/val']
+        [':onload', '@#b' + tok + 'OnLoad/functor'],
     ]);
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;

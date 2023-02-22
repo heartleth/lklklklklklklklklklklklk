@@ -69,7 +69,7 @@ class ActionInput extends HTMLElement {
     }
 
     get functor() {
-        return `callfunctionwithus('${this.actionNameInput.value}', this)`;
+        return `callfunctionwithus('${this.actionNameInput.value}', this);`;
     }
 }
 

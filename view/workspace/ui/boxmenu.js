@@ -16,6 +16,7 @@ function boxmenu(ws, edt) {
             ['#minWidth', '@#b' + tok + 'W/cells'],
             ['#width', 'fit-content'],
             [':id', '@#b' + tok + 'Id/val'],
+            [':onload', '@#b' + tok + 'OnLoad/functor'],
             [':boxStyle', '@#b' + tok + 'Style/val']
         ]);
         let uiedit = make('ui-edit').elem;
@@ -39,6 +40,7 @@ function boxmenu(ws, edt) {
             ['#minWidth', '@#b' + tok + 'W/cells'],
             ['#width', 'fit-content'],
             [':id', '@#b' + tok + 'Id/val'],
+            [':onload', '@#b' + tok + 'OnLoad/functor'],
             [':boxStyle', '@#b' + tok + 'Style/val']
         ]);
         let uiedit = make('ui-edit').elem;

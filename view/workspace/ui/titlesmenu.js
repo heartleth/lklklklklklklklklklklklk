@@ -2,6 +2,7 @@ function titlesmenu(ws, edt) {
     let tok = Math.floor(1000 * Math.random());
     if (edt) {
         let t = new ElementComponent('h' + edt.tagName[1], [
+            [':onload', '@#b' + tok + 'OnLoad/functor'],
             ['innerHTML', '@#b' + tok + 'Text/val']
         ]);
         let uiedit = make('ui-edit').elem;
@@ -16,10 +17,11 @@ function titlesmenu(ws, edt) {
         return;
     }
     let t = new ElementComponent('@#titleLevel/value', [
-        ['innerHTML', '@#titleText/val']
+        [':onload', '@#b' + tok + 'OnLoad/functor'],
+        ['innerHTML', '@#b' + tok + 'Text/val']
     ]);
     let uiedit = make('ui-edit').elem;
-    uiedit.name = 'title';
+    uiedit.name = 'b' + tok;
     uiedit.content = elementPropertySet().concat([
         make('value-input').set('fname', ['Text', 0]).set('defaultText', 'Title').elem,
         make('select').set('fname', ['Level', 1, 'Title Size']).opts(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']).elem,
@@ -40,6 +42,7 @@ function paragraphMenu(ws, edt) {
             ['#minWidth', '@#b' + tok + 'W/cells'],
             ['#width', 'fit-content'],
             [':id', '@#b' + tok + 'Id/val'],
+            [':onload', '@#b' + tok + 'OnLoad/functor'],
         ]);
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
@@ -61,6 +64,7 @@ function paragraphMenu(ws, edt) {
             ['#minWidth', '@#b' + tok + 'W/cells'],
             ['#width', 'fit-content'],
             [':id', '@#b' + tok + 'Id/val'],
+            [':onload', '@#b' + tok + 'OnLoad/functor'],
         ]);
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
