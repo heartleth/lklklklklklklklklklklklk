@@ -23,7 +23,6 @@ function createMenu(ws, name, n, edt) {
         functoreditmenu(ws, n);
     }
     else if (name == 'text field') {
-        // uiMenus('input text', ws);
         inputMenu(ws, edt);
     }
     else if (name == 'library') {
@@ -34,6 +33,21 @@ function createMenu(ws, name, n, edt) {
     }
     else if (name == 'database') {
         databaseMenu(ws);
+    }
+    else if (name == "paragraph") {
+        paragraphMenu(ws, edt);
+    }
+    else if (name == "form") {
+        formMenu(ws, edt);
+    }
+    else if (name == "image") {
+        imageMenu(ws, edt);
+    }
+    else if (name == "list") {
+        listMenu(ws, edt);
+    }
+    else if (name == "iframe") {
+        iframeMenu(ws, edt);
     }
 }
 
@@ -382,3 +396,20 @@ class UIEdit extends HTMLElement {
     }
 }
 window.customElements.define('ui-edit', UIEdit);
+
+function elementPropertySet(edt) {
+    if (edt) {
+        return [
+            make('value-input').set('fname', ['Id', 2, 'ID']).set('defaultText', edt.id).set('onlyText', true).elem,
+            make('value-input').set('fname', ['Class', 2]).set('defaultText', edt.getAttribute('class').replace('natural', '')).set('onlyText', true).elem,
+            make('action-input').set('fname', ['OnLoad', 2, 'Load Action']).set('actionName', undefined).elem,
+        ];
+    }
+    else {
+        return [
+            make('value-input').set('fname', ['Id', 2, 'ID']).set('defaultText', '').set('onlyText', true).elem,
+            make('value-input').set('fname', ['Class', 2]).set('defaultText', '').set('onlyText', true).elem,
+            make('action-input').set('fname', ['OnLoad', 2, 'Load Action']).set('actionName', undefined).elem,
+        ]
+    }
+}
