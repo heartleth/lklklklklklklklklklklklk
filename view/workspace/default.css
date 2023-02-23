@@ -70,3 +70,7 @@ input.natural, textarea.natural {
 button:hover {
     user-select: none !important;
 }
+
+p {
+    display: block;
+}
