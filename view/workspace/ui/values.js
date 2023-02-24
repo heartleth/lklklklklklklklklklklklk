@@ -1,4 +1,5 @@
 window.states = {};
+window.imageHist = [];
 
 class ValueInput extends HTMLElement {
     connectedCallback() {
@@ -21,7 +22,7 @@ class ValueInput extends HTMLElement {
     render() {
         this.innerHTML = '';
         let modeSelect = null;
-        if (!this.onlyState && !this.onlyText) {
+        if (!this.onlyState && !this.onlyText && (this.mode != 'Image')) {
             modeSelect = make('select').opts(['Text', 'State', 'Attr']).elem;
             modeSelect.addEventListener('change', v => {
                 this.mode = modeSelect.value;
@@ -30,7 +31,67 @@ class ValueInput extends HTMLElement {
             this.appendChild(modeSelect);
         }
         
-        if (this.mode == 'Text') {
+        if (this.mode == 'Image') {
+            let t2 = 'b' + Math.floor(1000 * Math.random());
+            // let lbl = make('div').html('Select image').attr('for', t2).elem;
+            let lbl = make('div').html('Select image').elem;
+            let histImages = make('select').attr('type', 'select').opts(window.imageHist).elem;
+            let ipt = make('input').attr('type', 'hidden').attr('name', t2).elem;
+            let fpp = make('p').elem;
+            histImages.style.display = 'block';
+            histImages.style.width = 'calc(100% - 10px)';
+            histImages.style.margin = '4px';
+            this.appendChild(lbl);
+            this.appendChild(histImages);
+            this.appendChild(ipt);
+            this.appendChild(fpp);
+            this.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+            this.addEventListener('drop', (e) => {
+                e.preventDefault();
+                console.log('File(s) dropped');
+                if (e.dataTransfer.items) {
+                    [...e.dataTransfer.items].forEach((item, i) => {
+                        if (item.kind === 'file') {
+                            const file = item.getAsFile();
+                            if (/(png|jpe?g|webp|gif|svg)$/.test(file.name)) {
+                                ipt.value = fpp.innerText = file.path;
+                            }
+                        }
+                    });
+                }
+                else {
+                    [...e.dataTransfer.files].forEach((file, i) => {
+                        if (/(png|jpe?g|webp|gif|svg)$/.test(file.name)) {
+                            ipt.value = fpp.innerText = file.path;
+                        }
+                    });
+                }
+            });
+            histImages.addEventListener('change', () => {
+                if (histImages.value) {
+                    ipt.value = fpp.innerText = histImages.value;
+                }
+            });
+            lbl.addEventListener('click', () => {
+                if (require) {
+                    let electron = require('electron');
+                    electron.ipcRenderer.send('SelectImage');
+                    electron.ipcRenderer.once('retf', (e, f) => {
+                        if (f) {
+                            ipt.value = fpp.innerText = f;
+                            if (!window.imageHist.includes(f)) {
+                                Window.imageHist.reverse();
+                                window.imageHist.push(f);
+                                Window.imageHist.reverse();
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        else if (this.mode == 'Text') {
             if (modeSelect) {
                 modeSelect.children[0].selected = 'selected';
                 this.appendChild(make('br').elem);
@@ -125,9 +186,14 @@ class ValueInput extends HTMLElement {
             else if (this.children[0]) {
                 k = this.children[0].value;
             }
-            return [...k.split(',')].map(e => '<li>"' + e + '"</li>')
+            return [...k.split(',')].map(e => '<li>' + e + '</li>').join('');
         }
-        if (this.mode == 'Text') {
+        if (this.mode == 'Image') {
+            if (this.children[2]) {
+                return this.children[2].value || 'https://raw.githubusercontent.com/heartleth/lklklklklklklklklklklklk/main/icon/icon.png';
+            }
+        }
+        else if (this.mode == 'Text') {
             if (this.children[2]) {
                 return this.lengthInput ? this.children[2].val : this.children[2].value;
             }

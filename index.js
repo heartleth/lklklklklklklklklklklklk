@@ -84,14 +84,15 @@ app.whenReady().then(async () => {
 
     ipcMain.on('saveAsFile', (e, localStorage) => {
         if (localStorage.saveFilePath) {
-            fs.writeFileSync(path.join(localStorage.saveFilePath, 'saveFile.json'), JSON.stringify(localStorage));
+            fs.writeFileSync(localStorage.saveFilePath, JSON.stringify(localStorage));
             e.reply('savedPath', false);
         }
         else {
-            dialog.showOpenDialog(win, {properties: [ 'openDirectory' ]}).then(res => {
-                if (res.filePaths.length) {
-                    fs.writeFileSync(path.join(res.filePaths[0], 'saveFile.json'), JSON.stringify(localStorage));
-                    e.reply('savedPath', res.filePaths[0]);
+            dialog.showSaveDialog(win, {filters: [{name:'*.json', extensions:['json']}], defaultPath: 'save.json'}).then(res => {
+                if (res.filePath) {
+                    console.log(res.filePath);
+                    fs.writeFileSync(res.filePath, JSON.stringify(localStorage));
+                    e.reply('savedPath', res.filePath);
                 }
                 else {
                     e.reply('savedPath', false);
@@ -99,7 +100,7 @@ app.whenReady().then(async () => {
             });
         }
     });
-    ipcMain.on('loadFile', (e, localStorage) => {
+    ipcMain.on('loadFile', (e) => {
         dialog.showOpenDialog(win, {properties: [ 'openFile' ]}).then(res => {
             if (res.filePaths.length) {
                 let lc = JSON.parse(fs.readFileSync(res.filePaths[0]).toString());
@@ -147,6 +148,16 @@ app.whenReady().then(async () => {
         }
         listening = expressApp.listen(port);
         shell.openExternal(`http://localhost:${port}/`);
+    });
+    ipcMain.on('SelectImage', (e) => {
+        dialog.showOpenDialog(win, { filters: [{extensions:['png','jpg','gif','jpeg','webp']}] }).then((res) => {
+            if (res.filePaths[0]) {
+                e.reply('retf', res.filePaths[0]);
+            }
+            else {
+                e.reply('retf', 0);
+            }
+        });
     });
 });
 

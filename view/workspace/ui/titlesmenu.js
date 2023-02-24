@@ -111,7 +111,7 @@ function imageMenu(ws, edt) {
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;
     uiedit.content = elementPropertySet().concat([
-        make('value-input').set('fname', ['src', 0, 'url']).set('defaultText', 'https://raw.githubusercontent.com/heartleth/lklklklklklklklklklklklk/main/icon/icon.png').elem,
+        make('value-input').set('fname', ['src', 0, 'url']).set('mode', 'Image').set('defaultText', 'https://raw.githubusercontent.com/heartleth/lklklklklklklklklklklklk/main/icon/icon.png').elem,
         make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 5).elem,
         make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', '').elem
     ]);
@@ -123,7 +123,7 @@ function imageMenu(ws, edt) {
 
 function listMenu(ws, edt) {
     let tok = Math.floor(1000 * Math.random());
-    let t = new ElementComponent(edt.tagName, [
+    let t = new ElementComponent((edt ?? {tagName:'@#b' + tok + 'Level/val'}).tagName, [
         [':id', '@#b' + tok + 'Id/val'],
         [':Class', '@#b' + tok + 'Class/val'],
         ['innerHTML', '@#b' + tok + 'Text/val'],
