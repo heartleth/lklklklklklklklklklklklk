@@ -19,7 +19,6 @@ function titlesmenu(ws, edt) {
         return;
     }
     let t = new ElementComponent('@#titleLevel/value', [
-        [':onload', '@#b' + tok + 'OnLoad/functor'],
         [':id', '@#b' + tok + 'Id/val'],
         [':class', '@#b' + tok + 'Class/val'],
         ['innerHTML', '@#b' + tok + 'Text/val']
@@ -47,11 +46,13 @@ function paragraphMenu(ws, edt) {
             ['#width', 'fit-content'],
             [':id', '@#b' + tok + 'Id/val'],
             [':onload', '@#b' + tok + 'OnLoad/functor'],
+            ['#fontSize', '@#b' + tok + 'FontSize/val']
         ]);
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
         uiedit.content = elementPropertySet().concat([
             make('value-input').set('fname', ['Text', 0]).set('defaultText', edt.innerText).elem,
+            make('value-input').set('fname', ['FontSize', 1, 'Font Size']).set('defaultText', 16).set('lengthInput', true).elem,
             make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', Math.round(lpx(edt.style.minWidth) / cellSpacing)).elem,
             make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', Math.round(lpx(edt.style.minHeight) / cellSpacing)).elem
         ]);
@@ -69,11 +70,13 @@ function paragraphMenu(ws, edt) {
             ['#width', 'fit-content'],
             [':id', '@#b' + tok + 'Id/val'],
             [':onload', '@#b' + tok + 'OnLoad/functor'],
+            ['#fontSize', '@#b' + tok + 'FontSize/val']
         ]);
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
         uiedit.content = elementPropertySet().concat([
             make('value-input').set('fname', ['Text', 0]).set('defaultText', 'SampleText').elem,
+            make('value-input').set('fname', ['FontSize', 1, 'Font Size']).set('defaultText', 16).set('lengthInput', true).elem,
             make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', '5').elem,
             make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', '3').elem
         ]);
@@ -87,43 +90,46 @@ function paragraphMenu(ws, edt) {
 function formMenu(ws, edt) {
     let tok = Math.floor(1000 * Math.random());
     if (edt) {
-        
-    }
-    let t = new ElementComponent('@#titleLevel/value', [
-        [':id', '@#b' + tok + 'Id/functor'],
-        [':Class', '@#b' + tok + 'Class/functor'],
-        [':onload', '@#b' + tok + 'OnLoad/functor'],
-        ['', '@#b' + tok + 'Text/val']
-    ]);
-    let uiedit = make('ui-edit').elem;
-    uiedit.name = 'b' + tok;
-    uiedit.content = elementPropertySet().concat([
-        make('value-input').set('fname', ['Text', 0]).set('defaultText', '<li>item</li>').elem,
-        make('select').set('fname', ['Type', 1]).opts(['password', 'number', 'date', 'email']).elem,
-        make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', '5').elem,
-        make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', '3').elem
-    ]);
-    let ac = addc(uiedit.addc(), [t]);
-    uiedit.then = ac;
-    addChilds(ws, [wstitle('List'), ac, uiedit]);
-    ac.updateref();
-}
-
-function imageMenu(ws, edt) {
-    let tok = Math.floor(1000 * Math.random());
-    if (edt) {
-        
         return;
     }
 }
 
+function imageMenu(ws, edt) {
+    let tok = Math.floor(1000 * Math.random());
+    let t = new ElementComponent('img', [
+        [':id', '@#b' + tok + 'Id/val'],
+        [':src', '@#b' + tok + 'src/val'],
+        [':draggable', 'false'],
+        [':ondragover', 'return false;'],
+        [':Class', '@#b' + tok + 'Class/val'],
+        ['#height', '@#b' + tok + 'H/cells'],
+        ['#width', '@#b' + tok + 'W/cells']
+    ]);
+    if (edt) {
+        return;
+    }
+    let uiedit = make('ui-edit').elem;
+    uiedit.name = 'b' + tok;
+    uiedit.content = elementPropertySet().concat([
+        make('value-input').set('fname', ['src', 0, 'url']).set('defaultText', 'https://raw.githubusercontent.com/heartleth/lklklklklklklklklklklklk/main/icon/icon.png').elem,
+        make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 5).elem,
+        make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', '').elem
+    ]);
+    let ac = addc(uiedit.addc(), [t]);
+    uiedit.then = ac;
+    addChilds(ws, [wstitle('Image'), ac, uiedit]);
+    ac.updateref();
+}
+
 function listMenu(ws, edt) {
     let tok = Math.floor(1000 * Math.random());
+    let t = new ElementComponent(edt.tagName, [
+        [':id', '@#b' + tok + 'Id/val'],
+        [':Class', '@#b' + tok + 'Class/val'],
+        ['innerHTML', '@#b' + tok + 'Text/val'],
+        ['#fontSize', '@#b' + tok + 'FontSize/val']
+    ]);
     if (edt) {
-        let t = new ElementComponent(edt.tagName, [
-            [':onload', '@#b' + tok + 'OnLoad/functor'],
-            ['innerHTML', '@#b' + tok + 'Text/val']
-        ]);
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
         uiedit.content = elementPropertySet().concat([
@@ -135,15 +141,12 @@ function listMenu(ws, edt) {
         ac.updateref();
         return;
     }
-    let t = new ElementComponent('@#titleLevel/value', [
-        [':onload', '@#b' + tok + 'OnLoad/functor'],
-        ['innerHTML', '@#b' + tok + 'Text/val']
-    ]);
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;
     uiedit.content = elementPropertySet().concat([
-        make('value-input').set('fname', ['Text', 0]).set('defaultText', '<li>item</li>').elem,
-        make('select').set('fname', ['Level', 1, 'List type']).opts(['ol', 'ul']).elem,
+        make('value-input').set('fname', ['Text', 0]).set('defaultText', 'Item1,Item2').set('listInput', true).set('onlyText', true).elem,
+        make('value-input').set('fname', ['FontSize', 1, 'Font Size']).set('defaultText', 16).set('lengthInput', true).elem,
+        make('select').set('fname', ['Level', 0, 'List Type']).opts(['ol', 'ul']).elem,
     ]);
     let ac = addc(uiedit.addc(), [t]);
     uiedit.then = ac;

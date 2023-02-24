@@ -208,7 +208,7 @@ drag-menu button:hover {
     margin-top: 4px;
 }
 
-input[type="text"]:not(.natural, .newStateName), textarea:not(.natural, .newStateName) {
+input[type="text"]:not(.natural, .newStateName, .fullStateName), textarea:not(.natural, .newStateName) {
     border: solid 1px black;
     width: calc(100% - 10px);
     border-radius: 8px;

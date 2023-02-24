@@ -71,6 +71,11 @@ button:hover {
     user-select: none !important;
 }
 
-p {
+ol.natural {
+    text-align: left;
+    width: fit-content;
+}
+
+img.natural {
     display: block;
 }

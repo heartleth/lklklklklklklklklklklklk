@@ -12,6 +12,10 @@ class ActionInput extends HTMLElement {
 
     render() {
         this.innerHTML = '';
+        this.appendChild(wse.label('Enabled').elem);
+        this.enabled = make('input').attr('type', 'checkbox').elem;
+        this.appendChild(this.enabled);
+        this.appendChild(wse.br());
         this.actionNameInput = make('select').addClass('fullStateName').elem;
         this.actionNameInput.innerHTML = Object.keys(window.actions).filter(t=>t.length&&t[0]!='_').map(t=>`<option>${t}</option>`).join('');
         this.appendChild(this.actionNameInput);
@@ -69,7 +73,12 @@ class ActionInput extends HTMLElement {
     }
 
     get functor() {
-        return `callfunctionwithus('${this.actionNameInput.value}', this);`;
+        if (this.enabled.checked) {
+            return `callfunctionwithus('${this.actionNameInput.value}', this);`;
+        }
+        else {
+            return '';
+        }
     }
 }
 

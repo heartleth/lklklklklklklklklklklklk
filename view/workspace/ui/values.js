@@ -117,6 +117,16 @@ class ValueInput extends HTMLElement {
     }
     
     get val() {
+        if (this.listInput) {
+            let k = 0;
+            if (this.children[2]) {
+                k = this.children[2].value;
+            }
+            else if (this.children[0]) {
+                k = this.children[0].value;
+            }
+            return [...k.split(',')].map(e => '<li>"' + e + '"</li>')
+        }
         if (this.mode == 'Text') {
             if (this.children[2]) {
                 return this.lengthInput ? this.children[2].val : this.children[2].value;

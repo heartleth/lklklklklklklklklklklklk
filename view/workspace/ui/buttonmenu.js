@@ -10,13 +10,15 @@ function buttonMenu(ws, edt) {
             ['innerHTML', '@#b' + tok + 'Text/val'],
             [':class', '@#b' + tok + 'Class/val'],
             [':id', '@#b' + tok + 'Id/val'],
-            [':boxStyle', '@#b' + tok + 'Style/val']
+            [':boxStyle', '@#b' + tok + 'Style/val'],
+            ['#fontSize', '@#b' + tok + 'FontSize/val']
         ]);
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
         let actionName = edt.getAttribute('onclick').substring(20).split("'")[0]
         uiedit.content = elementPropertySet().concat([
             make('value-input').set('fname', ['Text', 0]).set('defaultText', edt.innerText).elem,
+            make('value-input').set('fname', ['FontSize', 1, 'Font Size']).set('defaultText', 16).set('lengthInput', true).elem,
             make('action-input').set('fname', ['OnClick', 0, 'Click Action']).set('actionName', actionName).elem,
             make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', Math.round(lpx(edt.style.minWidth) / cellSpacing)).elem,
             make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', Math.round(lpx(edt.style.minHeight) / cellSpacing)).elem,
@@ -40,12 +42,14 @@ function buttonMenu(ws, edt) {
         ['innerHTML', '@#b' + tok + 'Text/val'],
         [':class', '@#b' + tok + 'Class/val'],
         [':id', '@#b' + tok + 'Id/val'],
-        [':boxStyle', '@#b' + tok + 'Style/val']
+        [':boxStyle', '@#b' + tok + 'Style/val'],
+        ['#fontSize', '@#b' + tok + 'FontSize/val']
     ]);
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;
     uiedit.content = elementPropertySet().concat([
         make('value-input').set('fname', ['Text', 0]).set('defaultText', 'Click!').elem,
+        make('value-input').set('fname', ['FontSize', 1, 'Font Size']).set('defaultText', 16).set('lengthInput', true).elem,
         make('action-input').set('fname', ['OnClick', 0, 'Click Action']).elem,
         make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 2).elem,
         make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', 1).elem,
