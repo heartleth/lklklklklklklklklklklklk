@@ -892,6 +892,20 @@ class SmallValue extends HTMLElement {
             i.onmousedown = e=>e.stopPropagation();
             this.appendChild(i);
         }
+        else if (this.getAttribute('mode') == 'actions') {
+            this.style.display = 'inline-block';
+            let acts = Object.keys(window.actions);
+            let i = make('select')
+                .addClass('stateName')
+                .html(acts.filter(t=>t.length&&t[0]!='_').map(t=>`<option${t==this.value?' selected="selected"':''}>${t}</option>`).join(''))
+                .elem;
+            i.addEventListener('change', e => {
+                this.dispatchEvent(new Event('change'));
+            });
+            i.onclick = e=>e.stopPropagation();
+            i.onmousedown = e=>e.stopPropagation();
+            this.appendChild(i);
+        }
         else if (this.getAttribute('mode') == 'href') {
             this.style.display = 'inline-block';
             let links = localStorage.getItem('route');
@@ -999,7 +1013,8 @@ window.customElements.define('small-value', SmallValue);
 
 function parseBlock(s) {
     return s
-        .replace(/\?L/g, '<small-value mode="href"></small-value>')
+        .replace(/\?A/g, '<small-value mode="actions"></small-value>')
+        // .replace(/\?L/g, '<small-value mode="href"></small-value>')
         .replace(/\?\{[^}]+\}/g, (s) => `<small-value mode="select" between="${s.substring(2, s.length - 1)}"></small-value>`)
         .replace(/\?T/g, '<small-value mode="string"></small-value>')
         .replace(/\?/g, '<small-value></small-value>')

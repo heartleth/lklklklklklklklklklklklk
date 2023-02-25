@@ -25,7 +25,8 @@ let blockmap = {
         })
     },
     'Href': {
-        html: 'Open Page ?L',
+        // html: 'Open Page ?L',
+        html: 'Open Page ?T',
         category: 'ui',
         exec: ((stc, local, text) => {
             location.href = location.href.split('#')[0] + '#/' + getValue(text, local);
@@ -211,6 +212,13 @@ let blockmap = {
                     child.run(stc, local);
                 }
             }
+        })
+    },
+    'CallAction': {
+        html: 'Action ?A',
+        category: 'code',
+        exec: ((stc, local, action) => {
+            callfunctionwithus(action, window.locals[local].elementThis);
         })
     }
 };

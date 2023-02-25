@@ -170,6 +170,12 @@ let blockmap = {
                     ||((a > b) && operator=='>');
             }
         })
+    },
+    'CallAction': {
+        category: 'code',
+        exec: ((stc, local, action) => {
+            callfunctionwithus(action, window.locals[local].elementThis);
+        })
     }
 };
 
