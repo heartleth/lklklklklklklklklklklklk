@@ -171,7 +171,7 @@ let blockmap = {
             }
         })
     },
-    'CallAction': {
+    'CallAction': { 
         category: 'code',
         exec: ((stc, local, action) => {
             callfunctionwithus(action, window.locals[local].elementThis);

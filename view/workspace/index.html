@@ -95,12 +95,19 @@
             openServer.addEventListener('click', () => {
                 let wsb = document.querySelector('wsbody');
                 wsb.setAttribute('mode', 'Page');
+                let imgs = [];
+                for (let e of wsb.querySelectorAll('src')) {
+                    if (e.getAttribute('src')[1] == ':') {
+                        imgs.push(e.getAttribute('src'));
+                    }
+                }
                 electron.ipcRenderer.send('openExpress',
                     wsb.innerHTML,
                     window.builtComponents,
                     window.actions,
                     window.states,
-                    { ...localStorage }
+                    { ...localStorage },
+                    imgs
                 );
             });
         }
