@@ -26,7 +26,7 @@ let blockmap = {
     },
     'Href': {
         // html: 'Open Page ?L',
-        html: 'Open Page ?T',
+        html: 'Open Page ?L',
         category: 'ui',
         exec: ((stc, local, text) => {
             location.href = location.href.split('#')[0] + '#/' + getValue(text, local);

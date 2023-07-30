@@ -173,8 +173,14 @@ class cec {
         return this;
     }
     set(name, val) {
+        if (val === undefined) {
+            return this;
+        }
         this.elem[name] = val;
         return this;
+    }
+    dtxt(val) {
+        return this.set('defaultText', val);
     }
 }
 
@@ -198,7 +204,7 @@ let wse = {
     br: () => make('br').elem
 }
 
-function addc(refs, template, edt) {
+function addc(refs, template, edt = undefined) {
     return make('add-component').set('refs', refs).set('template', template).set('edt', edt).elem;
 }
 

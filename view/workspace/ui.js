@@ -229,7 +229,13 @@ window.addEventListener('mousemove', (e)=>{
         ctx.strokeStyle = 'rgba(255, 101, 110, 0.9)';
         ctx.strokeRect(...drawOriginal);
         if (direction == 'top') {
-            element.style.minHeight = parseFloat(original.minHeight) - distY + 'px';
+            if (element.tagName != 'IMG') {
+                element.style.minHeight = lpx(original.minHeight) - distY + 'px';
+            }
+            else {
+                element.height = drawOriginal[3] - distY;
+                element.style.height = drawOriginal[3] - distY + 'px';
+            }
             if (isLen(originalStyle.marginBottom)) {
                 // element.style.marginBottom = parseFloat(original.marginBottom) - distY + 'px';
             }
@@ -238,7 +244,12 @@ window.addEventListener('mousemove', (e)=>{
             }
         }
         else if (direction == 'left') {
-            if (!isLen(originalStyle.marginLeft)) {
+            if (element.tagName == 'IMG') {
+                element.style.marginLeft = Math.max(0, lpx(original.marginLeft) + distX) + 'px';
+                element.width = drawOriginal[2] - distX;
+                element.style.width = drawOriginal[2] - distX + 'px';
+            }
+            else if (!isLen(originalStyle.marginLeft)) {
                 element.style.minWidth = lpx(original.minWidth) - distX * 2 + 'px';
             }
             else {
@@ -250,18 +261,26 @@ window.addEventListener('mousemove', (e)=>{
             if (isLen(originalStyle.marginRight)) {
                 element.style.marginRight = Math.max(0, lpx(original.marginRight) - distX) + 'px';
                 element.style.minWidth = '10px';
+                console.log('a');
             }
             else if (!isLen(originalStyle.marginLeft)) {
                 element.style.minWidth = lpx(original.minWidth) + 2 * distX + 'px';
+                console.log('b');
             }
             else {
                 element.style.minWidth = lpx(original.minWidth) + distX + 'px';
+                console.log('c');
             }
         }
         else if (direction == 'right' && element.tagName[0] == 'H' && element.tagName.length == 2) {
-            let ow = Math.round((lpx(original.minWidth) || lpx(original.width)) / cellSpacing) * cellSpacing;
+            let ow = Math.round((lpx(original.minWidth) ?? lpx(original.width)) / cellSpacing) * cellSpacing;
+            element.style.maxWidth = ow + distX + 'px';
             element.style.minWidth = ow + distX + 'px';
             element.style.width = element.style.minWidth;
+        }
+        else if (direction == 'right' && element.tagName == 'IMG') {
+            let ow = Math.round((lpx(original.width)) / cellSpacing) * cellSpacing;
+            element.style.width = ow + distX + 'px';
         }
         else if (direction == 'bottom' && isLen(originalStyle.minHeight)) {
             if (isLen(originalStyle.marginBottom)) {

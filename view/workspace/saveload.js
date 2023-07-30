@@ -1,11 +1,11 @@
 function getPage() {
-    if (location.hash == '') {
-        return '/.';
-    }
-    else if (location.hash[1] != '/') {
-        return ('/' + location.hash.substring(1)).replace(/\/+/g, '/') + '.';
-    }
-    return location.hash.substring(1).replace(/\/+/g, '/') + '.';
+    // if (location.hash == '') {
+    //     return '/.';
+    // }
+    // else if (location.hash[1] != '/') {
+    //     return clearPath(location.hash) + '.';
+    // }
+    return clearPath(location.hash) + '.';
 }
 
 // async function save() {
@@ -20,7 +20,7 @@ function save() {
         localStorage.setItem(page + 'page', document.querySelector('wsbody').innerHTML);
     }
     if (!localStorage.getItem('route')) {
-        localStorage.setItem('route', '/');
+        localStorage.setItem('route', '');
     }
     localStorage.setItem(page + 'components', JSON.stringify(window.builtComponents));
     localStorage.setItem(page + 'actions', JSON.stringify(window.actions));

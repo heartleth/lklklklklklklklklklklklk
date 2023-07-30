@@ -910,13 +910,13 @@ class SmallValue extends HTMLElement {
             this.style.display = 'inline-block';
             let links = localStorage.getItem('route');
             if (links) {
-                links = links.split(',')
+                links = links.split(',');
             }
             else {
                 if (!links || links.length == 0) {
                     localStorage.setItem('route', '/');
                 }
-                links = '/'.split(',')
+                links = '/'.split(',');
             }
             let i = make('select')
                 .addClass('stateName')
@@ -1017,6 +1017,7 @@ function parseBlock(s) {
         // .replace(/\?L/g, '<small-value mode="href"></small-value>')
         .replace(/\?\{[^}]+\}/g, (s) => `<small-value mode="select" between="${s.substring(2, s.length - 1)}"></small-value>`)
         .replace(/\?T/g, '<small-value mode="string"></small-value>')
+        .replace(/\?L/g, '<small-value mode="href"></small-value>')
         .replace(/\?/g, '<small-value></small-value>')
         .replace(/%/g, '<small-value mode="state"></small-value>');
 }

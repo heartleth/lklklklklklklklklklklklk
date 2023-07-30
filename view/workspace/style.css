@@ -258,7 +258,7 @@ div[temp][t2] {
 } */
 
 wsbody {
-    min-height: 500px;
+    min-height: 1500px;
     overflow-y: auto;
     display: block;
     height: auto;
@@ -672,4 +672,31 @@ checkbox-options {
 
 h1, h2, h3 {
     user-select: none !important;
+}
+
+route-node > input[type="text"].routenode {
+    display: inline-block;
+    border-radius: 0px;
+    overflow: visible;
+    background: none;
+    font-size: 18px;
+    color: white;
+    border: none;
+    width: 150px;
+    padding: 4px;
+}
+
+route-node > input[type="text"].routenode:focus {
+    background-color: #2f2f2f;
+}
+
+route-node > button {
+    background-color: #333;
+    color: white;
+    outline: none;
+    border: none;
+}
+
+route-node {
+    display: block;
 }

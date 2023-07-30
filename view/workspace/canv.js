@@ -167,6 +167,11 @@ function drawResizeOne(div, ctx, canvasRect) {
     fns(divW/2, divH-2);
     fns(2, divH/2);
     fns(divW-2, divH/2);
+
+    // fns(2, 2);
+    // fns(divW-2, divH-2);
+    // fns(2, divH-2);
+    // fns(divW-2, 2);
 }
 
 window.addEventListener('mousedown', (e) => {
@@ -189,6 +194,10 @@ window.addEventListener('mousedown', (e) => {
                 { top:tl[1]+2, bottom:tl[1]+2+wh[1], left:tl[0]+divW/2, right:tl[0]+divW/2+wh[0] },
                 { top:tl[1]+divH/2, bottom:tl[1]+divH/2+wh[1], left:tl[0]+divW-2, right:tl[0]+divW-2+wh[0] },
                 { top:tl[1]+divH-2, bottom:tl[1]+divH-2+wh[1], left:tl[0]+divW/2, right:tl[0]+divW/2+wh[0] },
+
+                // { top:tl[1]+divH-2, bottom:tl[1]+divH-2+wh[1], left:tl[0]+divW-2, right:tl[0]+divW-2+wh[0] },
+                // { top:tl[1]+divH-2, bottom:tl[1]+divH-2+wh[1], left:tl[0]+divW-2, right:tl[0]+divW-2+wh[0] }
+
                 {
                     left: divRect.left + tw - canvasRect.left,
                     top: divRect.top - canvasRect.top - 15,
@@ -240,6 +249,10 @@ window.addEventListener('mousedown', (e) => {
                 }
                 window.ojf = { element: div };
             }
+            // else if (isInRect(mx - canvasRect.left, my - canvasRect.top, rects[5])) {
+                
+            // }
+            // divRect.left + tw - canvasRect.left + 35, divRect.top - canvasRect.top - 3
 
             // if (isInRect(mx - canvasRect.left, my - canvasRect.top, {
             //     top: tl[1],

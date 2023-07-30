@@ -78,4 +78,5 @@ ol.natural {
 
 img.natural {
     display: block;
+    user-select: none !important;
 }

@@ -103,7 +103,9 @@ function imageMenu(ws, edt) {
         [':ondragover', 'return false;'],
         [':Class', '@#b' + tok + 'Class/val'],
         ['#height', '@#b' + tok + 'H/cells'],
-        ['#width', '@#b' + tok + 'W/cells']
+        ['#width', '@#b' + tok + 'W/cells'],
+        [':height', '@#b' + tok + 'H/cells'],
+        [':width', '@#b' + tok + 'W/cells']
     ]);
     if (edt) {
         return;
@@ -113,7 +115,7 @@ function imageMenu(ws, edt) {
     uiedit.content = elementPropertySet().concat([
         make('value-input').set('fname', ['src', 0, 'url']).set('mode', 'Image').set('defaultText', 'https://raw.githubusercontent.com/heartleth/lklklklklklklklklklklklk/main/icon/icon.png').elem,
         make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 5).elem,
-        make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', '').elem
+        make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', 5).elem
     ]);
     let ac = addc(uiedit.addc(), [t]);
     uiedit.then = ac;

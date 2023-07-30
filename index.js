@@ -101,7 +101,7 @@ app.whenReady().then(async () => {
         }
     });
     ipcMain.on('loadFile', (e) => {
-        dialog.showOpenDialog(win, {properties: [ 'openFile' ]}).then(res => {
+        dialog.showOpenDialog(win, {properties: [ 'openFile' ], filters:[{name:'*.json', extensions: ['json']}]}).then(res => {
             if (res.filePaths.length) {
                 let lc = JSON.parse(fs.readFileSync(res.filePaths[0]).toString());
                 e.reply('loadedLS', lc);
@@ -116,8 +116,10 @@ app.whenReady().then(async () => {
         let expressApp = express();
         expressApp.use(express.json());
         expressApp.use(express.static(path.join(appdata, 'yghdatas/payload')));
-        for (const routeName of (localStorage.route || '/').split(',')) {
-            const route = (routeName[0]=='/' ? '' : '/') + routeName;
+        console.log(localStorage);
+        for (const routeName of (localStorage.route || '').split(',')) {
+            const route = clearPath(routeName);
+            console.log(route);
             const builtComponents = JSON.parse(localStorage[route + '.components'] ?? '{}');
             const actions = JSON.parse(localStorage[route + '.actions']);
             const states = JSON.parse(localStorage[route + '.states']);
