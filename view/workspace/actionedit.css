@@ -137,7 +137,7 @@ function-edit-window > div {
 }
 
 function-edit-window > div > function-edit-block {
-    display: inline-block;
+    display: block;
     margin-bottom: 4px;
 }
 
@@ -245,12 +245,13 @@ small-value > button.m2 {
 }
 
 function-edit-block.args {
-    display: inline-block !important;
+    /* display: inline-block !important; */
     padding-bottom: 0px !important;
     border-radius: 8px !important;
     padding-top: 0px !important;
     height: 14px !important;
     font-size: 12px;
+    display: block;
 }
 
 function-edit-block.args::after {

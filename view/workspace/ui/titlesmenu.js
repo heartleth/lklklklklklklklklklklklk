@@ -2,7 +2,7 @@ function titlesmenu(ws, edt) {
     let tok = Math.floor(1000 * Math.random());
     if (edt) {
         let t = new ElementComponent('h' + edt.tagName[1], [
-            [':onload', '@#b' + tok + 'OnLoad/functor'],
+            [':ooonload', '@#b' + tok + 'OnLoad/functor'],
             [':id', '@#b' + tok + 'Id/val'],
             [':class', '@#b' + tok + 'Class/val'],
             ['innerHTML', '@#b' + tok + 'Text/val']
@@ -19,6 +19,7 @@ function titlesmenu(ws, edt) {
         return;
     }
     let t = new ElementComponent('@#titleLevel/value', [
+        [':ooonload', '@#b' + tok + 'OnLoad/functor'],
         [':id', '@#b' + tok + 'Id/val'],
         [':class', '@#b' + tok + 'Class/val'],
         ['innerHTML', '@#b' + tok + 'Text/val']
@@ -45,7 +46,7 @@ function paragraphMenu(ws, edt) {
             ['#minWidth', '@#b' + tok + 'W/cells'],
             ['#width', 'fit-content'],
             [':id', '@#b' + tok + 'Id/val'],
-            [':onload', '@#b' + tok + 'OnLoad/functor'],
+            [':ooonload', '@#b' + tok + 'OnLoad/functor'],
             ['#fontSize', '@#b' + tok + 'FontSize/val']
         ]);
         let uiedit = make('ui-edit').elem;
@@ -69,7 +70,7 @@ function paragraphMenu(ws, edt) {
             ['#minWidth', '@#b' + tok + 'W/cells'],
             ['#width', 'fit-content'],
             [':id', '@#b' + tok + 'Id/val'],
-            [':onload', '@#b' + tok + 'OnLoad/functor'],
+            [':ooonload', '@#b' + tok + 'OnLoad/functor'],
             ['#fontSize', '@#b' + tok + 'FontSize/val']
         ]);
         let uiedit = make('ui-edit').elem;

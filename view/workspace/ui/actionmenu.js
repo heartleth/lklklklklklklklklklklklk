@@ -17,7 +17,12 @@ class ActionInput extends HTMLElement {
         this.appendChild(this.enabled);
         this.appendChild(wse.br());
         this.actionNameInput = make('select').addClass('fullStateName').elem;
-        this.actionNameInput.innerHTML = Object.keys(window.actions).filter(t=>t.length&&t[0]!='_').map(t=>`<option>${t}</option>`).join('');
+        this.actionNameInput.innerHTML = '<option>None</option>';
+        this.actionNameInput.innerHTML += Object.keys(window.actions).filter(t=>t.length&&t[0]!='_').map(t=>`<option${t===this.actionName?' selected="selected"':''}>${t}</option>`).join('');
+        this.actionNameInput.addEventListener('click', () => {
+            this.dispatchEvent(new Event('change'));
+        });
+        
         this.appendChild(this.actionNameInput);
         let newActionNameInput = make('text').addClass('newStateName').elem;
         this.appendChild(newActionNameInput);
@@ -73,12 +78,12 @@ class ActionInput extends HTMLElement {
     }
 
     get functor() {
-        if (this.enabled.checked) {
-            return `callfunctionwithus('${this.actionNameInput.value}', this);`;
-        }
-        else {
-            return '';
-        }
+        return `callfunctionwithus('${this.actionNameInput.value}', this);`;
+        // if (this.enabled.checked) {
+        // }
+        // else {
+        //     return '';
+        // }
     }
 }
 
@@ -86,8 +91,8 @@ function callfunctionwithus(c, elementThis) {
     if (!window.actions[c]) return;
     let stc = [];
     let bp = getPage();
-    let local = (Math.random() + 1).toString(36).substring(7);
-    window.locals[local] = { elementThis };
+    let local = (Math.random() + 1).toString(36).substring(7)
+    window.locals[local] = { elementThis };;
     actfunctioncode(stc, local, window.actions[c].code);
     let ap = getPage();
     if (bp == ap) {

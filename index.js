@@ -8,6 +8,14 @@ const path = require('path');
 const fs = require('fs');
 let port = 5252;
 
+function clearPath(path) {
+    let pp = path.replace(/\/+/g, '/');
+    if (pp[pp.length - 1] == '/') {
+        return pp.substring(0, pp.length - 1);
+    }
+    return pp;
+}
+
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 800,

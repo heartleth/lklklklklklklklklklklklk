@@ -700,3 +700,14 @@ route-node > button {
 route-node {
     display: block;
 }
+
+style-bind {
+    display: block;
+}
+
+div.style-category {
+    padding: 4px;
+    background-color: #2f2f2f;
+    border-radius: 4px;
+    outline: solid 1px white;
+}
