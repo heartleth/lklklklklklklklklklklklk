@@ -22,6 +22,20 @@ const styleoptions = [
 function stylemenu(ws) {
     ws.appendChild(wstitle('Styles'));
     ws.appendChild(make('line').elem);
+    
+    if (localStorage.getItem('llstyle') == null) {
+        localStorage.setItem('llstyle', '{"None":{}}');
+    }
+    let pstyles = JSON.parse(localStorage.getItem('llstyle'));
+    let styleName = document.createElement('select');
+    for (const stn in pstyles) {
+        styleName.innerHTML += '<option>' + stn + '</option>';
+    }
+    styleName.addEventListener('click', () => {
+        
+    });
+    ws.appendChild(styleName);
+    ws.appendChild(wse.br());
 
     for (const category of styleoptions) {
         let dv = document.createElement('div');
@@ -39,8 +53,21 @@ function stylemenu(ws) {
 class StyleBind extends HTMLElement {
     connectedCallback() {
         this.appendChild(make('span').text(this.bind[0]).elem);
-        this.appendChild(make('span').text(this.bind[1]).elem);
+        for (const bprop of this.bind[1]) {
+            this.appendChild(this.parseBind(bprop)[0]);
+        }
         this.appendChild(wse.br());
+    }
+    
+    parseBind(bind) {
+        let bspd = bind.split('=');
+        let btype = bspd[0];
+        let btarget = bspd[1];
+        if (btype[0] == '@') {
+            let opts = btype.substring(2, btype.length - 1).split(',');
+            return [make('select').html([...opts.map(e=>`<option>${e}</option>`)].join('')).elem, btarget];
+        }
+        return [make('span').text(bind).elem, btarget];
     }
 }
 window.customElements.define('style-bind', StyleBind);
