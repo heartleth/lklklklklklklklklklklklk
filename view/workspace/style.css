@@ -277,18 +277,27 @@ button.close {
 }
 
 length-input {
-    display: block;
+    /* display: block; */
+    width: calc(100% - 52px);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
 }
 
-length-input {
-    width: calc(100% - 52px);
+length-input > input {
+    height: 15px !important;
+    border: none !important;
+    display: inline-block;
+    outline: solid 1px black;
 }
 
 select.measure {
-    position: relative;
-    top: 2px;
-    width: 45px;
+    /* position: relative; */
+    outline: solid 1px white;
+    display: inline-block;
+    border: none;
     height: 15px;
+    width: 45px;
 }
 
 select {
@@ -702,12 +711,50 @@ route-node {
 }
 
 style-bind {
-    display: block;
+    display: table-row;
+}
+
+style-bind > * {
+    outline: solid .5px rgb(196, 196, 196);
+    display: table-cell;
+    padding: 4px;
 }
 
 div.style-category {
-    padding: 4px;
     background-color: #2f2f2f;
-    border-radius: 4px;
     outline: solid 1px white;
+    border-radius: 4px;
+    width: calc(100% - 8px);
+    overflow: hidden;
+    margin: 4px 0px;
+    display: table;
+}
+
+.style-label {
+    display: table-cell;
+    min-width: 90px;
+    width: 90px;
+}
+
+input[type="color"] {
+    background-color: transparent;
+    display: inline-block;
+    outline: none;
+    border: none;
+    padding: 0px;
+    height: 16px;
+    margin: 0px;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    outline: solid 1px white;
+    margin: 0px;
+    border-radius: 30px;
+    border: none;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    position: relative;
+    padding: 0px;
+    top: 2px;
 }

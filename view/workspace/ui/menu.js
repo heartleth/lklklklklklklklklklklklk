@@ -109,7 +109,10 @@ let applyScaling = scaledWrapper => {
 
 class LengthInput extends HTMLElement {
     connectedCallback() {
-        this.innerHTML = `<input type="text" value="${this.defaultValue ?? 50}">
+        if (this.label) {
+            this.appendChild(make('span').text(this.label).attr('style', 'display: inline-block; width: 80px;').elem);
+        }
+        this.innerHTML += `<input type="text" value="${this.defaultValue ?? 50}">
         <select class="measure">
             <option selected="px">px</option>
             <option>cm</option>
