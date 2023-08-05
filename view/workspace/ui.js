@@ -221,6 +221,9 @@ window.addEventListener('mousemove', (e)=>{
         else if (this.isClicked == 'place') {
             dragToPlace(me, e);
         }
+        else if (this.isClicked == 'set') {
+            dragToSet(me, e);
+        }
     }
     else if (this.resizing) {
         let { ctx, element, direction, begin, original, drawOriginal, originalStyle, ow } = this.resizing;
@@ -326,6 +329,9 @@ window.addEventListener('mouseup', (e) => {
     }
     else if (window.isClicked == 'place') {
         dropToPlace(window.movingElement, e);
+    }
+    else if (window.isClicked == 'set') {
+        dropToSet(window.movingElement, e);
     }
     if (window.isClicked) {
         save();

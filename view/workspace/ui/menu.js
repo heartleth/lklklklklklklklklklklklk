@@ -125,8 +125,11 @@ class LengthInput extends HTMLElement {
     }
 
     get val() {
-        if (this.children[0]) {
-            return this.children[0].value + this.children[1].value;
+        if (!this.label) {
+            this.label = 0;
+        }
+        if (this.children[this.label + 1]) {
+            return this.children[this.label].value + this.children[this.label + 1].value;
         }
         else {
             return '0px';
@@ -415,6 +418,7 @@ function elementPropertySet(edt) {
             make('value-input').set('fname', ['Id', 2, 'ID']).set('defaultText', edt.id).set('onlyText', true).elem,
             make('value-input').set('fname', ['Class', 2]).set('defaultText', edt.getAttribute('class').replace('natural', '')).set('onlyText', true).elem,
             // make('action-input').set('fname', ['OnLoad', 2, 'Load Action']).set('actionName', actionName).elem,
+            make('checkbox-options').set('fname', ['Style', 1, 'Style']).set('optdf', edt.getAttribute('styles')).set('options', Object.keys(JSON.parse(localStorage.getItem('llstyle') || '{"None":[]}'))).elem
         ];
     }
     else {
@@ -422,6 +426,50 @@ function elementPropertySet(edt) {
             make('value-input').set('fname', ['Id', 2, 'ID']).set('defaultText', '').set('onlyText', true).elem,
             make('value-input').set('fname', ['Class', 2]).set('defaultText', '').set('onlyText', true).elem,
             // make('action-input').set('fname', ['OnLoad', 2, 'Load Action']).elem,
+            make('style-input').set('fname', ['OnLoad', 2, 'Load Action']).elem,
+            make('checkbox-options').set('fname', ['Style', 1, 'Style']).set('optdf').set('options', Object.keys(JSON.parse(localStorage.getItem('llstyle') || '{"None":[]}'))).elem
         ];
+    }
+}
+
+class DragableWrapper extends HTMLElement {
+    connectedCallback() {
+        this.addEventListener('mousedown', this.onmousedown);
+        this.innerHTML = 'hello';
+        this.style.background = '#222222';
+    }
+
+    onmousedown(e) {
+        window.movingElement = this;
+        window.isClicked = 'set';
+    }
+}
+window.customElements.define('dragable-wrapper', DragableWrapper);
+
+function dragToSet(me, evt) {
+    let wsb = document.querySelector('wsbody');
+    const mx = evt.clientX;
+    const my = evt.clientY;
+    drawCanvas();
+    const cell = getCell(mx, my);
+
+    let mom = evt.srcElement;
+    if (mom != wsb) {
+        const momRect = mom.getBoundingClientRect();
+        const momCell = getCell(momRect.left, momRect.top);
+        drawBox(momCell[0], momCell[1], momRect.width / cellSpacing, momRect.height / cellSpacing, '#e79');
+    }
+}
+
+function dropToSet(me, evt) {
+    let wsb = document.querySelector('wsbody');
+    const mx = evt.clientX;
+    const my = evt.clientY;
+    drawCanvas();
+    const cell = getCell(mx, my);
+
+    let mom = evt.srcElement;
+    if (mom != wsb) {
+        me.dropCallback(mom, evt, cell);
     }
 }

@@ -14,36 +14,70 @@ const styleoptions = [
         title: 'Box Style',
         binds: [
             ['Shadow', ['shadow=box-shadow']],
-            ['Background', ['texture=background-color']],
+            ['Background', ['texture=background-color']]
+        ]
+    },
+    {
+        title: 'Border Style',
+        binds: [
+            ['Type', ['@[none,solid,dashed,double,inset,outset,ridge,groove]=border-style']]
         ]
     }
 ];
 
 function stylemenu(ws) {
     ws.render = () => {
+        ws.innerHTML = '';
+        ws.dsn = ws.dsn ?? 'None';
         if (localStorage.getItem('llstyle') == null) {
             localStorage.setItem('llstyle', '{"None":{}}');
         }
         let pstyles = JSON.parse(localStorage.getItem('llstyle'));
-        let styleName = document.createElement('select');
+        styleName = document.createElement('select');
         for (const stn in pstyles) {
-            styleName.innerHTML += '<option>' + stn + '</option>';
+            styleName.innerHTML += `<option ${stn == ws.dsn ? 'selected' : ''}>` + stn + '</option>';
         }
-        styleName.addEventListener('click', () => {
-            if (styleName.value != 'None') {
-                
-            }
+        styleName.addEventListener('change', () => {
+            ws.dsn = styleName.value;
+            ws.render();
         });
         
         ws.appendChild(wstitle('Styles'));
         ws.appendChild(make('line').elem);
         ws.appendChild(styleName);
+        let nsi = make('input').attr('type', 'text').attr('style', 'margin-left: 4px; height: 16px; width: 80px; position: relative;').elem;
+        let nsbt = make('button').text('+').addClass('newstate').elem;
+        nsbt.addEventListener('click', () => {
+            if (nsi.value != '') {
+                ws.dsn = nsi.value;
+                let s = JSON.parse(localStorage.getItem('llstyle'));
+                s[ws.dsn] = {};
+                localStorage.setItem('llstyle', JSON.stringify(s));
+                applyStyle();
+                ws.render();
+            }
+        });
+        ws.appendChild(nsi);
+        ws.appendChild(nsbt);
+        ws.appendChild(wse.br());
+        let wrapper = make('dragable-wrapper').elem;
+        wrapper.dropCallback = ((elem) => {
+            let s = elem.getAttribute('styles');
+            if (!s) {
+                s = '';
+            }
+            if (!s.split(' ').includes(ws.dsn)) {
+                s += ' ' + ws.dsn;
+            }
+            elem.setAttribute('styles', s);
+        });
+        ws.appendChild(wrapper);
         ws.appendChild(wse.br());
         for (const category of styleoptions) {
             let dv = document.createElement('div');
             dv.classList.add('style-category');
             for (const bind of category.binds) {
-                dv.appendChild(make('style-bind').set('bind', bind).elem);
+                dv.appendChild(make('style-bind').set('bind', bind).set('ws', ws).elem);
             }
             ws.appendChild(make('span').text(category.title).elem);
             ws.appendChild(make('show-hide-button').attr('div', true).elem);
@@ -62,6 +96,25 @@ class StyleBind extends HTMLElement {
         for (const bprop of this.bind[1]) {
             let pb = this.parseBind(bprop);
             let td = document.createElement('td');
+            if (this.llstyle()[this.ws.dsn][pb[1]]) {
+                if (pb[3]) {
+                    pb[3](this.llstyle()[this.ws.dsn][pb[1]]);
+                }
+                else {
+                    pb[0].value = this.llstyle()[this.ws.dsn][pb[1]];
+                }
+            }
+            pb[0].addEventListener('change', () => {
+                let s = this.llstyle();
+                if (pb[2]) {
+                    s[this.ws.dsn][pb[1]] = pb[2]();
+                }
+                else {
+                    s[this.ws.dsn][pb[1]] = pb[0].value;
+                }
+                localStorage.setItem('llstyle', JSON.stringify(s));
+                applyStyle();
+            });
             td.appendChild(pb[0]);
             this.bindlist.push(pb[1]);
             this.appendChild(td);
@@ -79,7 +132,7 @@ class StyleBind extends HTMLElement {
         else if (btype == 'len') {
             let li = make('length-input').elem;
             li.style.width = '100px';
-            return [li, btarget];
+            return [li, btarget, () => li.val];
         }
         else if (btype == 'color') {
             let li = make('input').attr('type', 'color').elem;
@@ -88,18 +141,38 @@ class StyleBind extends HTMLElement {
         else if (btype == 'shadow') {
             let lis = make('div').elem;
             // lis.style.width = '100px';
+            let type = make('select').attr('style', 'width: 60px; display: inline-block;').html('<option>none</option><option>default</option><option>inset</option>').elem;
             let ofx = make('length-input').attr('style', 'width: 60px; display: block;').set('label', 'offset X').elem;
             let ofy = make('length-input').attr('style', 'width: 60px; display: block;').set('label', 'offset Y').elem;
             let blr = make('length-input').attr('style', 'width: 60px; display: block;').set('label', 'blur rad').elem;
             let spr = make('length-input').attr('style', 'width: 60px; display: block;').set('label', 'spread rad').elem;
             let col = make('input').attr('type', 'color').elem;
+            lis.appendChild(wse.label('type').attr('style', 'display: inline-block; width: 80px;').elem);
+            lis.appendChild(type);
             lis.appendChild(ofx);
             lis.appendChild(ofy);
             lis.appendChild(blr);
             lis.appendChild(spr);
-            return [lis, btarget];
+            lis.appendChild(wse.label('color').attr('style', 'display: inline-block; width: 80px;').elem);
+            lis.appendChild(col);
+            return [lis, btarget, () => {
+                return ofx.value + ` ${ofx.val} ${ofy.val} ${blr.val} ${spr.val} ${col.value}`;
+            }];
         }
         return [make('span').text(bind).elem, btarget];
     }
+
+    llstyle() {
+        return JSON.parse(localStorage.getItem('llstyle'));
+    }
 }
 window.customElements.define('style-bind', StyleBind);
+
+function applyStyle() {
+    let s = JSON.parse(localStorage.getItem('llstyle'));
+    let ee = document.createElement('style');
+    for (const styleName of Object.keys(s)) {
+        ee.innerHTML += `.natural[styles~="${styleName}"] {${Object.keys(s[styleName]).map(e=>`${e}: ${s[styleName][e]};`).join('')}}`
+    }
+    document.head.appendChild(ee);
+}
