@@ -25,10 +25,10 @@ const styleoptions = [
     }
 ];
 
-function stylemenu(ws) {
+function stylemenu(ws, dsn) {
     ws.render = () => {
         ws.innerHTML = '';
-        ws.dsn = ws.dsn ?? 'None';
+        ws.dsn = ws.dsn ?? (dsn ?? 'None');
         if (localStorage.getItem('llstyle') == null) {
             localStorage.setItem('llstyle', '{"None":{}}');
         }
@@ -59,6 +59,9 @@ function stylemenu(ws) {
         });
         ws.appendChild(nsi);
         ws.appendChild(nsbt);
+        if (ws.dsn == 'None') {
+            return;
+        }
         ws.appendChild(wse.br());
         let wrapper = make('dragable-wrapper').elem;
         wrapper.dropCallback = ((elem) => {
@@ -138,6 +141,10 @@ class StyleBind extends HTMLElement {
             let li = make('input').attr('type', 'color').elem;
             return [li, btarget];
         }
+        else if (btype == 'font') {
+            // let li = make('input').attr('type', 'color').elem;
+            // return [li, btarget];
+        }
         else if (btype == 'shadow') {
             let lis = make('div').elem;
             // lis.style.width = '100px';
@@ -170,9 +177,9 @@ window.customElements.define('style-bind', StyleBind);
 
 function applyStyle() {
     let s = JSON.parse(localStorage.getItem('llstyle'));
-    let ee = document.createElement('style');
+    let ee = document.getElementById('lsimulate');
+    ee.innerHTML = '';
     for (const styleName of Object.keys(s)) {
         ee.innerHTML += `.natural[styles~="${styleName}"] {${Object.keys(s[styleName]).map(e=>`${e}: ${s[styleName][e]};`).join('')}}`
     }
-    document.head.appendChild(ee);
 }

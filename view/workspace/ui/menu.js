@@ -1,6 +1,6 @@
 const LengthInputHTML = `<input type="text" value="20"><select><option selected="px">px</option><option>cm</option><option>mm</option><option>em</option></select>`;
 
-function createMenu(ws, name, n, edt) {
+function createMenu(ws, name, n, edt, dsn) {
     if (name == 'button') {
         buttonMenu(ws, edt);
     }
@@ -17,7 +17,7 @@ function createMenu(ws, name, n, edt) {
         componentmenu(ws);
     }
     else if (name == 'style') {
-        stylemenu(ws);
+        stylemenu(ws, dsn);
     }
     else if (name == 'edit functor') {
         functoreditmenu(ws, n);
@@ -311,7 +311,14 @@ class CheckBoxOptions extends HTMLElement {
         this.optdf = this.optdf ? this.optdf.split(' ') : [];
         for (const option of this.options) {
             let x = Math.floor(1000 * Math.random());
-            this.appendChild(wse.label(option).attr('for', 'bo' + x).elem);
+            let label = wse.label(option).attr('for', 'bo' + x).elem;
+            if (this.fname[0] == 'Style' && option != 'None') {
+                label.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openMenu('style', undefined, undefined, option);
+                });
+            }
+            this.appendChild(label);
             let i = this.optdf.includes(option)
                 ? make('input').attr('type', 'checkbox').attr('checked', 'true').setId('bo' + x).elem
                 : make('input').attr('type', 'checkbox').setId('bo' + x).elem;
