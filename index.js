@@ -133,6 +133,7 @@ app.whenReady().then(async () => {
             const states = JSON.parse(localStorage[route + '.states']);
             const tables = JSON.parse(localStorage['tables']);
             const html = localStorage[route + '.page'];
+            const llstyle = localStorage['llstyle'];
             let serverSidePostActions = [];
             for (let an in actions) {
                 if (!actions[an].code) {

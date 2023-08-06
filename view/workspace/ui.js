@@ -92,7 +92,7 @@ class SomeMenu extends HTMLElement {
         if (!this.style.height) {
             this.style.height = '250px'
             this.style.right = 'unset';
-            this.style.width = '240px';
+            this.style.width = '280px';
             this.style.left = '100px';
             this.style.top = '50px';
         }
