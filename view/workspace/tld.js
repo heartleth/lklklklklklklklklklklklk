@@ -64,7 +64,7 @@ function topLeftDrag(me, evt) {
                     idsib.getBoundingClientRect().right,
                     cell[1] * cellSpacing + canvRect.top
                 ];
-                drawBox(cell[0], cell[1], mw, mh, '#77e', { left: piv[0], top: piv[1] });
+                drawBox(cell[0], cell[1], mw, mh, '#77e9', { left: piv[0], top: piv[1] });
             }
             else if (upsib) {
                 drawBox(momCell[0], momCell[1], momRect.width / cellSpacing, momRect.height / cellSpacing, '#e79');
@@ -72,7 +72,7 @@ function topLeftDrag(me, evt) {
                     momRect.left + parseFloat(getComputedStyle(mom).paddingLeft.replace('px', '')),
                     upsib.getBoundingClientRect().bottom
                 ];
-                drawBox(cell[0], cell[1], mw, mh, '#77e', { left: piv[0], top: piv[1] });
+                drawBox(cell[0], cell[1], mw, mh, '#77e9', { left: piv[0], top: piv[1] });
             }
             else {
                 me.upsib = undefined;

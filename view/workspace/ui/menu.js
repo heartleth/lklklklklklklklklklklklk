@@ -394,10 +394,11 @@ class UIEdit extends HTMLElement {
         };
         [...this.children[0].children].forEach(e => {
             if (e.innerText == this.mode) {
-                e.style.backgroundColor = '#777';
+                // e.style.backgroundColor = '#777';
+                e.style.backgroundColor = '#fff';
             }
             else {
-                e.style.backgroundColor = 'unset';
+                e.style.backgroundColor = '#dcdcdc';
             }
         });
         for (let c of this.miniws.children) {

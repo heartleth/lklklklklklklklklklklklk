@@ -12,10 +12,10 @@ class ActionInput extends HTMLElement {
 
     render() {
         this.innerHTML = '';
-        this.appendChild(wse.label('Enabled').elem);
-        this.enabled = make('input').attr('type', 'checkbox').elem;
-        this.appendChild(this.enabled);
-        this.appendChild(wse.br());
+        // this.appendChild(wse.label('Enabled').elem);
+        // this.enabled = make('input').attr('type', 'checkbox').elem;
+        // this.appendChild(this.enabled);
+        // this.appendChild(wse.br());
         this.actionNameInput = make('select').addClass('fullStateName').elem;
         this.actionNameInput.innerHTML = '<option>None</option>';
         this.actionNameInput.innerHTML += Object.keys(window.actions).filter(t=>t.length&&t[0]!='_').map(t=>`<option${t===this.actionName?' selected="selected"':''}>${t}</option>`).join('');

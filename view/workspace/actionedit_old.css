@@ -28,38 +28,38 @@ div > function-edit-block {
 
 function-edit-window > function-edit-block.start,
 div > function-edit-block.start {
-    background: linear-gradient(90deg, rgb(0, 255, 102) 5px, white 1px);
+    background: linear-gradient(90deg, rgb(0, 255, 102) 5px, rgb(41, 41, 41) 1px);
 }
 
 function-edit-window > function-edit-block.value,
 div > function-edit-block.value {
-    background: linear-gradient(90deg, rgb(255, 0, 149) 5px, white 1px);
+    background: linear-gradient(90deg, rgb(255, 0, 149) 5px, rgb(41, 41, 41) 1px);
 }
 
 function-edit-window > function-edit-block.control,
 div > function-edit-block.control {
-    background: linear-gradient(90deg, rgb(35, 201, 182) 5px, white 1px);
+    background: linear-gradient(90deg, rgb(35, 201, 182) 5px, rgb(41, 41, 41) 1px);
     min-height: 52px;
 }
 
 function-edit-window > function-edit-block.ui,
 div > function-edit-block.ui {
-    background: linear-gradient(90deg, rgb(193, 35, 201) 5px, white 1px);
+    background: linear-gradient(90deg, rgb(193, 35, 201) 5px, rgb(41, 41, 41) 1px);
 }
 
 function-edit-window > function-edit-block.style,
 div > function-edit-block.style {
-    background: linear-gradient(90deg, rgb(90, 202, 236) 5px, white 1px);
+    background: linear-gradient(90deg, rgb(90, 202, 236) 5px, rgb(41, 41, 41) 1px);
 }
 
 function-edit-window > function-edit-block.code,
 div > function-edit-block.code {
-    background: linear-gradient(90deg, rgb(0, 0, 0) 5px, white 1px);
+    background: linear-gradient(90deg, rgb(0, 0, 0) 5px, rgb(41, 41, 41) 1px);
 }
 
 function-edit-window > function-edit-block.db,
 div > function-edit-block.db {
-    background: linear-gradient(90deg, rgb(251, 255, 0) 5px, white 1px);
+    background: linear-gradient(90deg, rgb(251, 255, 0) 5px, rgb(41, 41, 41) 1px);
 }
 
 function-edit-window > function-edit-block::after, function-edit-window > function-edit-block.control > div::after {
@@ -111,7 +111,7 @@ function-edit-window > function-edit-block.control::after {
 }
 
 function-edit-window > function-edit-block.control > div {
-    background: rgb(255, 255, 255);
+    background: rgb(28, 28, 28);
     position: absolute;
     height: calc(100% - 32px);
     width: calc(100% - 8px);
@@ -123,7 +123,7 @@ function-edit-window > function-edit-block.control > div {
 }
 
 function-edit-window > div {
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(79, 79, 79);
     border-radius: 0px 0px 4px 4px;
     border: solid 1px #bbb;
     white-space: initial;
@@ -152,12 +152,11 @@ small-value > input[type="text"]:nth-child(2) {
 }
 
 small-value > input[type="text"]:first-child {
-    outline: solid 1px rgb(255, 255, 255);
     height: 12px !important;
     display: inline-block;
     border-radius: 8px;
     position: relative;
-    border: none;
+    border: white;
     margin: 0px;
     width: 60px;
     /* top: -1.8px; */
@@ -222,7 +221,7 @@ small-value > button.m2 {
 }
 
 .blockNav {
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(54, 54, 54);
     border-radius: 0px 0px 0px 0px;
     border: solid 1px #bbb;
     white-space: initial;
@@ -242,7 +241,7 @@ small-value > button.m2 {
 }
 
 .blockNav > div:hover {
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(97, 97, 97);
 }
 
 function-edit-block.args {
@@ -273,13 +272,4 @@ function-edit-window > button {
     position: absolute;
     bottom: 210px;
     left: 10px;
-}
-
-function-edit-window select {
-    box-shadow: none !important;
-    outline: solid 1px #00000057;
-}
-
-function-edit-window input {
-    outline: solid 1px #00000057 !important;
 }
