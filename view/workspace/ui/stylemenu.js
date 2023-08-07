@@ -135,7 +135,7 @@ class StyleBind extends HTMLElement {
         else if (btype == 'len') {
             let li = make('length-input').elem;
             li.style.width = '100px';
-            return [li, btarget, () => li.val, l => ];
+            return [li, btarget, () => li.val, li.set_val];
         }
         else if (btype == 'color') {
             let li = make('input').attr('type', 'color').elem;
@@ -156,6 +156,7 @@ class StyleBind extends HTMLElement {
             if (!isTextShadow) {
                 let spr = make('length-input').attr('style', 'width: 60px; display: block;').set('label', 'spread rad').elem;
                 let col = make('input').attr('type', 'color').elem;
+                let opc = make('input').attr('type', 'range').attr('min', '0').attr('max', '255').attr('style', 'width: 80px;').elem;
                 lis.appendChild(wse.label('type').attr('style', 'display: inline-block; width: 80px;').elem);
                 lis.appendChild(type);
                 lis.appendChild(ofx);
@@ -164,12 +165,25 @@ class StyleBind extends HTMLElement {
                 lis.appendChild(spr);
                 lis.appendChild(wse.label('color').attr('style', 'display: inline-block; width: 80px;').elem);
                 lis.appendChild(col);
+                lis.appendChild(wse.br());
+                lis.appendChild(wse.label('opacity').attr('style', 'display: inline-block; width: 80px;').elem);
+                lis.appendChild(opc);
                 return [lis, btarget, () => {
-                    return type.value + ` ${ofx.val} ${ofy.val} ${blr.val} ${spr.val} ${col.value}`;
+                    return type.value + ` ${ofx.val} ${ofy.val} ${blr.val} ${spr.val} ${col.value}${parseInt(opc.value).toString(16)}`;
+                }, (v) => {
+                    let s = [...v.split(' ')];
+                    type.value = s[0];
+                    ofx.set_val(s[1]);
+                    ofy.set_val(s[2]);
+                    blr.set_val(s[3]);
+                    spr.set_val(s[4]);
+                    col.value = s[5].substring(0, 7);
+                    opc.value = parseInt(s[5].substring(7), 16);
                 }];
             }
             else {
                 let col = make('input').attr('type', 'color').elem;
+                let opc = make('input').attr('type', 'range').attr('min', '0').attr('max', '255').attr('style', 'width: 80px;').elem;
                 lis.appendChild(wse.label('type').attr('style', 'display: inline-block; width: 80px;').elem);
                 lis.appendChild(type);
                 lis.appendChild(ofx);
@@ -177,8 +191,19 @@ class StyleBind extends HTMLElement {
                 lis.appendChild(blr);
                 lis.appendChild(wse.label('color').attr('style', 'display: inline-block; width: 80px;').elem);
                 lis.appendChild(col);
+                lis.appendChild(wse.br());
+                lis.appendChild(wse.label('opacity').attr('style', 'display: inline-block; width: 80px;').elem);
+                lis.appendChild(opc);
                 return [lis, btarget, () => {
-                    return type.value + ` ${ofx.val} ${ofy.val} ${blr.val} ${col.value}`;
+                    return type.value + ` ${ofx.val} ${ofy.val} ${blr.val} ${col.value}${parseInt(opc.value).toString(16)}`;
+                }, (v) => {
+                    let s = [...v.split(' ')];
+                    type.value = s[0];
+                    ofx.set_val(s[1]);
+                    ofy.set_val(s[2]);
+                    blr.set_val(s[3]);
+                    col.value = s[4].substring(0, 7);
+                    opc.value = parseInt(s[4].substring(7), 16);
                 }];
             }
         }

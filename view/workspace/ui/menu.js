@@ -119,14 +119,17 @@ class LengthInput extends HTMLElement {
             <option>mm</option>
             <option>em</option>
         </select>`;
+        if (this.stv) {
+            this.children[0 + !!(this.label)].value = this.stv.replace(/[a-zA-Z_]+/g, '');
+            this.children[1 + !!(this.label)].value = this.stv.replace(/[0-9\-]+/g, '');
+        }
         if (this.then) {
             this.then.render();
         }
     }
 
-    set val(l) {
-        this.children[0 + !!(this.label)].value = l.replace(/[a-zA-Z_]/g, '');
-        this.children[0 + !!(this.label)].value = l.replace(/[0-9\-]/g, '');
+    set_val(l) {
+        this.stv = l;
     }
     
     get val() {
@@ -317,10 +320,10 @@ class CheckBoxOptions extends HTMLElement {
         for (const option of this.options) {
             let x = Math.floor(1000 * Math.random());
             let label = wse.label(option).attr('for', 'bo' + x).elem;
-            if (this.fname[0] == 'Style' && option != 'None') {
+            if (this.fname[0] == 'Style') {
                 label.addEventListener('click', (e) => {
                     e.preventDefault();
-                    openMenu('style', undefined, undefined, option);
+                    openMenu('style', undefined, undefined, option, this.getBoundingClientRect());
                 });
             }
             this.appendChild(label);

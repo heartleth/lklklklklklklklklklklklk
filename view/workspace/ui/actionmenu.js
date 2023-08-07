@@ -131,7 +131,7 @@ class FunctionEdit extends HTMLElement {
         this.appendChild(rawCode);
         let openEdit = make('div').addClass('openActionEditor').html('Open Editor').elem;
         openEdit.addEventListener('click', () => {
-            openMenu('edit functor', this.actionName);
+            openMenu('edit functor', this.actionName, undefined, undefined, this.getBoundingClientRect());
             rawCode.innerText = JSON.stringify(window.actions[this.actionName]);
         });
         this.appendChild(openEdit);

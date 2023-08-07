@@ -106,7 +106,7 @@ class SomeMenu extends HTMLElement {
 }
 customElements.define('some-menu', SomeMenu);
 
-function openMenu(menuname, actionName, editing, dsn) {
+function openMenu(menuname, actionName, editing, dsn, rect) {
     let k = document.createElement('some-menu');
     k.setAttribute('name', menuname);
     k.editing = editing;
@@ -115,6 +115,10 @@ function openMenu(menuname, actionName, editing, dsn) {
         k.actionName = actionName;
     }
     document.getElementById('menus').appendChild(k);
+    if (rect) {
+        k.style.top = rect.top + 'px';
+        k.style.left = rect.right + 'px';
+    }
     return k;
 }
 
