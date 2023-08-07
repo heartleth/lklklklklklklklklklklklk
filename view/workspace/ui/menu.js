@@ -124,12 +124,17 @@ class LengthInput extends HTMLElement {
         }
     }
 
+    set val(l) {
+        this.children[0 + !!(this.label)].value = l.replace(/[a-zA-Z_]/g, '');
+        this.children[0 + !!(this.label)].value = l.replace(/[0-9\-]/g, '');
+    }
+    
     get val() {
         if (!this.label) {
             this.label = 0;
         }
-        if (this.children[this.label + 1]) {
-            return this.children[this.label].value + this.children[this.label + 1].value;
+        if (this.children.length) {
+            return this.children[0 + !!(this.label)].value + this.children[!!(this.label) + 1].value;
         }
         else {
             return '0px';

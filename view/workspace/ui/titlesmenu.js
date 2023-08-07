@@ -2,6 +2,7 @@ function titlesmenu(ws, edt) {
     let tok = Math.floor(1000 * Math.random());
     if (edt) {
         let t = new ElementComponent('h' + edt.tagName[1], [
+            [':styles', '@#b' + tok + 'Style/val'],
             [':ooonload', '@#b' + tok + 'OnLoad/functor'],
             [':id', '@#b' + tok + 'Id/val'],
             [':class', '@#b' + tok + 'Class/val'],
@@ -19,6 +20,7 @@ function titlesmenu(ws, edt) {
         return;
     }
     let t = new ElementComponent('@#titleLevel/value', [
+        [':styles', '@#b' + tok + 'Style/val'],
         [':ooonload', '@#b' + tok + 'OnLoad/functor'],
         [':id', '@#b' + tok + 'Id/val'],
         [':class', '@#b' + tok + 'Class/val'],
@@ -40,6 +42,7 @@ function paragraphMenu(ws, edt) {
     let tok = Math.floor(1000 * Math.random());
     if (edt) {
         let div = new ElementComponent('p', [
+            [':styles', '@#b' + tok + 'Style/val'],
             ['innerHTML', '@#b' + tok + 'Text/val'],
             [':class', '@#b' + tok + 'Class/val'],
             ['#minHeight', '@#b' + tok + 'H/cells'],
@@ -64,6 +67,7 @@ function paragraphMenu(ws, edt) {
     }
     else {
         let div = new ElementComponent('p', [
+            [':styles', '@#b' + tok + 'Style/val'],
             ['innerHTML', '@#b' + tok + 'Text/val'],
             [':class', '@#b' + tok + 'Class/val'],
             ['#minHeight', '@#b' + tok + 'H/cells'],
@@ -98,6 +102,7 @@ function formMenu(ws, edt) {
 function imageMenu(ws, edt) {
     let tok = Math.floor(1000 * Math.random());
     let t = new ElementComponent('img', [
+        [':styles', '@#b' + tok + 'Style/val'],
         [':id', '@#b' + tok + 'Id/val'],
         [':src', '@#b' + tok + 'src/val'],
         [':draggable', 'false'],
@@ -127,6 +132,7 @@ function imageMenu(ws, edt) {
 function listMenu(ws, edt) {
     let tok = Math.floor(1000 * Math.random());
     let t = new ElementComponent((edt ?? {tagName:'@#b' + tok + 'Level/val'}).tagName, [
+        [':styles', '@#b' + tok + 'Style/val'],
         [':id', '@#b' + tok + 'Id/val'],
         [':Class', '@#b' + tok + 'Class/val'],
         ['innerHTML', '@#b' + tok + 'Text/val'],

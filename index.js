@@ -133,7 +133,7 @@ app.whenReady().then(async () => {
             const states = JSON.parse(localStorage[route + '.states']);
             const tables = JSON.parse(localStorage['tables']);
             const html = localStorage[route + '.page'];
-            const llstyle = localStorage['llstyle'];
+            const llstyle = localStorage['llcss'];
             let serverSidePostActions = [];
             for (let an in actions) {
                 if (!actions[an].code) {
@@ -153,8 +153,11 @@ app.whenReady().then(async () => {
             expressApp.get('/functions' + route, (req, res) => {
                 res.send(JSON.stringify({ builtComponents, actions, states, tables, serverSidePostActions }));
             });
+            expressApp.get('/lls.css' + route, (req, res) => {
+                res.send(llstyle);
+            });
             expressApp.get(route, (req, res) => {
-                res.setHeader('Content-Type', 'text/html; charset=utf-8').send('<meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="/payload.js"></script><link rel="stylesheet" href="default.css">' + html);
+                res.setHeader('Content-Type', 'text/html; charset=utf-8').send('<meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="/payload.js"></script><link rel="stylesheet" href="default.css"><link rel="stylesheet" href="/lls.css">' + html);
             });
         }
         listening = expressApp.listen(port);

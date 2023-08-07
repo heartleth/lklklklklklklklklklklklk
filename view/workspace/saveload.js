@@ -137,6 +137,8 @@ async function load() {
         }
         document.querySelectorAll('.outline').forEach(e=>e.classList.remove('outline'));
         document.getElementById('location').innerText = 'site.com' + getPage().replace('.', '');
+        let ee = document.getElementById('lsimulate');
+        ee.innerHTML = localStorage.getItem('llcss');
     }
     else {
         window.states = {};

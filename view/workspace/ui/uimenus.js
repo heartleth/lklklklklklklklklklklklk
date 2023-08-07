@@ -37,6 +37,7 @@ const inputTypes = [
 function inputMenu(ws, edt) {
     let tok = Math.floor(1000 * Math.random());
     let bt = new ElementComponent('textarea', [
+        [':styles', '@#b' + tok + 'Style/val'],
         [':id', '@#b' + tok + 'Id/val'],
         [':class', '@#b' + tok + 'Class/val'],
         ['#height', '@#b' + tok + 'H/cells'],

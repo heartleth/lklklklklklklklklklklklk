@@ -20,6 +20,7 @@ function ipcSetupMakeServer(mainWindow) {
                 fs.mkdirSync(path.join(targetPath, 'views'));
                 fs.copyFileSync(path.join(appdata, 'yghdatas/makeserver/payload.js'), path.join(targetPath, 'payload/payload.js'));
                 fs.copyFileSync(path.join(appdata, 'yghdatas/payload/default.css'), path.join(targetPath, 'payload/default.css'));
+                // fs.copyFileSync(path.join(appdata, 'yghdatas/payload/lls.css'), path.join(targetPath, 'payload/lls.css'));
                 fs.copyFileSync(path.join(appdata, 'yghdatas/makeserver/_package.json'), path.join(targetPath, 'package.json'));
                 fs.copyFileSync(path.join(appdata, 'yghdatas/makeserver/README.txt'), path.join(targetPath, 'README.txt'));
                 fs.copyFileSync(path.join(appdata, 'yghdatas/makeserver/server.js'), path.join(targetPath, 'server.js'));
@@ -99,12 +100,14 @@ function ipcSetupMakeServer(mainWindow) {
                         }
                         html = html.replace((new RegExp(`callfunctionwithus\\('${action}'\\)`)), (r)=>action + '()');
                     }
+                    fs.writeFileSync(path.join(targetPath, 'payload/lls.css'), localStorage['lls']);
                     fs.writeFileSync(path.join(targetPath, 'views/v' + i + '.html'), `
                     <!doctype html>
                     <html>
                         <head>
                             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <link rel="stylesheet" href="default.css">
+                            <link rel="stylesheet" href="/default.css">
+                            <link rel="stylesheet" href="/lls.css">
                             <script src="/payload.js"></script>
                             <script>${actionsJS}</script>
                         </head>

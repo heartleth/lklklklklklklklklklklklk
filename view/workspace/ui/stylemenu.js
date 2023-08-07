@@ -7,7 +7,7 @@ const styleoptions = [
             ['Font Weight', ['@[lighter,light,initial,bold,bolder]=font-weight']],
             ['Color', ['color=color']],
             ['Text Align', ['@[right,left,center]=text-align']],
-            ['Shadow', ['shadow=text-shadow']]
+            ['Shadow', ['Shadow=text-shadow']]
         ]
     },
     {
@@ -135,7 +135,7 @@ class StyleBind extends HTMLElement {
         else if (btype == 'len') {
             let li = make('length-input').elem;
             li.style.width = '100px';
-            return [li, btarget, () => li.val];
+            return [li, btarget, () => li.val, l => ];
         }
         else if (btype == 'color') {
             let li = make('input').attr('type', 'color').elem;
@@ -145,26 +145,42 @@ class StyleBind extends HTMLElement {
             // let li = make('input').attr('type', 'color').elem;
             // return [li, btarget];
         }
-        else if (btype == 'shadow') {
+        else if (btype.toLowerCase() == 'shadow') {
+            let isTextShadow = btype[0] == 'S';
             let lis = make('div').elem;
             // lis.style.width = '100px';
-            let type = make('select').attr('style', 'width: 60px; display: inline-block;').html('<option>none</option><option>default</option><option>inset</option>').elem;
+            let type = make('select').attr('style', 'width: 60px; display: inline-block;').html('<option>none</option><option value="">default</option><option>inset</option>').elem;
             let ofx = make('length-input').attr('style', 'width: 60px; display: block;').set('label', 'offset X').elem;
             let ofy = make('length-input').attr('style', 'width: 60px; display: block;').set('label', 'offset Y').elem;
             let blr = make('length-input').attr('style', 'width: 60px; display: block;').set('label', 'blur rad').elem;
-            let spr = make('length-input').attr('style', 'width: 60px; display: block;').set('label', 'spread rad').elem;
-            let col = make('input').attr('type', 'color').elem;
-            lis.appendChild(wse.label('type').attr('style', 'display: inline-block; width: 80px;').elem);
-            lis.appendChild(type);
-            lis.appendChild(ofx);
-            lis.appendChild(ofy);
-            lis.appendChild(blr);
-            lis.appendChild(spr);
-            lis.appendChild(wse.label('color').attr('style', 'display: inline-block; width: 80px;').elem);
-            lis.appendChild(col);
-            return [lis, btarget, () => {
-                return ofx.value + ` ${ofx.val} ${ofy.val} ${blr.val} ${spr.val} ${col.value}`;
-            }];
+            if (!isTextShadow) {
+                let spr = make('length-input').attr('style', 'width: 60px; display: block;').set('label', 'spread rad').elem;
+                let col = make('input').attr('type', 'color').elem;
+                lis.appendChild(wse.label('type').attr('style', 'display: inline-block; width: 80px;').elem);
+                lis.appendChild(type);
+                lis.appendChild(ofx);
+                lis.appendChild(ofy);
+                lis.appendChild(blr);
+                lis.appendChild(spr);
+                lis.appendChild(wse.label('color').attr('style', 'display: inline-block; width: 80px;').elem);
+                lis.appendChild(col);
+                return [lis, btarget, () => {
+                    return type.value + ` ${ofx.val} ${ofy.val} ${blr.val} ${spr.val} ${col.value}`;
+                }];
+            }
+            else {
+                let col = make('input').attr('type', 'color').elem;
+                lis.appendChild(wse.label('type').attr('style', 'display: inline-block; width: 80px;').elem);
+                lis.appendChild(type);
+                lis.appendChild(ofx);
+                lis.appendChild(ofy);
+                lis.appendChild(blr);
+                lis.appendChild(wse.label('color').attr('style', 'display: inline-block; width: 80px;').elem);
+                lis.appendChild(col);
+                return [lis, btarget, () => {
+                    return type.value + ` ${ofx.val} ${ofy.val} ${blr.val} ${col.value}`;
+                }];
+            }
         }
         return [make('span').text(bind).elem, btarget];
     }
@@ -182,4 +198,5 @@ function applyStyle() {
     for (const styleName of Object.keys(s)) {
         ee.innerHTML += `.natural[styles~="${styleName}"] {${Object.keys(s[styleName]).map(e=>`${e}: ${s[styleName][e]};`).join('')}}`
     }
+    localStorage.setItem('llcss', ee.innerHTML);
 }

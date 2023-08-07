@@ -104,6 +104,8 @@
                         imgs.push(e.getAttribute('src'));
                     }
                 }
+                let ee = document.getElementById('lsimulate');
+                localStorage.setItem('llcss', ee.innerHTML);
                 electron.ipcRenderer.send('openExpress',
                     wsb.innerHTML,
                     window.builtComponents,
