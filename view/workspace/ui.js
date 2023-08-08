@@ -8,7 +8,12 @@ class AddMenu extends HTMLElement {
     }
 
     onclick(e) {
-        openMenu(this.name);
+        if (this.name == 'action') {
+            openMenu('edit functor', [...Object.keys(window.actions)][0], undefined, undefined);
+        }
+        else {
+            openMenu(this.name);
+        }
     }
 }
 customElements.define('add-menu', AddMenu);

@@ -87,13 +87,13 @@ class ActionInput extends HTMLElement {
     }
 }
 
-function callfunctionwithus(c, elementThis) {
+async function callfunctionwithus(c, elementThis) {
     if (!window.actions[c]) return;
     let stc = [];
     let bp = getPage();
     let local = (Math.random() + 1).toString(36).substring(7)
     window.locals[local] = { elementThis };;
-    actfunctioncode(stc, local, window.actions[c].code);
+    await actfunctioncode(stc, local, window.actions[c].code);
     let ap = getPage();
     if (bp == ap) {
         updateState(stc);
@@ -103,16 +103,16 @@ function callfunctionwithus(c, elementThis) {
     }
 }
 
-function actfunctioncode(stc, local, codes) {
+async function actfunctioncode(stc, local, codes) {
     for (let code of codes) {
         if (blockmap[code.name].category == 'control') {
             const child = {
                 run: (stc, local) => code.child ? actfunctioncode(stc, local, code.child):''
             };
-            blockmap[code.name].exec(stc, local, child, ...code.params);
+            await blockmap[code.name].exec(stc, local, child, ...code.params);
         }
         else {
-            blockmap[code.name].exec(stc, local, ...code.params);
+            await blockmap[code.name].exec(stc, local, ...code.params);
         }
     }
 }
@@ -203,15 +203,40 @@ class FunctionEditWindow extends HTMLElement {
     }
     
     init() {
+        let codePositions = localStorage.getItem('codepositions');
         this.actionName = this.getAttribute('actionName');
         if (this.actionName) {
-            let rect = this.getBoundingClientRect();
+            // let rect = this.getBoundingClientRect();
             if (window.actions[this.actionName].code) {
                 this.start = make('function-edit-block').addClass('start').html('Event start: ' + this.actionName).elem;
                 this.start.style.left = '10px';
                 this.start.style.top = '45px';
+                if (codePositions) {
+                    // codePositions = JSON.parse(codePositions);
+                    // this.start.style.left = codePositions.start.left;
+                    // this.start.style.top = codePositions.start.top;
+                }
                 this.appendChild(this.start);
                 this.loadCode(this.start, window.actions[this.actionName].code);
+
+                let i = 1;
+                this.bgs = [];
+                for (let hsn of Object.keys(window.actions)) {
+                    if (hsn == this.actionName) {
+                        continue;
+                    }
+                    let hs = make('function-edit-block').addClass('start').html('Event start: ' + hsn).elem;
+                    hs.style.left = 10 + 380 * i + 'px';
+                    hs.style.top = '45px';
+                    if (codePositions) {
+                        // this.start.style.left = codePositions.start.left;
+                        // this.start.style.top = codePositions.start.top;
+                    }
+                    hs.hsn = hsn;
+                    this.bgs.push(hs);
+                    this.appendChild(hs);
+                    this.loadCode(hs, window.actions[hsn].code, undefined, hsn);
+                }
             }
             else {
                 this.starts = {};
@@ -248,12 +273,20 @@ class FunctionEditWindow extends HTMLElement {
             this.appendChild(this.blockNav);
             registerBlocks(this);
             this.appendChild(this.addBlocks);
+            this.addEventListener('mousedown', this.onmousedown);
             this.addEventListener('mousemove', this.onmousemove);
             this.addEventListener('mouseup', this.onmouseup);
         }
     }
 
-    loadCode(t, codes, vk) {
+    onmousedown(e) {
+        // this.dxdy = [e.clientX, e.clientY];
+        if (e.srcElement == this) {
+            this.dxdy = [e.clientX, e.clientY];
+        }
+    }
+
+    loadCode(t, codes, vk, acn) {
         let tail = t ?? this.start;
         for (let code of codes) {
             tail = make('function-edit-block')
@@ -280,7 +313,7 @@ class FunctionEditWindow extends HTMLElement {
                         c.children[i].setValue(param);
                         let k = c.children[i];
                         c.children[i].addEventListener('change', () => {
-                            window.actions[this.actionName].code[i] = k.val;
+                            window.actions[acn ?? this.actionName].code[i] = k.val;
                         });
                         i += 1;
                     }
@@ -300,7 +333,7 @@ class FunctionEditWindow extends HTMLElement {
                         tail.children[i].setValue(param, true);
                         let k = tail.children[i];
                         tail.children[i].addEventListener('change', () => {
-                            window.actions[this.actionName][vk].code[i] = k.val;
+                            window.actions[acn ?? this.actionName][vk].code[i] = k.val;
                         });
                         i += 1;
                     }
@@ -313,7 +346,7 @@ class FunctionEditWindow extends HTMLElement {
                         tail.children[i].setValue(param, true);
                         let k = tail.children[i];
                         tail.children[i].addEventListener('change', () => {
-                            window.actions[this.actionName].code[i] = k.val;
+                            window.actions[acn ?? this.actionName].code[i] = k.val;
                         });
                         i += 1;
                     }
@@ -334,7 +367,7 @@ class FunctionEditWindow extends HTMLElement {
     }
     
     onmousemove(e) {
-        if (this.movingElement) {
+        if (this.movingElement && !this.dxdy) {
             let me = this.movingElement;
             let boxRect = this.getBoundingClientRect();
             if (me.classList.contains('args')) {
@@ -351,10 +384,12 @@ class FunctionEditWindow extends HTMLElement {
                     me.render();
                 }
                 else {
-                    let px = e.clientX + me.offset[0] + 9;
-                    let py = e.clientY + me.offset[1] + 22;
-                    me.style.left = Math.min(Math.max(9, px - boxRect.left), this.clientWidth-10-me.clientWidth) + 'px';
-                    me.style.top =  Math.min(Math.max(22, py - boxRect.top), this.clientHeight-80-me.clientHeight) + 'px';
+                    let px = e.clientX + me.offset[0] + 4;
+                    let py = e.clientY + me.offset[1] + 4;
+                    // me.style.left = Math.min(Math.max(9, px - boxRect.left), this.clientWidth-10-me.clientWidth) + 'px';
+                    // me.style.top =  Math.min(Math.max(22, py - boxRect.top), this.clientHeight-80-me.clientHeight) + 'px';
+                    me.style.left = px - boxRect.left + 'px';
+                    me.style.top =  py - boxRect.top + 'px';
                     let mx = me.getBoundingClientRect().left;
                     let my = me.getBoundingClientRect().top;
                     let ups = [...this.querySelectorAll('function-edit-block>small-value')].filter(e=>{
@@ -372,8 +407,8 @@ class FunctionEditWindow extends HTMLElement {
                         }
                         let tx = ups[0].getBoundingClientRect().left;
                         let ty = ups[0].getBoundingClientRect().top;
-                        me.style.left = tx - boxRect.left + 9 + 'px';
-                        me.style.top = ty - boxRect.top + 21 + 'px';
+                        me.style.left = tx - boxRect.left + 4 + 'px';
+                        me.style.top = ty - boxRect.top + 4 + 'px';
                         for (let c of me.children) {
                             if (c.tagName == 'SMALL-VALUE') {
                                 c.relocate(this.style.zIndex);
@@ -407,10 +442,10 @@ class FunctionEditWindow extends HTMLElement {
                 }
             }
             else {
-                let px = e.clientX + me.offset[0] + 9;
-                let py = e.clientY + me.offset[1] + 22;
-                me.style.left = Math.min(Math.max(9, px - boxRect.left), this.clientWidth-10-me.clientWidth) + 'px';
-                me.style.top =  Math.min(Math.max(22, py - boxRect.top), this.clientHeight-80-me.clientHeight) + 'px';
+                let px = e.clientX + me.offset[0] + 4;
+                let py = e.clientY + me.offset[1] + 4;
+                me.style.left = px - boxRect.left + 'px';
+                me.style.top =  py - boxRect.top + 'px';
                 for (let c of me.children) {
                     if (c.tagName == 'SMALL-VALUE') {
                         c.relocate(me.style.zIndex);
@@ -429,8 +464,8 @@ class FunctionEditWindow extends HTMLElement {
                     if (e.classList.contains('control')) {
                         let tx = e.getBoundingClientRect().left;
                         let ty = e.getBoundingClientRect().bottom;
-                        let tx2 = e.getBoundingClientRect().left + 8;
-                        let ty2 = e.getBoundingClientRect().top + 22;
+                        let tx2 = e.getBoundingClientRect().left + 9;
+                        let ty2 = e.getBoundingClientRect().top + 23;
                         return Math.hypot(tx - mx, ty - my) < 5 || Math.hypot(tx2 - mx, ty2 - my) < 5;
                     }
                     let tx = e.getBoundingClientRect().left;
@@ -441,8 +476,8 @@ class FunctionEditWindow extends HTMLElement {
                 if (ups.length) {
                     itmb = true;
                     if (ups[0].classList.contains('control')) {
-                        let tx2 = ups[0].getBoundingClientRect().left + 8;
-                        let ty2 = ups[0].getBoundingClientRect().top + 22;
+                        let tx2 = ups[0].getBoundingClientRect().left + 9;
+                        let ty2 = ups[0].getBoundingClientRect().top + 23;
                         if (Math.hypot(tx2 - mx, ty2 - my) < 5) {
                             if (me.familyTree().includes(ups[0])) {
                                 return;
@@ -508,10 +543,25 @@ class FunctionEditWindow extends HTMLElement {
                 }
             }
         }
+        else if (this.dxdy) {
+            let rect = this.getBoundingClientRect();
+            let ox = e.clientX - this.dxdy[0];
+            let oy = e.clientY - this.dxdy[1];
+            this.start.style.left = this.start.getBoundingClientRect().x - rect.x + 4 + ox + 'px';
+            this.start.style.top = this.start.getBoundingClientRect().y - rect.y + 4 + oy + 'px';
+            for (const hs of this.bgs) {
+                hs.style.left = hs.getBoundingClientRect().x - rect.x + 4 + ox + 'px';
+                hs.style.top = hs.getBoundingClientRect().y - rect.y + 4 + oy + 'px';
+                hs.render();
+            }
+            this.start.render();
+            this.dxdy = [e.clientX, e.clientY];
+        }
     }
 
     onmouseup() {
         this.movingElement = undefined;
+        this.dxdy = undefined;
         this.saveCode();
     }
 
@@ -525,7 +575,22 @@ class FunctionEditWindow extends HTMLElement {
                 window.actions[this.actionName].code = [];
             }
             this.start.render();
+            
+            for (const hs of this.bgs) {
+                if (this.start.down) {
+                    window.actions[hs.hsn].code = hs.down.makeCode();
+                    console.log(isServerAction(window.actions[hs.hsn].code));
+                }
+                else {
+                    window.actions[hs.hsn].code = [];
+                }
+                hs.render();
+            }
             document.querySelectorAll('function-edit > .useStatesList').forEach(e=>e.reload());
+            localStorage.setItem('codepositions', JSON.stringify({
+                start: [this.start.style.top, this.start.style.left],
+                bgs: [...this.bgs.map(e=>[e.style.top, e.style.left])]
+            }));
             save();
         }
         else {
@@ -691,8 +756,8 @@ class FunctionEditBlock extends HTMLElement {
                 this.up.down = this;
             }
             let rect = this.parentElement.getBoundingClientRect();
-            this.style.top = this.up.getClientRects()[0].bottom - rect.top + 22 + 'px';
-            this.style.left = this.up.getClientRects()[0].left - rect.left + 9 + 'px';
+            this.style.top = this.up.getClientRects()[0].bottom - rect.top + 4 + 'px';
+            this.style.left = this.up.getClientRects()[0].left - rect.left + 4 + 'px';
         }
         if (this.child) {
             if (l.concat([this]).includes(this.child)) {
@@ -704,7 +769,7 @@ class FunctionEditBlock extends HTMLElement {
             }
             
             this.child.style.left = parseFloat(this.style.left.replace('px', '')) + 9 + 'px';
-            this.child.style.top = parseFloat(this.style.top.replace('px', '')) + 23.3 + 'px';
+            this.child.style.top = parseFloat(this.style.top.replace('px', '')) + 23 + 'px';
             this.child.style.zIndex = this.style.zIndex + 1;
             let c = this.child.render(l.concat([this]), undefined, start);
             this.style.height = c + 30 + 'px';
@@ -844,8 +909,8 @@ class SmallValue extends HTMLElement {
             let boxRect = this.parentElement.parentElement.getBoundingClientRect();
             let tx = this.getBoundingClientRect().left;
             let ty = this.getBoundingClientRect().top;
-            this.expression.style.left = tx - boxRect.left + 10 + 'px';
-            this.expression.style.top = ty - boxRect.top + 10 + 'px';
+            this.expression.style.left = tx - boxRect.left + 4 + 'px';
+            this.expression.style.top = ty - boxRect.top - 6 + 'px';
             this.expression.params = this.value.params;
             this.expression.render();
             this.style.width = this.expression.getBoundingClientRect().width + 'px';
@@ -861,8 +926,8 @@ class SmallValue extends HTMLElement {
             let boxRect = this.parentElement.parentElement.getBoundingClientRect();
             let tx = this.getBoundingClientRect().left;
             let ty = this.getBoundingClientRect().top;
-            this.expression.style.left = tx - boxRect.left + 9 + 'px';
-            this.expression.style.top = ty - boxRect.top + 10 + 'px';
+            this.expression.style.left = tx - boxRect.left + 4 + 'px';
+            this.expression.style.top = ty - boxRect.top - 6 + 'px';
             // this.style.width = this.expression.render(z + 1) + 'px';
             this.expression.params = this.value.params;
             this.expression.render();

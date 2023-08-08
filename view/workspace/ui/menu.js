@@ -1,7 +1,7 @@
 const LengthInputHTML = `<input type="text" value="20"><select><option selected="px">px</option><option>cm</option><option>mm</option><option>em</option></select>`;
 
 function createMenu(ws, name, n, edt, dsn) {
-    if (name == 'button') {
+        if (name == 'button') {
         buttonMenu(ws, edt);
     }
     else if (name == 'title') {
@@ -377,7 +377,7 @@ class UIEdit extends HTMLElement {
         this.miniws = make('div').addClass('miniws').elem;
         this.appendChild(this.miniws);
         for (let c of this.content) {
-            this.miniws.appendChild(wse.label(c.fname[2] ?? c.fname[0]).set('mcat', ['inline', c.fname[1]]).elem);
+            this.miniws.appendChild(wse.label(c.fname[2] ?? c.fname[0]).set('mcat', ['inline-block', c.fname[1]]).elem);
             this.miniws.appendChild(make('show-hide-button').set('mcat', ['inline-block', c.fname[1]]).elem);
             this.miniws.appendChild(make('br').set('mcat', ['inline', c.fname[1]]).elem);
             c.mcat = ['block', c.fname[1]];

@@ -320,7 +320,10 @@ value-input, action-input {
     font-size: 12px;
     display: block;
     padding: 5px;
-    margin: 0px 0px 16px 0px;
+}
+
+.miniws > label {
+    margin: 16px 0px 0px 0px;
 }
 
 value-input.hide, action-input.hide  {

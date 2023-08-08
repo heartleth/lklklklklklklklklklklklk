@@ -1,7 +1,13 @@
 function-edit-window {
+    overflow: hidden;
     display: block;
     height: 100%;
     width: 100%;
+}
+
+.functionEdit {
+    position: relative;
+    overflow: hidden;
 }
 
 function-edit-window > function-edit-block,
@@ -18,6 +24,12 @@ div > function-edit-block {
     height: 20px;
     left: 30px;
     top: 30px;
+}
+
+function-edit-block {
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 div > function-edit-block {
