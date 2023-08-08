@@ -557,3 +557,13 @@ document.getElementById('help').addEventListener('click', () => {
         electron.shell.openExternal('https://heartleth.github.io/lklklklklklklklklklklklk/docs');
     }
 });
+
+document.getElementById('appearance').addEventListener('click', () => {
+    let canv = document.querySelector('canvas');
+    if (canv.style.display == 'none') {
+        canv.style.display = 'block';
+    }
+    else if (canv.style.display == 'block') {
+        canv.style.display = 'none';
+    }
+});
