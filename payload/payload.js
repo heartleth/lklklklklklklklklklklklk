@@ -2,49 +2,49 @@ window.locals = {};
 let blockmap = {
     'return': {
         category: 'value',
-        exec: ((stc, local, v) => {
+        exec: (async (stc, local, v) => {
             window.locals[local]._returnValue = getValue(v, local);
             return;
         })
     },
     'JavaScript': {
         category: 'code',
-        exec: ((stc, local, code) => eval(getValue(code, local)))
+        exec: (async (stc, local, code) => eval(getValue(code, local)))
     },
     'ConsoleLog': {
         category: 'code',
-        exec: ((stc, local, code) => console.log(getValue(code, local)))
+        exec: (async (stc, local, code) => console.log(getValue(code, local)))
     },
     'Alert': {
         category: 'ui',
-        exec: ((stc, local, text) => {
+        exec: (async (stc, local, text) => {
             alert(getValue(text, local));
         })
     },
     'Href': {
         category: 'ui',
-        exec: ((stc, local, text) => {
+        exec: (async (stc, local, text) => {
             location.href = getValue(text, local);
         })
     },
     'HasId': {
         category: 'ui',
         isArgs: true,
-        exec: ((stc, local, e) => {
+        exec: (async (stc, local, e) => {
             return '#' + getValue(e, local);
         })
     },
     'ValueOf': {
         category: 'ui',
         isArgs: true,
-        exec: ((stc, local, v) => {
+        exec: (async (stc, local, v) => {
             return window.locals[local][v][0].value;
         })
     },
     'State': {
         category: 'value',
         isArgs: true,
-        exec: ((stc, local, s) => {
+        exec: (async (stc, local, s) => {
             return window.states[s];
         })
     },
@@ -52,21 +52,21 @@ let blockmap = {
         html: 'Attr:?T',
         category: 'value',
         isArgs: true,
-        exec: ((stc, local, s) => {
+        exec: (async (stc, local, s) => {
             return JSON.parse(window.locals[local].elementThis.getAttribute('attrs'))[s];
         })
     },
     'Local': {
         category: 'value',
         isArgs: true,
-        exec: ((stc, local, s) => {
+        exec: (async (stc, local, s) => {
             return window.locals[local][s];
         })
     },
     'PlusMinus': {
         category: 'value',
         isArgs: true,
-        exec: ((stc, local, ta, op, tb) => {
+        exec: (async (stc, local, ta, op, tb) => {
             console.log(ta);
             console.log(tb);
             const a = parseFloat(getValue(ta, local));
@@ -81,14 +81,14 @@ let blockmap = {
     'Find': {
         html: 'Find selector ?T into ?T',
         category: 'ui',
-        exec: ((stc, local, s, into) => {
+        exec: (async (stc, local, s, into) => {
             window.locals[local][into] = document.querySelectorAll(getValue(s, local));
         })
     },
     'Hide': {
         html: 'Hide ?T',
         category: 'ui',
-        exec: ((stc, local, v) => {
+        exec: (async (stc, local, v) => {
             if (window.locals[local][v][0].classList) {
                 window.locals[local][v].forEach(e=>e.classList.add('hide'));
             }
@@ -97,7 +97,7 @@ let blockmap = {
     'Show': {
         html: 'Show ?T',
         category: 'ui',
-        exec: ((stc, local, v) => {
+        exec: (async (stc, local, v) => {
             if (window.locals[local][v][0].classList) {
                 window.locals[local][v].forEach(e=>e.classList.remove('hide'));
             }
@@ -106,7 +106,7 @@ let blockmap = {
     'AppendHTML': {
         html: 'Append HTML ?T to ?T',
         category: 'ui',
-        exec: ((stc, local, html, v) => {
+        exec: (async (stc, local, html, v) => {
             if (window.locals[local][v][0].classList) {
                 window.locals[local][v].forEach(e=>e.appendChild(getValue(html, local)));
             }
@@ -115,7 +115,7 @@ let blockmap = {
     'SetState': {
         html: 'Set state % as ?T',
         category: 'value',
-        exec: ((stc, local, st, text) => {
+        exec: (async (stc, local, st, text) => {
             stc.push(st);
             window.states[st] = getValue(text, local);
         })
@@ -123,14 +123,14 @@ let blockmap = {
     'SetLocal': {
         html: 'Set variable ?T as ?T',
         category: 'value',
-        exec: ((stc, local, v, text) => {
+        exec: (async (stc, local, v, text) => {
             window.locals[local][v] = getValue(text, local);
         })
     },
     'IfOrd': {
         html: 'If ?T ?{=,≠,>,<,≤,≥} ?T',
         category: 'control',
-        exec: ((stc, local, child, ta, operator, tb) => {
+        exec: (async (stc, local, child, ta, operator, tb) => {
             let a = getValue(ta, local);
             let b = getValue(tb, local);
             let condition = ((a == b) && operator=='=')
@@ -141,7 +141,20 @@ let blockmap = {
                 ||((a > b) && operator=='>');
             if (condition) {
                 if (child) {
-                    child.run(stc, local);
+                    await child.run(stc, local);
+                }
+            }
+        })
+    },
+    'IterateOver': {
+        html: 'Each ?T in ?T',
+        category: 'control',
+        exec: (async (stc, local, child, iterName, arrc) => {
+            let arr = getValue(arrc, local);
+            for (let iter of arr) {
+                window.locals[local][iterName] = iter;
+                if (child) {
+                    await child.run(stc, local);
                 }
             }
         })
@@ -149,7 +162,7 @@ let blockmap = {
     'WhileOrd': {
         html: 'While ?T ?{=,≠,>,<,≤,≥} ?T',
         category: 'control',
-        exec: ((stc, local, child, ta, operator, tb) => {
+        exec: (async (stc, local, child, ta, operator, tb) => {
             let a = getValue(ta, local);
             let b = getValue(tb, local);
             let condition = ((a == b) && operator=='=')
@@ -160,7 +173,7 @@ let blockmap = {
                 ||((a > b) && operator=='>');
             while (condition) {
                 if (child) {
-                    child.run(stc, local);
+                    await child.run(stc, local);
                 }
                 a = getValue(ta, local);
                 b = getValue(tb, local);
@@ -173,8 +186,16 @@ let blockmap = {
     },
     'CallAction': { 
         category: 'code',
-        exec: ((stc, local, action) => {
-            callfunctionwithus(action, window.locals[local].elementThis);
+        exec: (async (stc, local, action) => {
+            await callfunctionwithus(action, window.locals[local].elementThis);
+        })
+    },
+    'Delay': {
+        html: 'Delay ?T s',
+        category: 'code',
+        exec: (async (stc, local, s) => {
+            let secs = getValue(s, local);
+            await new Promise(p => setTimeout(p, secs * 1000));
         })
     }
 };
@@ -193,7 +214,7 @@ let blockmap = {
             category: 'ui',
             isArgs: true,
             exp: (e) => `#${e}`,
-            exec: ((stc, local, ...params) => {
+            exec: (async (stc, local, ...params) => {
                 return make('user-built-component').set('attrs', params).set('componentName', bc).elem;
             })
         };
@@ -246,7 +267,7 @@ let blockmap = {
                         document.querySelectorAll(selector).forEach(e=>e.innerHTML='');
                     }
                     else {
-                        blockmap[code[0]].exec(stc, local, ...code.slice(1));
+                        await blockmap[code[0]].exec(stc, local, ...code.slice(1));
                     }
                 }
                 for (let st in res.states) {
@@ -296,24 +317,25 @@ class UserBuiltComponent extends HTMLElement {
 
 window.customElements.define('user-built-component', UserBuiltComponent);
 
-function callfunctionwithus(c, elementThis) {
+async function callfunctionwithus(c, elementThis) {
     let stc = [];
     let local = (Math.random() + 1).toString(36).substring(7);
     window.locals[local] = { elementThis };
-    actfunctioncode(stc, local, window.actions[c].code);
+    await actfunctioncode(stc, local, window.actions[c].code);
     updateState(stc);
 }
 
-function actfunctioncode(stc, local, codes) {
+async function actfunctioncode(stc, local, codes) {
+    console.log(codes);
     for (let code of codes) {
         if (blockmap[code.name].category == 'control') {
             const child = {
-                run: (stc, local) => code.child ? actfunctioncode(stc, local, code.child):''
+                run: async (stc, local) => code.child ? actfunctioncode(stc, local, code.child):''
             };
-            blockmap[code.name].exec(stc, local, child, ...code.params);
+            await blockmap[code.name].exec(stc, local, child, ...code.params);
         }
         else {
-            blockmap[code.name].exec(stc, local, ...code.params);
+            await blockmap[code.name].exec(stc, local, ...code.params);
         }
     }
 }
