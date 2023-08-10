@@ -38,14 +38,14 @@ let blockmap = {
         category: 'ui',
         isArgs: true,
         exec: (async (stc, local, v) => {
-            return window.locals[local][v][0].value;
+            return window.locals[local][await v][0].value;
         })
     },
     'State': {
         category: 'value',
         isArgs: true,
         exec: (async (stc, local, s) => {
-            return window.states[s];
+            return window.states[await s];
         })
     },
     'Attr': {
@@ -60,7 +60,7 @@ let blockmap = {
         category: 'value',
         isArgs: true,
         exec: (async (stc, local, s) => {
-            return window.locals[local][s];
+            return window.locals[local][await s];
         })
     },
     'PlusMinus': {
@@ -215,9 +215,7 @@ let blockmap = {
             isArgs: true,
             exp: (e) => `#${e}`,
             exec: (async (stc, local, ...params) => {
-                console.log('김민수');
-                let ret = make('user-built-component').set('attrs', params).set('locals', locals).set('componentName', bc).elem;
-                console.log(ret);
+                let ret = make('user-built-component').set('attrs', params).set('locals', local).set('componentName', bc).elem;
                 return ret;
             })
         };
@@ -245,7 +243,7 @@ let blockmap = {
                         body['#Elements:' + t[2]] = metaElem;
                     }
                 }
-                console.log(body);
+                // console.log(body);
                 const res = await fetch(`./serverside/${ssa.name}`, {
                     method: 'post',
                     headers: {
@@ -253,9 +251,9 @@ let blockmap = {
                     },
                     body: JSON.stringify(body)
                 }).then(e=>e.json());
-                console.log(res);
+                // console.log('res:', res);
                 for (let code of res.clientActs) {
-                    console.log(code);
+                    // console.log(code);
                     if (code[0].startsWith('AppendHTML')) {
                         const selector = code[2][1][code[1]].selector;
                         for (const e of document.querySelectorAll(selector)) {
@@ -263,7 +261,6 @@ let blockmap = {
                                 window.locals[local][k] = code[2][1][k];
                             }
                             let cgr = await getValue(code[2][0], local);
-                            console.log(cgr);
                             e.appendChild(cgr);
                         }
                     }
@@ -292,8 +289,11 @@ class UserBuiltComponent extends HTMLElement {
             let i = 0;
             this.querySelectorAll('*').forEach(e=>e.classList.remove('outline'));
             let ta = {};
+            for (let i in Object.keys(this.attrs)) {
+                this.attrs[i] = await getValue(this.attrs[i], this.local)
+            }
             for (let attr of componentInfo.attributes) {
-                ta[attr] = await getValue(this.attrs[i], this.locals);
+                ta[attr] = this.attrs[attr];
                 i += 1;
             }
             let sattrs = JSON.stringify(ta);
@@ -331,7 +331,6 @@ async function callfunctionwithus(c, elementThis) {
 }
 
 async function actfunctioncode(stc, local, codes) {
-    console.log(codes);
     for (let code of codes) {
         if (blockmap[code.name].category == 'control') {
             const child = {
@@ -368,7 +367,6 @@ async function getValue(v, local) {
     if (!v.substring && v.name) {
         if (v.name.startsWith('GETCOL')) {
             let v1 = await getValue(v.params[1], local);
-            console.log(v1, v.params[0]);
             return v1[v.params[0]];
         }
         return await blockmap[v.name].exec([], local, ...v.params.map(e=>getValue(e, local)));
