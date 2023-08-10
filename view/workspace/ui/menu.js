@@ -257,6 +257,7 @@ class ElementComponent {
                 }
             }
         }
+        console.log(this.updates);
         for (let [property, ref] of this.updates) {
             if (ref[0] == '@') {
                 let refinfo = ref.substring(1).split('/');

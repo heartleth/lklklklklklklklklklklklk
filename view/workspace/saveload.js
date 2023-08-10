@@ -62,7 +62,7 @@ async function load() {
                 category: 'ui',
                 isArgs: true,
                 exp: (e) => `#${e}`,
-                exec: ((stc, local, ...params) => {
+                exec: (async (stc, local, ...params) => {
                     return make('user-built-component').set('attrs', params).set('componentName', bc).elem;
                 })
             };
@@ -73,7 +73,7 @@ async function load() {
                 html: 'Insert values ' + Object.keys(window.tables[table]).map(e=>e+':?T').join(' ') + ' into ' + table,
                 category: 'db',
                 isArgs: false,
-                exec: ((stc, local, ...params) => {                    
+                exec: (async (stc, local, ...params) => {                    
                     console.log('Insert values ' + Object.keys(window.tables[table]).map(e=>e+': ... ') + 'INTO ' + table);
                 })
             };
@@ -81,7 +81,7 @@ async function load() {
                 html: `Select ${Object.keys(window.tables[table]).map(e=>e+'?{y,n}').join(' ')} from ${table}`,
                 category: 'db',
                 isArgs: true,
-                exec: ((stc, local, ...cols) => {
+                exec: (async (stc, local, ...cols) => {
                     console.log('SELECT ' + Object.keys(window.tables[table]).filter((e, i)=>cols[i]=='y').join(', ') + 'FROM' + table);
                 })
             };
@@ -89,7 +89,7 @@ async function load() {
                 html: `Select ${Object.keys(window.tables[table]).join(',')} from ${table} at id ?T`,
                 category: 'db',
                 isArgs: true,
-                exec: ((stc, local, ...cols) => {
+                exec: (async (stc, local, ...cols) => {
                     console.log('얼럴럴러');
                 })
             };
@@ -97,7 +97,7 @@ async function load() {
                 html: `Update ${table} at id ?T as ` + Object.keys(window.tables[table]).map(e=>e+':?T').join(' '),
                 category: 'db',
                 isArgs: false,
-                exec: ((stc, local, ...cols) => {
+                exec: (async (stc, local, ...cols) => {
                     console.log('얼럴럴러');
                 })
             };
@@ -105,8 +105,8 @@ async function load() {
                 html: `Column ?{${Object.keys(window.tables[table]).join(',')},id} of ?T from ${table}`,
                 category: 'db',
                 isArgs: true,
-                exec: ((stc, local, col, obj) => {
-                    return getValue(obj, local)[col];
+                exec: (async (stc, local, col, obj) => {
+                    return await getValue(obj, local)[col];
                 })
             };
         }

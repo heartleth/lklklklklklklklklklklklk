@@ -46,16 +46,16 @@ function inputMenu(ws, edt) {
         [':placeholder', '@#b' + tok + 'Placeholder/val'],
         // [':type', '@#b' + tok + 'Type/value'],
         ['#backgroundColor', '@#b' + tok + 'Color/val'],
-        ['value', '@#b' + tok + 'DefaultValue/val'],
-        [':boxStyle', '@#b' + tok + 'Style/val']
-        [':onload', '@#b' + tok + 'OnLoad/functor'],
+        // ['value', '@#b' + tok + 'DefaultValue/val'],
+        [':boxStyle', '@#b' + tok + 'Style/val'],
+        [':onload', '@#b' + tok + 'OnLoad/functor']
     ]);
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;
     if (edt) {
-        uiedit.content = elementPropertySet().concat([
+        uiedit.content = elementPropertySet(edt).concat([
             make('value-input').set('fname', ['Placeholder', 0]).set('onlyText', true).set('defaultText', edt.getAttribute('placeholder')).elem,
-            make('value-input').set('fname', ['DefaultValue', 0, 'Default Value']).set('defaultText', edt.value).elem,
+            // make('value-input').set('fname', ['DefaultValue', 0, 'Default Value']).set('defaultText', edt.value).elem,
             make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', Math.round(lpx(edt.style.width) / cellSpacing)).elem,
             make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', Math.round(lpx(edt.style.height) / cellSpacing)).elem,
             make('value-input').set('fname', ['Color', 1]).set('defaultText', edt.style.backgroundColor).elem,
@@ -65,7 +65,7 @@ function inputMenu(ws, edt) {
     else {
         uiedit.content = elementPropertySet().concat([
             make('value-input').set('fname', ['Placeholder', 0]).set('onlyText', true).elem,
-            make('value-input').set('fname', ['DefaultValue', 0, 'Default Value']).elem,
+            // make('value-input').set('fname', ['DefaultValue', 0, 'Default Value']).elem,
             make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 5).elem,
             make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', 1).elem,
             make('value-input').set('fname', ['Color', 1]).set('defaultText', 'white').elem,

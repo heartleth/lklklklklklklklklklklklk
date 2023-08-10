@@ -3,35 +3,35 @@ let blockmap = {
     'return': {
         category: 'value',
         exec: (async (stc, local, v) => {
-            window.locals[local]._returnValue = getValue(v, local);
+            window.locals[local]._returnValue = await getValue(v, local);
             return;
         })
     },
     'JavaScript': {
         category: 'code',
-        exec: (async (stc, local, code) => eval(getValue(code, local)))
+        exec: (async (stc, local, code) => eval(await getValue(code, local)))
     },
     'ConsoleLog': {
         category: 'code',
-        exec: (async (stc, local, code) => console.log(getValue(code, local)))
+        exec: (async (stc, local, code) => console.log(await getValue(code, local)))
     },
     'Alert': {
         category: 'ui',
         exec: (async (stc, local, text) => {
-            alert(getValue(text, local));
+            alert(await getValue(text, local));
         })
     },
     'Href': {
         category: 'ui',
         exec: (async (stc, local, text) => {
-            location.href = getValue(text, local);
+            location.href = await getValue(text, local);
         })
     },
     'HasId': {
         category: 'ui',
         isArgs: true,
         exec: (async (stc, local, e) => {
-            return '#' + getValue(e, local);
+            return '#' + await getValue(e, local);
         })
     },
     'ValueOf': {
@@ -67,10 +67,8 @@ let blockmap = {
         category: 'value',
         isArgs: true,
         exec: (async (stc, local, ta, op, tb) => {
-            console.log(ta);
-            console.log(tb);
-            const a = parseFloat(getValue(ta, local));
-            const b = parseFloat(getValue(tb, local));
+            const a = parseFloat(await getValue(ta, local));
+            const b = parseFloat(await getValue(tb, local));
             if (op == '+') return a + b;
             if (op == '-') return a - b;
             if (op == '*') return a * b;
@@ -82,7 +80,7 @@ let blockmap = {
         html: 'Find selector ?T into ?T',
         category: 'ui',
         exec: (async (stc, local, s, into) => {
-            window.locals[local][into] = document.querySelectorAll(getValue(s, local));
+            window.locals[local][into] = document.querySelectorAll(await getValue(s, local));
         })
     },
     'Hide': {
@@ -108,7 +106,9 @@ let blockmap = {
         category: 'ui',
         exec: (async (stc, local, html, v) => {
             if (window.locals[local][v][0].classList) {
-                window.locals[local][v].forEach(e=>e.appendChild(getValue(html, local)));
+                for (const e of window.locals[local][v]) {
+                    e.appendChild(await getValue(html, local));
+                }
             }
         })
     },
@@ -117,22 +117,22 @@ let blockmap = {
         category: 'value',
         exec: (async (stc, local, st, text) => {
             stc.push(st);
-            window.states[st] = getValue(text, local);
+            window.states[st] = await getValue(text, local);
         })
     },
     'SetLocal': {
         html: 'Set variable ?T as ?T',
         category: 'value',
         exec: (async (stc, local, v, text) => {
-            window.locals[local][v] = getValue(text, local);
+            window.locals[local][v] = await getValue(text, local);
         })
     },
     'IfOrd': {
         html: 'If ?T ?{=,≠,>,<,≤,≥} ?T',
         category: 'control',
         exec: (async (stc, local, child, ta, operator, tb) => {
-            let a = getValue(ta, local);
-            let b = getValue(tb, local);
+            let a = await getValue(ta, local);
+            let b = await getValue(tb, local);
             let condition = ((a == b) && operator=='=')
                 ||((a != b) && operator=='≠')
                 ||((a < b) && operator=='<')
@@ -150,7 +150,7 @@ let blockmap = {
         html: 'Each ?T in ?T',
         category: 'control',
         exec: (async (stc, local, child, iterName, arrc) => {
-            let arr = getValue(arrc, local);
+            let arr = await getValue(arrc, local);
             for (let iter of arr) {
                 window.locals[local][iterName] = iter;
                 if (child) {
@@ -163,8 +163,8 @@ let blockmap = {
         html: 'While ?T ?{=,≠,>,<,≤,≥} ?T',
         category: 'control',
         exec: (async (stc, local, child, ta, operator, tb) => {
-            let a = getValue(ta, local);
-            let b = getValue(tb, local);
+            let a = await getValue(ta, local);
+            let b = await getValue(tb, local);
             let condition = ((a == b) && operator=='=')
                 ||((a != b) && operator=='≠')
                 ||((a < b) && operator=='<')
@@ -175,8 +175,8 @@ let blockmap = {
                 if (child) {
                     await child.run(stc, local);
                 }
-                a = getValue(ta, local);
-                b = getValue(tb, local);
+                a = await getValue(ta, local);
+                b = await getValue(tb, local);
                 condition = ((a == b) && operator=='=')
                     ||((a < b) && operator=='<')
                     ||((a != b) && operator=='≠')
@@ -194,7 +194,7 @@ let blockmap = {
         html: 'Delay ?T s',
         category: 'code',
         exec: (async (stc, local, s) => {
-            let secs = getValue(s, local);
+            let secs = await getValue(s, local);
             await new Promise(p => setTimeout(p, secs * 1000));
         })
     }
@@ -215,7 +215,10 @@ let blockmap = {
             isArgs: true,
             exp: (e) => `#${e}`,
             exec: (async (stc, local, ...params) => {
-                return make('user-built-component').set('attrs', params).set('componentName', bc).elem;
+                console.log('김민수');
+                let ret = make('user-built-component').set('attrs', params).set('locals', locals).set('componentName', bc).elem;
+                console.log(ret);
+                return ret;
             })
         };
     }
@@ -233,7 +236,7 @@ let blockmap = {
                         body['#State:' + t[1]] = window.states[t[1]];
                     }
                     else if (t[0] == '#Find') {
-                        let selector = getValue(t[1], local);
+                        let selector = await getValue(t[1], local);
                         let elem = document.querySelector(selector);
                         const metaElem = {
                             value: elem.value,
@@ -255,12 +258,14 @@ let blockmap = {
                     console.log(code);
                     if (code[0].startsWith('AppendHTML')) {
                         const selector = code[2][1][code[1]].selector;
-                        document.querySelectorAll(selector).forEach(e=>{
+                        for (const e of document.querySelectorAll(selector)) {
                             for (let k in code[2][1]) {
                                 window.locals[local][k] = code[2][1][k];
                             }
-                            e.appendChild(getValue(code[2][0], local));
-                        });
+                            let cgr = await getValue(code[2][0], local);
+                            console.log(cgr);
+                            e.appendChild(cgr);
+                        }
                     }
                     else if (code[0].startsWith('EmptyElement')) {
                         const selector = code[1][1][code[1][0]].selector;
@@ -280,7 +285,7 @@ let blockmap = {
 })();
 
 class UserBuiltComponent extends HTMLElement {
-    connectedCallback() {
+    async connectedCallback() {
         if (this.componentName) {
             let componentInfo = window.builtComponents[this.componentName];
             this.innerHTML = componentInfo.html;
@@ -288,7 +293,7 @@ class UserBuiltComponent extends HTMLElement {
             this.querySelectorAll('*').forEach(e=>e.classList.remove('outline'));
             let ta = {};
             for (let attr of componentInfo.attributes) {
-                ta[attr] = this.attrs[i];
+                ta[attr] = await getValue(this.attrs[i], this.locals);
                 i += 1;
             }
             let sattrs = JSON.stringify(ta);
@@ -330,7 +335,7 @@ async function actfunctioncode(stc, local, codes) {
     for (let code of codes) {
         if (blockmap[code.name].category == 'control') {
             const child = {
-                run: async (stc, local) => code.child ? actfunctioncode(stc, local, code.child):''
+                run: async (stc, local) => code.child ? await actfunctioncode(stc, local, code.child):''
             };
             await blockmap[code.name].exec(stc, local, child, ...code.params);
         }
@@ -358,15 +363,15 @@ function updateState(stateNames) {
     }
 }
 
-function getValue(v, local) {
+async function getValue(v, local) {
     if (!v) return;
     if (!v.substring && v.name) {
         if (v.name.startsWith('GETCOL')) {
-            let v1 = getValue(v.params[1], local);
+            let v1 = await getValue(v.params[1], local);
             console.log(v1, v.params[0]);
             return v1[v.params[0]];
         }
-        return blockmap[v.name].exec([], local, ...v.params.map(e=>getValue(e, local)));
+        return await blockmap[v.name].exec([], local, ...v.params.map(e=>getValue(e, local)));
     }
     if (v.startsWith) {
         if (v.startsWith('#Local:')) {
