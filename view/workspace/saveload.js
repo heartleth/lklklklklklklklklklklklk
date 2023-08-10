@@ -67,7 +67,24 @@ async function load() {
                 })
             };
         }
-
+        // if (code.name.startsWith('INSERTINTO')) {
+        //     const table = code.name.substring(10);
+        //     const values = Object.keys(cas.tables[table]).map((e, i) => [e, getValue(code.params[i], cas)]);
+        //     const query = `INSERT INTO ${table} (${values.map(e=>e[0]).join([', '])}) VALUES (${values.map(e=>'?').join([', '])})`;
+        //     let realValues = await Promise.all([...values.map(e=>e[1])]);
+        //     console.log(code.params);
+        //     console.log(query, realValues);
+        //     await new Promise(p => db.run(query, realValues, (err) => { console.log(err); p(0); }));
+        // }
+        // else if (code.name.startsWith('UPID')) {
+        //     const table = code.name.substring(4);
+        //     const values = Object.keys(cas.tables[table]).map((e, i) => [e, getValue(code.params[i+1], cas)]);
+        //     const query = `UPDATE ${table} SET ${values.map(e=>e[0]+'=?').join([', '])} WHERE id=` + await getValue(code.params[0], cas);
+        //     let realValues = await Promise.all([...values.map(e=>e[1])]);
+        //     console.log(code.params);
+        //     console.log(query, realValues);
+        //     await new Promise(p => db.run(query, realValues, (err) => { console.log(err); p(0); }));
+        // }
         for (let table of Object.keys(window.tables)) {
             blockmap['INSERTINTO' + table] = {
                 html: 'Insert values ' + Object.keys(window.tables[table]).map(e=>e+':?T').join(' ') + ' into ' + table,

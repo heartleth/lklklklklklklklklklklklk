@@ -161,6 +161,20 @@ let blockmap = {
                 }
             }
         })
+    },
+    'Delay': {
+        html: 'Delay ?T s',
+        category: 'code',
+        exec: (async  (cas, t) => {
+            cas.clientActs.push(['Delay', [t, {...cas.locals}]]);
+        })
+    },
+    'CallAction': {
+        html: 'Action ?A',
+        category: 'code',
+        exec: (async (cas, ac) => {
+            cas.clientActs.push(['CallAction', [ac, {...cas.locals}]]);
+        })
     }
 };
 

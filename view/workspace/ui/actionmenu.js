@@ -218,6 +218,7 @@ class FunctionEditWindow extends HTMLElement {
                 }
                 this.appendChild(this.start);
                 this.loadCode(this.start, window.actions[this.actionName].code);
+                let cym = Math.max(...[...this.querySelectorAll('function-edit-window > function-edit-block')].map(e=>e.getBoundingClientRect().top));
 
                 let i = 1;
                 this.bgs = [];
@@ -226,8 +227,8 @@ class FunctionEditWindow extends HTMLElement {
                         continue;
                     }
                     let hs = make('function-edit-block').addClass('start').html('Event start: ' + hsn).elem;
-                    hs.style.left = 10 + 380 * i + 'px';
-                    hs.style.top = '45px';
+                    hs.style.left = '10px';
+                    hs.style.top = 95 + cym - this.getBoundingClientRect().top + 'px';
                     if (codePositions) {
                         // this.start.style.left = codePositions.start.left;
                         // this.start.style.top = codePositions.start.top;
@@ -236,6 +237,7 @@ class FunctionEditWindow extends HTMLElement {
                     this.bgs.push(hs);
                     this.appendChild(hs);
                     this.loadCode(hs, window.actions[hsn].code, undefined, hsn);
+                    cym = Math.max(...[...this.querySelectorAll('function-edit-window > function-edit-block')].map(e=>e.getBoundingClientRect().top));
                 }
             }
             else {
@@ -910,7 +912,7 @@ class SmallValue extends HTMLElement {
             let tx = this.getBoundingClientRect().left;
             let ty = this.getBoundingClientRect().top;
             this.expression.style.left = tx - boxRect.left + 4 + 'px';
-            this.expression.style.top = ty - boxRect.top - 6 + 'px';
+            this.expression.style.top = ty - boxRect.top - 8 + 'px';
             this.expression.params = this.value.params;
             this.expression.render();
             this.style.width = this.expression.getBoundingClientRect().width + 'px';
@@ -927,7 +929,7 @@ class SmallValue extends HTMLElement {
             let tx = this.getBoundingClientRect().left;
             let ty = this.getBoundingClientRect().top;
             this.expression.style.left = tx - boxRect.left + 4 + 'px';
-            this.expression.style.top = ty - boxRect.top - 6 + 'px';
+            this.expression.style.top = ty - boxRect.top - 8 + 'px';
             // this.style.width = this.expression.render(z + 1) + 'px';
             this.expression.params = this.value.params;
             this.expression.render();

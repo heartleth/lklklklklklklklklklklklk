@@ -7,4 +7,4 @@ const db = new sqlite3.Database('C:\\Users\\myjmy\\AppData\\Roaming\\yghdatas\\w
 //     console.log([...b[0].sql.substring(15 + tnl).split(',')].map(e=>e.trim().split(' ')));
 // });
 
-db.run('DELETE FROM posts', (a, b)=>console.log(a, b));
+db.run('DELETE FROM board', (a, b)=>console.log(a, b));

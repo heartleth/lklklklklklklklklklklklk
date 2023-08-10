@@ -187,6 +187,7 @@ let blockmap = {
     'CallAction': { 
         category: 'code',
         exec: (async (stc, local, action) => {
+            console.log(action);
             await callfunctionwithus(action, window.locals[local].elementThis);
         })
     },
