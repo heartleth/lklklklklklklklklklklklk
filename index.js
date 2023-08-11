@@ -50,40 +50,40 @@ app.whenReady().then(async () => {
         }
         if (!fs.existsSync(path.join(appdata, 'yghdatas/payload'))) {
             fs.mkdirSync(path.join(appdata, 'yghdatas/payload'));
-            const requirements = [
-                'default.css',
-                'payload.js'
-            ];
-            for (let filename of requirements) {
-                const file = fs.createWriteStream(path.join(appdata, 'yghdatas/payload/' + filename));
-                const request = https.get("https://raw.githubusercontent.com/heartleth/lklklklklklklklklklklklk/main/payload/" + filename, function(response) {
-                    response.pipe(file);
-                    file.on("finish", () => {
-                        file.close();
-                        console.log("Download Completed! " + filename);
-                    });
+        }
+        const requirements = [
+            'default.css',
+            'payload.js'
+        ];
+        for (let filename of requirements) {
+            const file = fs.createWriteStream(path.join(appdata, 'yghdatas/payload/' + filename));
+            const request = https.get("https://raw.githubusercontent.com/heartleth/lklklklklklklklklklklklk/main/payload/" + filename, function(response) {
+                response.pipe(file);
+                file.on("finish", () => {
+                    file.close();
+                    console.log("Download Completed! " + filename);
                 });
-            }
+            });
         }
         if (!fs.existsSync(path.join(appdata, 'yghdatas/makeserver'))) {
             fs.mkdirSync(path.join(appdata, 'yghdatas/makeserver'));
-            const requirements = [
-                '_package.json',
-                'payload.js',
-                'README.txt',
-                'server.js',
-                'run.bat'
-            ];
-            for (let filename of requirements) {
-                const file = fs.createWriteStream(path.join(appdata, 'yghdatas/makeserver/' + filename));
-                const request = https.get("https://raw.githubusercontent.com/heartleth/lklklklklklklklklklklklk/main/makeserver/" + filename, function(response) {
-                    response.pipe(file);
-                    file.on("finish", () => {
-                        file.close();
-                        console.log("Download Completed! " + filename);
-                    });
+        }
+        const requirements2 = [
+            '_package.json',
+            'payload.js',
+            'README.txt',
+            'server.js',
+            'run.bat'
+        ];
+        for (let filename of requirements2) {
+            const file = fs.createWriteStream(path.join(appdata, 'yghdatas/makeserver/' + filename));
+            const request = https.get("https://raw.githubusercontent.com/heartleth/lklklklklklklklklklklklk/main/makeserver/" + filename, function(response) {
+                response.pipe(file);
+                file.on("finish", () => {
+                    file.close();
+                    console.log("Download Completed! " + filename);
                 });
-            }
+            });
         }
     }
 
