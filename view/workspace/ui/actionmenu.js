@@ -1,7 +1,9 @@
 let itmb = 0;
 let mzi = 0;
 
-window.actions = {};
+window.actions = {
+    'page load': { code: [] }
+};
 window.locals = {};
 
 class ActionInput extends HTMLElement {
@@ -168,6 +170,9 @@ function functoreditmenu(ws, funcName) {
 
 class FunctionEditWindow extends HTMLElement {
     connectedCallback() {
+        if (localStorage.getItem(clearPath(location.hash) + '.actions')) {
+            
+        }
         this.init();
     }
     

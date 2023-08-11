@@ -188,7 +188,13 @@ let blockmap = {
         category: 'code',
         exec: (async (stc, local, action) => {
             console.log(action);
-            await callfunctionwithus(action[0], window.locals[local].elementThis);
+            if (Array.isArray(action)) {
+                console.log('ee');
+                await callfunctionwithus(action[0], window.locals[local].elementThis);
+            }
+            else {
+                await callfunctionwithus(action, window.locals[local].elementThis);
+            }
         })
     },
     'Delay': {
@@ -281,6 +287,7 @@ let blockmap = {
             })
         };
     }
+    callfunctionwithus('page load', document.body);
 })();
 
 class UserBuiltComponent extends HTMLElement {
@@ -325,6 +332,7 @@ class UserBuiltComponent extends HTMLElement {
 window.customElements.define('user-built-component', UserBuiltComponent);
 
 async function callfunctionwithus(c, elementThis) {
+    console.log(c);
     let stc = [];
     let local = (Math.random() + 1).toString(36).substring(7);
     window.locals[local] = { elementThis };
