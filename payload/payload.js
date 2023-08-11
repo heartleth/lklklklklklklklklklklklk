@@ -188,7 +188,7 @@ let blockmap = {
         category: 'code',
         exec: (async (stc, local, action) => {
             console.log(action);
-            await callfunctionwithus(action, window.locals[local].elementThis);
+            await callfunctionwithus(action[0], window.locals[local].elementThis);
         })
     },
     'Delay': {
@@ -252,7 +252,7 @@ let blockmap = {
                     },
                     body: JSON.stringify(body)
                 }).then(e=>e.json());
-                // console.log('res:', res);
+                console.log('res:', res);
                 for (let code of res.clientActs) {
                     // console.log(code);
                     if (code[0].startsWith('AppendHTML')) {
@@ -267,6 +267,7 @@ let blockmap = {
                     }
                     else if (code[0].startsWith('EmptyElement')) {
                         const selector = code[1][1][code[1][0]].selector;
+                        console.log(selector);
                         document.querySelectorAll(selector).forEach(e=>e.innerHTML='');
                     }
                     else {
