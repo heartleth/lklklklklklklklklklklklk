@@ -236,6 +236,7 @@ let blockmap = {
     'LIMIT': {
         html: 'Limit ?T',
         category: 'db',
+        mode: 'chain',
         exec: (async (stc, local, n) => {
             return await getValue(n, local);
         })
