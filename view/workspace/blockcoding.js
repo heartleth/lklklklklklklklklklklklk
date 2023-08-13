@@ -232,6 +232,13 @@ let blockmap = {
         exec: (async (stc, local, action) => {
             await callfunctionwithus(action, window.locals[local].elementThis);
         })
+    },
+    'LIMIT': {
+        html: 'Limit ?T',
+        category: 'db',
+        exec: (async (stc, local, n) => {
+            return await getValue(n, local);
+        })
     }
 };
 
