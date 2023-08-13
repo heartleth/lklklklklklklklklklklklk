@@ -29,7 +29,7 @@ let blockmap = {
         html: 'Open Page ?L',
         category: 'ui',
         exec: (async (stc, local, text) => {
-            location.href = location.href.split('#')[0] + '#/' + await getValue(text, local);
+            location.href = location.href.split('#')[0] + '#' + await getValue(text, local);
             location.reload();
         })
     },

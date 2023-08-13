@@ -5,7 +5,7 @@ function getPage() {
     // else if (location.hash[1] != '/') {
     //     return clearPath(location.hash) + '.';
     // }
-    return clearPath(location.hash) + '.';
+    return clearPath(location.hash.substring(1)) + '.';
 }
 
 // async function save() {
@@ -22,8 +22,10 @@ function save() {
     if (!localStorage.getItem('route')) {
         localStorage.setItem('route', '');
     }
+    localStorage.setItem('version', '');
     localStorage.setItem(page + 'components', JSON.stringify(window.builtComponents));
-    localStorage.setItem(page + 'actions', JSON.stringify(window.actions));
+    // localStorage.setItem(page + 'actions', JSON.stringify(window.actions));
+    localStorage.setItem('actions', JSON.stringify(window.actions));
     localStorage.setItem(page + 'states', JSON.stringify(window.states));
     localStorage.setItem(page + 'menus', JSON.stringify([...document.getElementById('menus').children].map(e=>{
         let { top, left, right, width, height } = e.style;
@@ -127,7 +129,15 @@ async function load() {
                 })
             };
         }
-        window.actions = JSON.parse(localStorage.getItem(page + 'actions'));
+        // let allActions = JSON.parse(localStorage.getItem(page + 'actions'));
+        let allActions = JSON.parse(localStorage.getItem('actions'));
+        console.log(allActions);
+        window.actions = {};
+        for (const key in allActions) {
+            if (page.startsWith(allActions[key].from)) {
+                window.actions[key] = allActions[key];
+            }
+        }
         window.states = JSON.parse(localStorage.getItem(page + 'states'));
         document.querySelector('wsbody').innerHTML = localStorage.getItem(page + 'page');
         let menus = JSON.parse(localStorage.getItem(page + 'menus'));

@@ -2,7 +2,7 @@ let itmb = 0;
 let mzi = 0;
 
 window.actions = {
-    'page load': { code: [] }
+    'page load': { from: '_isolated', code: [] }
 };
 window.locals = {};
 
@@ -31,6 +31,7 @@ class ActionInput extends HTMLElement {
         let makeNewAction = make('button').addClass('newstate').html('+').elem;
         makeNewAction.addEventListener('click', () => {
             window.actions[newActionNameInput.value] = {
+                from: clearPath(location.hash.substring(1)),
                 code: []
             };
             document.querySelectorAll('action-input>select.fullStateName').forEach(e=>{
@@ -170,7 +171,7 @@ function functoreditmenu(ws, funcName) {
 
 class FunctionEditWindow extends HTMLElement {
     connectedCallback() {
-        if (localStorage.getItem(clearPath(location.hash) + '.actions')) {
+        if (localStorage.getItem(clearPath(location.hash.substring(1)) + '.actions')) {
             
         }
         this.init();

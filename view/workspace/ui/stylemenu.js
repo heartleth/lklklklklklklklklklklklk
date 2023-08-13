@@ -30,12 +30,17 @@ function stylemenu(ws, dsn) {
         ws.innerHTML = '';
         ws.dsn = ws.dsn ?? (dsn ?? 'None');
         if (localStorage.getItem('llstyle') == null) {
-            localStorage.setItem('llstyle', '{"None":{}}');
+            localStorage.setItem('llstyle', '{"None":{"from":""}}');
+            
         }
         let pstyles = JSON.parse(localStorage.getItem('llstyle'));
         styleName = document.createElement('select');
+        console.log(clearPath(location.hash.substring(1)));
         for (const stn in pstyles) {
-            styleName.innerHTML += `<option ${stn == ws.dsn ? 'selected' : ''}>` + stn + '</option>';
+            if (clearPath(location.hash.substring(1)).startsWith(pstyles[stn].from)) {
+
+                styleName.innerHTML += `<option ${stn == ws.dsn ? 'selected' : ''}>` + stn + '</option>';
+            }
         }
         styleName.addEventListener('change', () => {
             ws.dsn = styleName.value;
@@ -51,7 +56,7 @@ function stylemenu(ws, dsn) {
             if (nsi.value != '') {
                 ws.dsn = nsi.value;
                 let s = JSON.parse(localStorage.getItem('llstyle'));
-                s[ws.dsn] = {};
+                s[ws.dsn] = { from: clearPath(location.hash.substring(1)) };
                 localStorage.setItem('llstyle', JSON.stringify(s));
                 applyStyle();
                 ws.render();

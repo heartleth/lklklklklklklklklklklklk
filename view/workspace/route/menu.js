@@ -1,4 +1,5 @@
 function clearPath(path) {
+    if (path.length <= 1) return '';
     let pp = path.replace(/\/+/g, '/');
     if (pp[pp.length - 1] == '/') {
         return pp.substring(0, pp.length - 1);
@@ -52,8 +53,10 @@ function routeMenu(ws) {
         let newRoute = make('text').elem;
         let newRouteButton = make('button').text('Create Page').elem;
         newRouteButton.addEventListener('click', () => {
-            localStorage.setItem('route', route+','+newRoute.value);
-            ws.refresh();
+            if (!pages.includes(newRoute.value) && newRoute.value[0] == '/') {
+                localStorage.setItem('route', route+','+newRoute.value);
+                ws.refresh();
+            }
         });
         ws.appendChild(wse.br());
         ws.appendChild(newRoute);
@@ -107,7 +110,7 @@ class RouteNode extends HTMLElement {
         });
         this.appendChild(this.rpath);
         this.goto = document.createElement('button');
-        this.goto.innerHTML = '#'
+        this.goto.innerHTML = '#';
         this.goto.onclick = () => blockmap.Href.exec([], '', ppath);
         this.appendChild(this.goto);
         if (this.tree.childs.length) {
