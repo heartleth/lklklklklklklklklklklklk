@@ -54,7 +54,9 @@ function routeMenu(ws) {
         let newRouteButton = make('button').text('Create Page').elem;
         newRouteButton.addEventListener('click', () => {
             if (!pages.includes(newRoute.value) && newRoute.value[0] == '/') {
+                window.actions['page load: ' + clearPath(newRoute.value)] = { from: clearPath(newRoute.value), inherit: false, code: [] };
                 localStorage.setItem('route', route+','+newRoute.value);
+                save();
                 ws.refresh();
             }
         });

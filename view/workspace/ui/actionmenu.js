@@ -2,7 +2,7 @@ let itmb = 0;
 let mzi = 0;
 
 window.actions = {
-    'page load': { from: '_isolated', code: [] }
+    'page load': { from: '', inherit: false, code: [] }
 };
 window.locals = {};
 
@@ -20,7 +20,7 @@ class ActionInput extends HTMLElement {
         // this.appendChild(wse.br());
         this.actionNameInput = make('select').addClass('fullStateName').elem;
         this.actionNameInput.innerHTML = '<option>None</option>';
-        this.actionNameInput.innerHTML += Object.keys(window.actions).filter(t=>t.length&&t[0]!='_').map(t=>`<option${t===this.actionName?' selected="selected"':''}>${t}</option>`).join('');
+        this.actionNameInput.innerHTML += Object.keys(window.actions).filter(t=>t.length&&t[0]!='_'&&!t.startsWith('page load')).map(t=>`<option${t===this.actionName?' selected="selected"':''}>${t}</option>`).join('');
         this.actionNameInput.addEventListener('click', () => {
             this.dispatchEvent(new Event('change'));
         });
@@ -32,6 +32,7 @@ class ActionInput extends HTMLElement {
         makeNewAction.addEventListener('click', () => {
             window.actions[newActionNameInput.value] = {
                 from: clearPath(location.hash.substring(1)),
+                inherit: true,
                 code: []
             };
             document.querySelectorAll('action-input>select.fullStateName').forEach(e=>{
@@ -128,6 +129,23 @@ class FunctionEdit extends HTMLElement {
 
     render() {
         this.innerHTML = '';
+        if (this.actionName != 'None') {
+            let div = make('div').elem;
+            div.appendChild(wse.label('Inherit').elem)
+            // this.appendChild();
+            let inherit = make('input').attr('name', this.actionName).attr('type', 'checkbox').elem;
+            inherit.checked = window.actions[this.actionName].inherit;
+            inherit.addEventListener('change', () => {
+                window.actions[this.actionName].inherit = inherit.checked;
+                save();
+            });
+            div.appendChild(inherit);
+            this.appendChild(div);
+            this.appendChild(make('div').elem);
+        }
+        else {
+            return;
+        }
         let rawCode = make('div').addClass('useStatesList').elem;
         rawCode.innerText = JSON.stringify(window.actions[this.actionName]);
         rawCode.reload = () => {rawCode.innerText = JSON.stringify(window.actions[this.actionName]);};

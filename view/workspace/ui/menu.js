@@ -1,7 +1,7 @@
 const LengthInputHTML = `<input type="text" value="20"><select><option selected="px">px</option><option>cm</option><option>mm</option><option>em</option></select>`;
 
 function createMenu(ws, name, n, edt, dsn) {
-        if (name == 'button') {
+    if (name == 'button') {
         buttonMenu(ws, edt);
     }
     else if (name == 'title') {
@@ -257,7 +257,7 @@ class ElementComponent {
                 }
             }
         }
-        console.log(this.updates);
+        // console.log(this.updates);
         for (let [property, ref] of this.updates) {
             if (ref[0] == '@') {
                 let refinfo = ref.substring(1).split('/');

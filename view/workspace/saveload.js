@@ -25,7 +25,16 @@ function save() {
     localStorage.setItem('version', '');
     localStorage.setItem(page + 'components', JSON.stringify(window.builtComponents));
     // localStorage.setItem(page + 'actions', JSON.stringify(window.actions));
-    localStorage.setItem('actions', JSON.stringify(window.actions));
+    if (localStorage.getItem('actions')) {
+        let acc = JSON.parse(localStorage.getItem('actions'));
+        for (const key in window.actions) {
+            acc[key] = window.actions[key];
+        }
+        localStorage.setItem('actions', JSON.stringify(acc));
+    }
+    else {
+        localStorage.setItem('actions', JSON.stringify(window.actions));
+    }
     localStorage.setItem(page + 'states', JSON.stringify(window.states));
     localStorage.setItem(page + 'menus', JSON.stringify([...document.getElementById('menus').children].map(e=>{
         let { top, left, right, width, height } = e.style;
@@ -133,9 +142,12 @@ async function load() {
         let allActions = JSON.parse(localStorage.getItem('actions'));
         console.log(allActions);
         window.actions = {};
+        let path = clearPath(location.hash.substring(1));
         for (const key in allActions) {
-            if (page.startsWith(allActions[key].from)) {
-                window.actions[key] = allActions[key];
+            if (path.startsWith(allActions[key].from) || path == allActions[key].from) {
+                if (path == allActions[key].from || allActions[key].inherit) {
+                    window.actions[key] = allActions[key];
+                }
             }
         }
         window.states = JSON.parse(localStorage.getItem(page + 'states'));
