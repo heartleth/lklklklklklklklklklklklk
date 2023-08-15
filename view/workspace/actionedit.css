@@ -74,7 +74,7 @@ div > function-edit-block.db {
     background: linear-gradient(90deg, rgb(251, 255, 0) 5px, white 1px);
 }
 
-function-edit-window > function-edit-block::after, function-edit-window > function-edit-block.control > div::after {
+function-edit-window > function-edit-block:not(.chain)::after, function-edit-window > function-edit-block:not(.chain).control > div::after {
     background-color: rgb(0, 0, 0);
     border: solid 1.5px #ddd;
     border-radius: 10px;
@@ -95,7 +95,7 @@ function-edit-window > function-edit-block.control > div::after
     bottom: -3.2px;
 }
 
-function-edit-window > function-edit-block::before, function-edit-window > function-edit-block.control > div::before {
+function-edit-window > function-edit-block:not(.chain)::before, function-edit-window > function-edit-block:not(.chain).control > div::before {
     background-color: rgb(0, 0, 0);
     border: solid 1.5px #ddd;
     border-radius: 10px;

@@ -236,9 +236,24 @@ let blockmap = {
     'LIMIT': {
         html: 'Limit ?T',
         category: 'db',
-        mode: 'chain',
+        isChain: 'chain',
         exec: (async (stc, local, n) => {
             return await getValue(n, local);
+        })
+    },
+    'ORDER BY': {
+        html: 'ORDER BY ?F',
+        category: 'db',
+        isChain: true,
+        exec: (async (stc, local, n) => {
+            return await getValue(n, local);
+        })
+    },
+    'SQL': {
+        html: 'SQL ?T',
+        category: 'db',
+        exec: ((stc, local, query) => {
+            
         })
     }
 };
@@ -269,7 +284,7 @@ function showBlocks(d) {
     d.addBlocks.innerHTML = ''; 
     for (let k of Object.keys(blockmap)) {
         if (blockmap[k].category == d.displayBlocks) {
-            d.registerBlock(new BlockCreator(blockmap[k].category, k, blockmap[k].html, blockmap[k].isArgs));
+            d.registerBlock(new BlockCreator(blockmap[k].category, k, blockmap[k].html, blockmap[k].isArgs, blockmap[k].isChain));
         }
     }
 }

@@ -860,9 +860,10 @@ class FunctionEditBlock extends HTMLElement {
 }
 
 class BlockCreator {
-    constructor(category, name, contents, isArgs) {
+    constructor(category, name, contents, isArgs, isChain) {
         this.category = category;
         this.contente = contents;
+        this.isChain = isChain;
         this.isArgs = isArgs;
         this.name = name;
     }
@@ -873,6 +874,13 @@ class BlockCreator {
                 .addClass('args')
                 .set('name', this.name)
                 .html(parseBlock(this.contente));    
+        }
+        if (this.isChain) {
+            return make('function-edit-block')
+                .addClass(this.category)
+                .addClass('chain')
+                .set('name', this.name)
+                .html(parseBlock(this.contente));
         }
         return make('function-edit-block')
             .addClass(this.category)
@@ -1030,8 +1038,9 @@ class SmallValue extends HTMLElement {
             let i = make('text').elem;
             i.value = this.value;
             i.addEventListener('change', e => {
+                i.style.width = Math.min(50, i.value.length) + 'ch';
                 this.dispatchEvent(new Event('change'));
-            });
+            })
             i.onclick = e=>e.stopPropagation();
             i.onmousedown = e=>e.stopPropagation();
             this.appendChild(i);
