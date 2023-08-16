@@ -26,6 +26,13 @@ div > function-edit-block {
     top: 30px;
 }
 
+function-edit-window > function-edit-block.chain,
+div > function-edit-block.chain {
+    border-radius: 0px 5px 5px 0px;
+    border-left: none;
+    min-width: 60px;
+}
+
 function-edit-block {
     -webkit-backface-visibility: hidden;
     -moz-backface-visibility: hidden;
@@ -69,9 +76,14 @@ div > function-edit-block.code {
     background: linear-gradient(90deg, rgb(0, 0, 0) 5px, white 1px);
 }
 
-function-edit-window > function-edit-block.db,
-div > function-edit-block.db {
+function-edit-window > function-edit-block.db:not(.chain),
+div > function-edit-block.db:not(.chain) {
     background: linear-gradient(90deg, rgb(251, 255, 0) 5px, white 1px);
+}
+
+function-edit-window > function-edit-block.db.chain,
+div > function-edit-block.db.chain {
+    background: linear-gradient(90deg, rgba(251, 255, 0, 0) 5px, white 1px);
 }
 
 function-edit-window > function-edit-block:not(.chain)::after, function-edit-window > function-edit-block:not(.chain).control > div::after {
@@ -107,6 +119,19 @@ function-edit-window > function-edit-block:not(.chain)::before, function-edit-wi
     width: 3px;
     left: 18px;
     top: -4px;
+}
+
+
+function-edit-window > function-edit-block.chain::before {
+    border-radius: 0px 5px 5px 0px;
+    border-right: solid 1px rgb(188, 188, 188);
+    position: absolute;
+    display: block;
+    height: 23px;
+    content: "";
+    width: 7px;
+    left: -1px;
+    top: -1px;
 }
 
 function-edit-window > function-edit-block.control > div::before {

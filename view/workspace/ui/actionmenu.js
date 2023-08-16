@@ -1037,6 +1037,7 @@ class SmallValue extends HTMLElement {
             this.style.display = 'inline-block';
             let i = make('text').elem;
             i.value = this.value;
+            i.style.width = Math.min(50, i.value.length) + 'ch';
             i.addEventListener('change', e => {
                 i.style.width = Math.min(50, i.value.length) + 'ch';
                 this.dispatchEvent(new Event('change'));
@@ -1118,6 +1119,8 @@ window.customElements.define('small-value', SmallValue);
 
 function parseBlock(s) {
     return s
+        .replace(/\?DB:table/g, '<small-value mode="dbtable"></small-value>')
+        .replace(/\?DB:field/g, '<small-value mode="field"></small-value>')
         .replace(/\?A/g, '<small-value mode="actions"></small-value>')
         // .replace(/\?L/g, '<small-value mode="href"></small-value>')
         .replace(/\?\{[^}]+\}/g, (s) => `<small-value mode="select" between="${s.substring(2, s.length - 1)}"></small-value>`)
