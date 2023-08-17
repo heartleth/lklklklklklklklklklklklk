@@ -293,11 +293,11 @@ function-edit-block.args {
 }
 
 function-edit-block.args::after {
-    display: none;
+    display: none !important;
 }
 
 function-edit-block.args::before {
-    display: none;
+    display: none !important;
 }
 
 function-edit-block.args > * {

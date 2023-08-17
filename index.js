@@ -125,11 +125,12 @@ app.whenReady().then(async () => {
         expressApp.use(express.json());
         expressApp.use(express.static(path.join(appdata, 'yghdatas/payload')));
         console.log(localStorage);
+        console.log(actions);
         for (const routeName of (localStorage.route || '').split(',')) {
             const route = clearPath(routeName);
             console.log(route);
             const builtComponents = JSON.parse(localStorage[route + '.components'] ?? '{}');
-            const actions = JSON.parse(localStorage[route + '.actions']);
+            const actions = JSON.parse(localStorage['actions']);
             const states = JSON.parse(localStorage[route + '.states']);
             const tables = JSON.parse(localStorage['tables']);
             const html = localStorage[route + '.page'];

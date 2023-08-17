@@ -233,22 +233,22 @@ let blockmap = {
             await callfunctionwithus(action, window.locals[local].elementThis);
         })
     },
-    'LIMIT': {
-        html: 'Limit ?T',
-        category: 'db',
-        isChain: 'chain',
-        exec: (async (stc, local, n) => {
-            return await getValue(n, local);
-        })
-    },
-    'ORDER BY': {
-        html: 'ORDER BY ?F',
-        category: 'db',
-        isChain: true,
-        exec: (async (stc, local, n) => {
-            return await getValue(n, local);
-        })
-    },
+    // 'LIMIT': {
+    //     html: 'Limit ?T',
+    //     category: 'db',
+    //     isChain: 'chain',
+    //     exec: (async (stc, local, n) => {
+    //         return await getValue(n, local);
+    //     })
+    // },
+    // 'ORDER BY': {
+    //     html: 'ORDER BY ?F',
+    //     category: 'db',
+    //     isChain: true,
+    //     exec: (async (stc, local, n) => {
+    //         return await getValue(n, local);
+    //     })
+    // },
     'SQL': {
         html: 'SQL ?T',
         category: 'db',
