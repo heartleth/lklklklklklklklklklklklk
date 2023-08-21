@@ -109,6 +109,7 @@ async function callfunctionwithus(c, elementThis) {
 
 async function actfunctioncode(stc, local, codes) {
     for (let code of codes) {
+        console.log(code);
         if (blockmap[code.name].category == 'control') {
             const child = {
                 run: (stc, local) => code.child ? actfunctioncode(stc, local, code.child):''
@@ -1037,9 +1038,9 @@ class SmallValue extends HTMLElement {
             this.style.display = 'inline-block';
             let i = make('text').elem;
             i.value = this.value;
-            i.style.width = Math.min(50, i.value.length) + 'ch';
+            i.style.width = 'max(40px, ' + Math.min(50, i.value.length) + 'ch)';
             i.addEventListener('change', e => {
-                i.style.width = Math.min(50, i.value.length) + 'ch';
+                i.style.width = 'max(40px, ' + Math.min(50, i.value.length) + 'ch)';
                 this.dispatchEvent(new Event('change'));
             })
             i.onclick = e=>e.stopPropagation();

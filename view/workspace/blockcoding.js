@@ -46,7 +46,7 @@ let blockmap = {
         category: 'ui',
         isArgs: true,
         exec: (async (stc, local, v) => {
-            return window.locals[local][v][0].value;
+            return window.locals[local][await v][0].value;
         })
     },
     'State': {
@@ -54,7 +54,7 @@ let blockmap = {
         category: 'value',
         isArgs: true,
         exec: (async (stc, local, s) => {
-            return window.states[s];
+            return window.states[await s];
         })
     },
     'Attr': {
@@ -70,7 +70,7 @@ let blockmap = {
         category: 'value',
         isArgs: true,
         exec: (async (stc, local, s) => {
-            return window.locals[local][s];
+            return window.locals[local][await s];
         })
     },
     'PlusMinus': {
@@ -87,11 +87,63 @@ let blockmap = {
             if (op == 'mod') return a % b;
         })
     },
+    'Cat': {
+        html: 'join ?T ?T',
+        category: 'value',
+        isArgs: true,
+        exec: (async (stc, local, ta, op, tb) => {
+            const a = await getValue(ta, local);
+            const b = await getValue(tb, local);
+            return `${a}${b}`;
+        })
+    },
+    'UAttrOf': {
+        html: '?{innerHTML,innerText,value,id,class} of ?T',
+        category: 'ui',
+        isArgs: true,
+        exec: (async (stc, local, pattrname, vvt) => {
+            let attrname = await pattrname;
+            let vt = await vvt;
+            if (vt === undefined || vt === null) return;
+            let v = vt.substring ? window.locals[local][await vt] : await getValue(vt, local);
+            console.log(v, vt, attrname);
+            if (v[0]) {
+                if (v[0].classList) {
+                    for (const e of v) {
+                        return e.getAttribute(attrname) ?? e[attrname];
+                    }
+                }
+            }
+        })
+    },
+    'SetAttr': {
+        html: 'Set ?{innerHTML,innerText,value,id,class} of ?T as ?T',
+        category: 'ui',
+        exec: (async (stc, local, pattrname, vvt, pval) => {
+            let attrname = await pattrname;
+            let vt = await vvt;
+            if (vt === undefined || vt === null) return;
+            let v = vt.substring ? window.locals[local][await vt] : await getValue(vt, local);
+            let val = await getValue(pval, local);
+            if (v[0]) {
+                if (v[0].classList) {
+                    for (const e of v) {
+                        if (e[attrname]) {
+                            e[attrname] = val;
+                        }
+                        else {
+                            e.setAttribute(attrname, val);
+                        }
+                    }
+                }
+            }
+        })
+    },
     'Find': {
         html: 'Find selector ?T into ?T',
         category: 'ui',
         exec: (async (stc, local, s, into) => {
-            window.locals[local][into] = document.getElementById('workspace').querySelectorAll(await getValue(s, local));
+            window.locals[local][await into] = document.getElementById('workspace').querySelectorAll(await getValue(s, local));
         })
     },
     'Hide': {
@@ -165,6 +217,7 @@ let blockmap = {
         exec: (async (stc, local, child, ta, operator, tb) => {
             let a = await getValue(ta, local);
             let b = await getValue(tb, local);
+            console.log(a, b);
             let condition = ((a == b) && operator=='=')
                 ||((a != b) && operator=='≠')
                 ||((a < b) && operator=='<')
