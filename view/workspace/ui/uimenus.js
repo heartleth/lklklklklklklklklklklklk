@@ -46,9 +46,6 @@ function inputMenu(ws, edt) {
         [':placeholder', '@#b' + tok + 'Placeholder/val'],
         // [':type', '@#b' + tok + 'Type/value'],
         ['#backgroundColor', '@#b' + tok + 'Color/val'],
-        // ['value', '@#b' + tok + 'DefaultValue/val'],
-        [':boxStyle', '@#b' + tok + 'Style/val'],
-        // [':oonload', '@#b' + tok + 'OnLoad/functor']
         [':onchange', '@#b' + tok + 'OnChange/functor']
     ]);
     let uiedit = make('ui-edit').elem;
@@ -61,7 +58,6 @@ function inputMenu(ws, edt) {
             make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', Math.round(lpx(edt.style.width) / cellSpacing)).elem,
             make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', Math.round(lpx(edt.style.height) / cellSpacing)).elem,
             make('value-input').set('fname', ['Color', 1]).set('defaultText', edt.style.backgroundColor).elem,
-            make('checkbox-options').set('fname', ['Style', 1, 'Box Style']).set('optdf', edt.getAttribute('boxStyle')).set('options', boxStyleOptions).elem,
             make('action-input').set('fname', ['OnChange', 0, 'Change Action']).set('actionName', actionName).elem
         ]);
     }

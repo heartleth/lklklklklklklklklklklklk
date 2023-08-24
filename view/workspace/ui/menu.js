@@ -427,6 +427,9 @@ class UIEdit extends HTMLElement {
 window.customElements.define('ui-edit', UIEdit);
 
 function elementPropertySet(edt) {
+    if (!localStorage.getItem('llstyle')) {
+        localStorage.setItem('llstyle', '{"None":{"from":""},"ROUND":{"from":""},"NO_OUTLINE":{"from":""},"BIG_OUTLINE":{"from":""},"SHADOW":{"from":""},"CENTER_BOX":{"from":""}}');
+    }
     if (edt) {
         // let actionName = edt.getAttribute('ooonload').substring(20).split("'")[0];
         // console.log(edt);

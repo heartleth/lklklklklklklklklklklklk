@@ -16,7 +16,6 @@ function boxmenu(ws, edt) {
         ['#width', 'fit-content'],
         [':id', '@#b' + tok + 'Id/val'],
         [':ooonload', '@#b' + tok + 'OnLoad/functor'],
-        [':boxStyle', '@#b' + tok + 'BStyle/val'],
         [':styles', '@#b' + tok + 'Style/val']
     ]);
     let uiedit = make('ui-edit').elem;
@@ -30,7 +29,6 @@ function boxmenu(ws, edt) {
     }
     uiedit.content = elementPropertySet(edt).concat([
         make('value-input').set('fname', ['Color', 1]).dtxt(es.backgroundColor ?? 'white').elem,
-        make('checkbox-options').set('fname', ['BStyle', 1, 'Box Style']).set('optdf', es.bs).set('options', boxStyleOptions).elem,
         make('value-input').set('fname', ['W', 1, 'Width']).dtxt(es.minWidth ?? '5').elem,
         make('value-input').set('fname', ['H', 1, 'Height']).dtxt(es.minHeight ?? '3').elem
     ]);

@@ -9,7 +9,6 @@ function buttonMenu(ws, edt) {
         ['innerHTML', '@#b' + tok + 'Text/val'],
         [':class', '@#b' + tok + 'Class/val'],
         [':id', '@#b' + tok + 'Id/val'],
-        [':boxStyle', '@#b' + tok + 'BStyle/val'],
         [':styles', '@#b' + tok + 'Style/val'],
         ['#fontSize', '@#b' + tok + 'FontSize/val']
     ]);
@@ -31,8 +30,7 @@ function buttonMenu(ws, edt) {
         make('action-input').set('fname', ['OnClick', 0, 'Click Action']).set('actionName', es.actionName).elem,
         make('value-input').set('fname', ['W', 1, 'Width']).dtxt(es.minWidth ?? '2').elem,
         make('value-input').set('fname', ['H', 1, 'Height']).dtxt(es.minHeight ?? '1').elem,
-        make('value-input').set('fname', ['Color', 1]).dtxt(es.backgroundColor).elem,
-        make('checkbox-options').set('fname', ['BStyle', 1, 'Box Style']).set('optdf', es.bs).set('options', boxStyleOptions).elem,
+        make('value-input').set('fname', ['Color', 1]).dtxt(es.backgroundColor).elem
     ]);
     let ac = addc(uiedit.addc(), [bt], edt);
     uiedit.then = ac;

@@ -30,8 +30,7 @@ function stylemenu(ws, dsn) {
         ws.innerHTML = '';
         ws.dsn = ws.dsn ?? (dsn ?? 'None');
         if (localStorage.getItem('llstyle') == null) {
-            localStorage.setItem('llstyle', '{"None":{"from":""}}');
-            
+            localStorage.setItem('llstyle', '{"None":{"from":""},"ROUND":{"from":""},"NO_OUTLINE":{"from":""},"BIG_OUTLINE":{"from":""},"SHADOW":{"from":""},"CENTER_BOX":{"from":""}}');
         }
         let pstyles = JSON.parse(localStorage.getItem('llstyle'));
         styleName = document.createElement('select');
@@ -64,7 +63,7 @@ function stylemenu(ws, dsn) {
         });
         ws.appendChild(nsi);
         ws.appendChild(nsbt);
-        if (ws.dsn == 'None') {
+        if (["CENTER_BOX","ROUND","NO_OUTLINE","None","BIG_OUTLINE","SHADOW"].includes(ws.dsn)) {
             return;
         }
         ws.appendChild(wse.br());
