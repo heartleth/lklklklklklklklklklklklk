@@ -144,6 +144,7 @@ function setDStyle(d, dcs) {
 }
 
 window.addEventListener('mousemove', (e)=>{
+    window.srce = e.srcElement;
     recc = [e.clientX, e.clientY];
     if (!!this.isClicked) {
         let me = this.movingElement;
@@ -275,15 +276,12 @@ window.addEventListener('mousemove', (e)=>{
             if (isLen(originalStyle.marginRight)) {
                 element.style.marginRight = Math.max(0, lpx(original.marginRight) - distX) + 'px';
                 element.style.minWidth = '10px';
-                console.log('a');
             }
             else if (!isLen(originalStyle.marginLeft)) {
                 element.style.minWidth = lpx(original.minWidth) + 2 * distX + 'px';
-                console.log('b');
             }
             else {
                 element.style.minWidth = lpx(original.minWidth) + distX + 'px';
-                console.log('c');
             }
         }
         else if (direction == 'right' && element.tagName[0] == 'H' && element.tagName.length == 2) {

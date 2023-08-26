@@ -3,8 +3,16 @@ let ctx;
 let recc = [0, 0];
 
 function drawCanvas() {
+    let wse = document.querySelector('#workspace');
     let canvas = document.querySelector('canvas');
-    const wsrect = document.querySelector('#workspace').getBoundingClientRect();
+    let wsrect = wse.getBoundingClientRect();
+    let wsrect2 = wsrect;
+    if (window.srce) {
+        if (window.srce.classList.contains('natural')) {
+            let me = window.srce;
+            wsrect2 = me.getBoundingClientRect();
+        }
+    }
     ctx = canvas.getContext('2d');;
     canvas.height = wsrect.height;
     canvas.width = wsrect.width;
@@ -12,13 +20,19 @@ function drawCanvas() {
     ctx.lineWidth = 0.4;
     ctx.strokeStyle = '#86baeb';
     ctx.beginPath();
-    for (let i = cellSpacing; i < wsrect.width; i += cellSpacing) {
-        ctx.moveTo(i, 0);
-        ctx.lineTo(i, wsrect.height);
-    }
-    for (let i = cellSpacing; i < wsrect.height; i += cellSpacing) {
-        ctx.moveTo(0, i);
-        ctx.lineTo(wsrect.width, i);
+    let sx = wsrect2.left - wsrect.left;
+    let sy = wsrect2.top - wsrect.top;
+    if (window.srce) {
+        if (wse == window.srce || wse.contains(window.srce)) {
+            for (let i = cellSpacing + sx; i < wsrect2.width + sx; i += cellSpacing) {
+                ctx.moveTo(i, sy);
+                ctx.lineTo(i, sy + wsrect2.height);
+            }
+            for (let i = cellSpacing + sy; i < wsrect2.height + sy; i += cellSpacing) {
+                ctx.moveTo(sx, i);
+                ctx.lineTo(sx + wsrect2.width, i);
+            }
+        }
     }
     ctx.stroke();
     drawResizes(canvas, ctx);
@@ -26,6 +40,14 @@ function drawCanvas() {
 
 function getCell(x, y) {
     let canvasRect = document.querySelector('canvas').getBoundingClientRect();
+    if (window.isClicked == 'place') {
+        let me = window.movingElement;
+        let mrect = me.getBoundingClientRect();
+        return [
+            Math.round(Math.round(x - mrect.left) / cellSpacing),
+            Math.round(Math.round(y - mrect.top) / cellSpacing)
+        ];
+    }
     return [
         Math.round(Math.round(x - canvasRect.left) / cellSpacing),
         Math.round(Math.round(y - canvasRect.top) / cellSpacing)
@@ -89,14 +111,14 @@ function drawResizeOne(div, ctx, canvasRect) {
     const divRect = div.getBoundingClientRect();
     ctx.lineWidth = 2.5;
     ctx.strokeStyle = 'rgba(50, 50, 255, 0.5)';
-    ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top, divRect.width, divRect.height);
+    // ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top, divRect.width, divRect.height);
     ctx.font = '12px Consolas';
     let tw = 0;
     if (div.id.length) {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-        ctx.fillText('#' + div.id, divRect.left - canvasRect.left, divRect.top - canvasRect.top-15 + 12);
+        ctx.fillText('#' + div.id, divRect.left - canvasRect.left, divRect.top - canvasRect.top - 15 + 12);
         tw = ctx.measureText('#' + div.id).width + 2;
-        ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top-15, tw, 15);
+        // ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top-15, tw, 15);
     }
     if (!isInRect(...recc, {
         top: divRect.top -  15,
@@ -107,12 +129,14 @@ function drawResizeOne(div, ctx, canvasRect) {
         return;
     }
     ctx.fillStyle = 'rgba(100, 145, 255)';
-    ctx.fillRect(divRect.left + tw - canvasRect.left, divRect.top - canvasRect.top-15, 33, 15);
-    ctx.fillRect(divRect.left + tw - canvasRect.left + 35, divRect.top - canvasRect.top-15, 33, 15);
+    ctx.fillRect(divRect.left + tw - canvasRect.left, divRect.top - canvasRect.top-15, 31, 15);
+    ctx.fillRect(divRect.left + tw - canvasRect.left + 35, divRect.top - canvasRect.top-15, 31, 15);
+    ctx.fillRect(divRect.left + tw - canvasRect.left + 70, divRect.top - canvasRect.top-15, 37, 15);
     ctx.font = '13px Consolas';
     ctx.fillStyle = 'white';
     ctx.fillText('edit', divRect.left + tw - canvasRect.left + 2, divRect.top - canvasRect.top - 3);
     ctx.fillText('code', divRect.left + tw - canvasRect.left + 35, divRect.top - canvasRect.top - 3);
+    ctx.fillText('style', divRect.left + tw - canvasRect.left + 70, divRect.top - canvasRect.top - 3);
     // ctx.beginPath();
     // ctx.moveTo(divRect.left + tw - canvasRect.left + 7.5, divRect.top - canvasRect.top-15 + 3);
     // ctx.lineTo(divRect.left + tw - canvasRect.left + 7.5, divRect.top - canvasRect.top-15 + 12);

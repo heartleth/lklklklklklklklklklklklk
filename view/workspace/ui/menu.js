@@ -72,6 +72,9 @@ class AddComponent extends HTMLElement {
     }
 
     render() {
+        if (this.edt) {
+            this.style.display = 'none';
+        }
         let usingStates = new Array();
         if (!this.refs) return;
         for (let refselector of this.refs) {
@@ -308,7 +311,9 @@ class ElementComponent {
             addChilds(this.elem, this.childs.map(e => { e.embody(); return e.elem; }));
         }
         this.elem.classList.add('natural');
-        if (edt) edt.classList.add('natural');
+        if (edt) {
+            edt.classList.add('natural');
+        }
         // this.elem.setAttribute('depstates', depstates);
     }
 }
