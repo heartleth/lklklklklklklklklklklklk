@@ -302,9 +302,24 @@ let blockmap = {
     //         return await getValue(n, local);
     //     })
     // },
-    'SQL': {
-        html: 'SQL ?T',
-        category: 'db',
+    'Cookie': {
+        html: 'Cookie ?T',
+        isArgs: true,
+        category: 'server',
+        exec: ((stc, local, query) => {
+            
+        })
+    },
+    'Clear Cookie': {
+        html: 'Clear Cookie ?T',
+        category: 'server',
+        exec: ((stc, local, query) => {
+            
+        })
+    },
+    'Set Cookie': {
+        html: 'Set Cookie ?T = ?T',
+        category: 'server',
         exec: ((stc, local, query) => {
             
         })
@@ -317,7 +332,7 @@ function registerBlocks(d) {
         make('div').attr('category', 'value').text('Value').elem,
         make('div').attr('category', 'db').text('DB').elem,
         make('div').attr('category', 'control').text('Flow').elem,
-        make('div').attr('category', 'style').text('Style').elem,
+        make('div').attr('category', 'server').text('Server').elem,
         make('div').attr('category', 'code').text('Code').elem
     ];
     for (let nav of navs) {

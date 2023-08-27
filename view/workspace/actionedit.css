@@ -66,8 +66,8 @@ div > function-edit-block.ui {
     background: linear-gradient(90deg, rgb(193, 35, 201) 5px, white 1px);
 }
 
-function-edit-window > function-edit-block.style,
-div > function-edit-block.style {
+function-edit-window > function-edit-block.server,
+div > function-edit-block.server {
     background: linear-gradient(90deg, rgb(90, 202, 236) 5px, white 1px);
 }
 
