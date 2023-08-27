@@ -4,26 +4,27 @@ function topLeftDrag(me, evt) {
     const my = evt.clientY;
     drawCanvas();
     const cell = getCell(mx, my);
-
     let mom = wsb;
     if (me.temp) {
         mom = findMom(me, wsb, mx, my) ?? mom;
     }
-    
+    const cellfrommom = getCell(mx, my, false, mom);
     const mw = me.children[0].getBoundingClientRect().width / cellSpacing;
     const mh = me.children[0].getBoundingClientRect().height / cellSpacing;
+    const momRect = mom.getBoundingClientRect();
+    const momCell = getCell(momRect.left, momRect.top, true);
     if (mom) {
-        const momRect = mom.getBoundingClientRect();
-        const momCell = getCell(momRect.left, momRect.top);
         if ([...mom.children].filter(e=>!e.classList.contains('dummy')).length == 0) {
             piv = [momRect.left, momRect.top];
             drawBox(momCell[0], momCell[1], momRect.width / cellSpacing, momRect.height / cellSpacing, '#e79');
             mom.style.opacity = '0.8';
-            drawBox(cell[0], cell[1], mw, mh, '#77e', mom.getBoundingClientRect());
+            drawBox(cellfrommom[0] + momRect.left, cellfrommom[1] + momRect.top, mw, mh, '#77e', mom.getBoundingClientRect());
             me.mom = mom;
             const margins = [
-                (cell[0] - momCell[0]) * cellSpacing + 'px',
-                (cell[1] - momCell[1]) * cellSpacing + 'px'
+                // (cell[0] - momCell[0]) * cellSpacing + 'px',
+                // (cell[1] - momCell[1]) * cellSpacing + 'px'
+                cellfrommom[0] * cellSpacing + 'px',
+                cellfrommom[1] * cellSpacing + 'px'
             ];
             if (mom.childNodes.length == 0 || (mom.children.length == 1 && mom.children[0].classList.contains('dummy'))) {
                 mom.innerHTML = `<div class="dummy" style="margin-top:${margins[1]}; margin-left: ${margins[0]}; min-width: ${mw*cellSpacing}px; min-height: ${mh*cellSpacing}px; width:fit-content;"></div>`;
@@ -40,7 +41,7 @@ function topLeftDrag(me, evt) {
             for (let sib of mom.children) {
                 if (sib == me.temp) continue;
                 let sibRect = sib.getBoundingClientRect();
-                let sibCell = getCell(sibRect.left, sibRect.top);
+                let sibCell = getCell(sibRect.left, sibRect.top, false, mom);
                 if (my + mh * cellSpacing <= sibRect.top) {
                     downsib = downsib ?? sib;
                 }
@@ -69,7 +70,7 @@ function topLeftDrag(me, evt) {
             else if (upsib) {
                 drawBox(momCell[0], momCell[1], momRect.width / cellSpacing, momRect.height / cellSpacing, '#e79');
                 piv = [
-                    momRect.left + parseFloat(getComputedStyle(mom).paddingLeft.replace('px', '')),
+                    momRect.left, // + parseFloat(getComputedStyle(mom).paddingLeft.replace('px', '')),
                     upsib.getBoundingClientRect().bottom
                 ];
                 drawBox(cell[0], cell[1], mw, mh, '#77e9', { left: piv[0], top: piv[1] });
@@ -80,7 +81,8 @@ function topLeftDrag(me, evt) {
         }
         me.mom = mom;
     }
-
+    cell[0] = momCell[0] + cellfrommom[0];
+    cell[1] = momCell[1] + cellfrommom[1];
     if (mom == wsb) {
         const canvRect = document.querySelector('canvas').getBoundingClientRect();
         wsb.querySelectorAll('.dummy').forEach(e=>e.remove());
@@ -101,6 +103,8 @@ function topLeftDrag(me, evt) {
     const wsbr = wsb.getBoundingClientRect();
     me.temp.style.left = cell[0] * cellSpacing + wsbr.left + 'px';
     me.temp.style.top = cell[1] * cellSpacing + wsbr.top - 18 + 'px';
+    // me.temp.style.left = momRect[0] + cellfrommom[0] * cellSpacing + 'px';
+    // me.temp.style.top = momRect[1] + cellfrommom[1] * cellSpacing - 18 + 'px';
 }
 
 function topLeftDrop(me, evt) {

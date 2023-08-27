@@ -38,14 +38,20 @@ function drawCanvas() {
     drawResizes(canvas, ctx);
 }
 
-function getCell(x, y) {
-    let canvasRect = document.querySelector('canvas').getBoundingClientRect();
-    if (window.isClicked == 'place') {
-        let me = window.movingElement;
-        let mrect = me.getBoundingClientRect();
+function getCell(x, y, noround, mom) {
+    let canvasRect = (mom ?? document.querySelector('canvas')).getBoundingClientRect();
+    // if (window.isClicked == 'place') {
+    //     let me = window.movingElement;
+    //     let mrect = me.getBoundingClientRect();
+    //     return [
+    //         Math.round(Math.round(x - mrect.left) / cellSpacing),
+    //         Math.round(Math.round(y - mrect.top) / cellSpacing)
+    //     ];
+    // }
+    if (noround) {
         return [
-            Math.round(Math.round(x - mrect.left) / cellSpacing),
-            Math.round(Math.round(y - mrect.top) / cellSpacing)
+            Math.round(x - canvasRect.left) / cellSpacing,
+            Math.round(y - canvasRect.top) / cellSpacing
         ];
     }
     return [
