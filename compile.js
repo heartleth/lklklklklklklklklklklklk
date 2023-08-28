@@ -1,3 +1,15 @@
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        counter += 1;
+    }
+    return result;
+}
+
 let blockmap = {
     'return': { category: 'value' },
     'JavaScript': { category: 'code' },
@@ -175,6 +187,25 @@ let blockmap = {
         exec: (async (cas, ac) => {
             cas.clientActs.push(['CallAction', [ac, {...cas.locals}]]);
         })
+    },
+    'Random': {
+        html: 'Random ?T ≤ X ≤ ?T',
+        category: 'value',
+        isArgs: true,
+        exec: (async (cas, a, b) => {
+            let min = parseFloat(await getValue(a, cas));
+            let max = parseFloat(await getValue(b, cas));
+            console.log(a, b);
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        })
+    },
+    'Token': {
+        html: 'Token size = ?T',
+        category: 'value',
+        isArgs: true,
+        exec: (async (cas, l) => {
+            return makeid(await getValue(l, cas));
+        })
     }
 };
 
@@ -264,6 +295,12 @@ async function getValue(v, cas) {
                 if (!err) { p(rows[0]); }
             }));
         }
+        else if (v.name == 'Cookie') {
+            return cas.clientCookies[await getValue(v.params[0])];
+        }
+        else if (v.name == 'Has Cookie') {
+            return (cas.clientCookies[await getValue(v.params[0])] !== undefined);
+        }
         return await blockmap[v.name].exec(cas, ...await Promise.all(v.params.map(e=>getValue(e, cas))));
     }
     if (v.startsWith) {
@@ -277,10 +314,11 @@ async function getValue(v, cas) {
     return v;
 }
 
-async function execAction(code, sentInputs, tables) {
+async function execAction(code, sentInputs, tables, clientCookies) {
     if (db === undefined) return;
     let clientActs = [];
     let elements = {};
+    let cookies = [];
     let states = {};
     let locals = {};
     let attrs = {};
@@ -296,7 +334,7 @@ async function execAction(code, sentInputs, tables) {
             elements[v.substring(10)] = sentInputs[v];
         }
     }
-    let cas = { states, locals, clientActs, tables, elements, attrs };
+    let cas = { states, locals, clientActs, tables, elements, attrs, cookies, clientCookies };
     await runActionSequence(code, cas);
     return cas;
 }
@@ -321,6 +359,12 @@ async function runActionSequence(seq, cas) {
                 console.log(code.params);
                 console.log(query, realValues);
                 await new Promise(p => db.run(query, realValues, (err) => { console.log(err); p(0); }));
+            }
+            else if (code.name == 'Set Cookie') {
+                cas.cookies.push({ name: await getValue(code.params[0]), value: await getValue(code.params[1]) });
+            }
+            else if (code.name == 'Clear Cookie') {
+                cas.cookies.push({ name: await getValue(code.params[0]), clear: true });
             }
             continue;
         }

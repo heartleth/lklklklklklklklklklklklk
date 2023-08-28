@@ -1,3 +1,15 @@
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        counter += 1;
+    }
+    return result;
+}
+
 let blockmap = {
     'return': {
         html: '= ?T',
@@ -286,42 +298,44 @@ let blockmap = {
             await callfunctionwithus(action, window.locals[local].elementThis);
         })
     },
-    // 'LIMIT': {
-    //     html: 'Limit ?T',
-    //     category: 'db',
-    //     isChain: 'chain',
-    //     exec: (async (stc, local, n) => {
-    //         return await getValue(n, local);
-    //     })
-    // },
-    // 'ORDER BY': {
-    //     html: 'ORDER BY ?F',
-    //     category: 'db',
-    //     isChain: true,
-    //     exec: (async (stc, local, n) => {
-    //         return await getValue(n, local);
-    //     })
-    // },
     'Cookie': {
         html: 'Cookie ?T',
         isArgs: true,
         category: 'server',
-        exec: ((stc, local, query) => {
-            
-        })
+        exec: (async (stc, local, c) => { })
+    },
+    'Has Cookie': {
+        html: 'Has Cookie ?T',
+        isArgs: true,
+        category: 'server',
+        exec: (async (stc, local, c) => { })
     },
     'Clear Cookie': {
         html: 'Clear Cookie ?T',
         category: 'server',
-        exec: ((stc, local, query) => {
-            
-        })
+        exec: (async (stc, local, c) => { })
     },
     'Set Cookie': {
         html: 'Set Cookie ?T = ?T',
         category: 'server',
-        exec: ((stc, local, query) => {
-            
+        exec: (async (stc, local, c, v) => { })
+    },
+    'Random': {
+        html: 'Random ?T ≤ X ≤ ?T',
+        category: 'value',
+        isArgs: true,
+        exec: (async (stc, local, a, b) => {
+            let min = parseFloat(await getValue(a, local));
+            let max = parseFloat(await getValue(b, local));
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        })
+    },
+    'Token': {
+        html: 'Token size = ?T',
+        category: 'value',
+        isArgs: true,
+        exec: (async (stc, local, l) => {
+            return makeid(await getValue(l, local));
         })
     }
 };

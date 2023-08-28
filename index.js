@@ -1,8 +1,11 @@
 const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
 const { compileAction, execAction } = require('./compile');
 const { ipcSetupMakeServer } = require('./makeserver');
+const cookieParser = require('cookie-parser');
 const { setupIpc } = require('./database');
+const { sha356, sha256 } = require('js-sha256');
 const express = require('express');
+
 const https = require('https');
 const path = require('path');
 const fs = require('fs');
@@ -122,6 +125,7 @@ app.whenReady().then(async () => {
             listening.close();
         }
         let expressApp = express();
+        expressApp.use(cookieParser());
         expressApp.use(express.json());
         expressApp.use(express.static(path.join(appdata, 'yghdatas/payload')));
         console.log(localStorage);
@@ -142,11 +146,20 @@ app.whenReady().then(async () => {
                 }
                 if (isServerAction(actions[an].code)) {
                     let compiled = compileAction(an, actions[an].code);
-                    serverSidePostActions.push({ name: an, ses: compiled.sendInputs });
-                    const ssurl = (route + '/serverside/' + an).replace(/\/+/g, '/');
+                    serverSidePostActions.push({ name: an, sha: sha256(an), ses: compiled.sendInputs });
+                    const ssurl = (route + '/serverside/' + sha256(an)).replace(/\/+/g, '/');
                     expressApp.post(ssurl, async (req, res) => {
                         console.log(req.body);
-                        let reply = await execAction(actions[an].code, req.body, tables);
+                        let reply = await execAction(actions[an].code, req.body, tables, req.cookies);
+                        for (const cookie of reply.cookies) {
+                            if (cookie.clear) {
+                                res.clearCookie(cookie.name);
+                            }
+                            else {
+                                res.cookie(cookie.name, cookie.value);
+                            }
+                        }
+                        reply.clientCookies = reply.cookies = undefined;
                         res.send(reply);
                     });
                 }
@@ -187,7 +200,7 @@ function isServerAction(actions) {
     for (let action of actions) {
         if (!action) continue;
         if (action.substring) continue;
-        if (action.name.startsWith('INSERTINTO') || action.name.startsWith('SELECTFROM') || action.name.startsWith('UPID') || action.name.startsWith('SFID')) {
+        if (action.name.includes('Cookie') || action.name.startsWith('INSERTINTO') || action.name.startsWith('SELECTFROM') || action.name.startsWith('UPID') || action.name.startsWith('SFID')) {
             return true;
         }
         if (action.params) {

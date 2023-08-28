@@ -251,7 +251,7 @@ let blockmap = {
                     }
                 }
                 // console.log(body);
-                const res = await fetch(`./serverside/${ssa.name}`, {
+                const res = await fetch(`./serverside/${ssa.sha}`, {
                     method: 'post',
                     headers: {
                         "Content-Type": "application/json; charset=utf-8",

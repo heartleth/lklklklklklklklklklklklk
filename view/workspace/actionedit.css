@@ -174,7 +174,7 @@ function-edit-window > div {
 }
 
 function-edit-window > div > function-edit-block {
-    display: block;
+    display: inline-block !important;
     margin-bottom: 4px;
 }
 
