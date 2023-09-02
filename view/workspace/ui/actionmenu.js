@@ -326,33 +326,10 @@ class FunctionEditWindow extends HTMLElement {
             
             this.appendChild(tail);
             if (code.child) {
-                let c = make('function-edit-block')
-                    .html(parseBlock(blockmap[code.child[0].name].html))
-                    .addClass(blockmap[code.child[0].name].category)
-                    .set('parent', tail)
-                    .set('name', code.child[0].name)
-                    .set('params', code.child[0].params).elem;
-                this.appendChild(c);
-
-                let i = 0;
-                for (let param of code.child[0].params) {
-                    if (c.children[i].tagName == 'SMALL-VALUE') {
-                        c.children[i].setValue(param);
-                        let k = c.children[i];
-                        c.children[i].addEventListener('change', () => {
-                            window.actions[acn ?? this.actionName].code[i] = k.val;
-                        });
-                        i += 1;
-                    }
-                }
-
-                tail.child = c;
-                if (code.child.length > 1) {
-                    this.loadCode(c, code.child.slice(1));
-                }
-                tail.render(undefined, undefined, true);
+                this.deliver(code, acn, vk, [tail]);
             }
-            
+            tail.render(undefined, undefined, true);
+
             if (vk) {
                 let i = 0;
                 for (let param of code.params) {
@@ -380,6 +357,37 @@ class FunctionEditWindow extends HTMLElement {
                 }
             }
         }
+    }
+
+    deliver(code, acn, vk, tail) {
+        let c = make('function-edit-block')
+        .html(parseBlock(blockmap[code.child[0].name].html))
+        .addClass(blockmap[code.child[0].name].category)
+        .set('parent', tail[0])
+        .set('name', code.child[0].name)
+        .set('params', code.child[0].params).elem;
+        this.appendChild(c);
+
+        let i = 0;
+        for (let param of code.child[0].params) {
+            if (c.children[i].tagName == 'SMALL-VALUE') {
+                c.children[i].setValue(param);
+                let k = c.children[i];
+                c.children[i].addEventListener('change', () => {
+                    window.actions[acn ?? this.actionName].code[i] = k.val;
+                });
+                i += 1;
+            }
+        }
+        if (code.child[0].child) {
+            this.deliver(code.child[0], acn, vk, [c]);
+        }
+        tail[0].child = c;
+        console.log(code.child);
+        if (code.child.length > 1) {
+            this.loadCode(c, code.child.slice(1), vk, acn);
+        }
+        tail[0].render(undefined, undefined, true);
     }
 
     registerBlock(block) {
@@ -604,7 +612,7 @@ class FunctionEditWindow extends HTMLElement {
             this.start.render();
             
             for (const hs of this.bgs) {
-                if (this.start.down) {
+                if (hs.down) {
                     window.actions[hs.hsn].code = hs.down.makeCode();
                     console.log(isServerAction(window.actions[hs.hsn].code));
                 }

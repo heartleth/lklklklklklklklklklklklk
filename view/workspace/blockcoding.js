@@ -337,6 +337,22 @@ let blockmap = {
         exec: (async (stc, local, l) => {
             return makeid(await getValue(l, local));
         })
+    },
+    'Len': {
+        html: 'Size of ?T',
+        category: 'value',
+        isArgs: true,
+        exec: (async (stc, local, l) => {
+            return (await getValue(l, local)).length;
+        })
+    },
+    'Index': {
+        html: '?T at ?T',
+        category: 'value',
+        isArgs: true,
+        exec: (async (stc, local, l, idx) => {
+            return (await getValue(l, local))[await getValue(idx, local)];
+        })
     }
 };
 

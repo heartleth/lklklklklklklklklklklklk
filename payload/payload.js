@@ -204,6 +204,40 @@ let blockmap = {
             let secs = await getValue(s, local);
             await new Promise(p => setTimeout(p, secs * 1000));
         })
+    },
+    'Random': {
+        html: 'Random ?T ≤ X ≤ ?T',
+        category: 'value',
+        isArgs: true,
+        exec: (async (stc, local, a, b) => {
+            let min = parseFloat(await getValue(a, local));
+            let max = parseFloat(await getValue(b, local));
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        })
+    },
+    'Token': {
+        html: 'Token size = ?T',
+        category: 'value',
+        isArgs: true,
+        exec: (async (stc, local, l) => {
+            return makeid(await getValue(l, local));
+        })
+    },
+    'Len': {
+        html: 'Size of ?T',
+        category: 'value',
+        isArgs: true,
+        exec: (async (stc, local, l) => {
+            return (await getValue(l, local)).length;
+        })
+    },
+    'Index': {
+        html: '?T at ?T',
+        category: 'value',
+        isArgs: true,
+        exec: (async (stc, local, l, idx) => {
+            return (await getValue(l, local))[await getValue(idx, local)];
+        })
     }
 };
 

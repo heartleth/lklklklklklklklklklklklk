@@ -103,7 +103,7 @@ let blockmap = {
     'EmptyElement': {
         html: 'Empty Element ?T',
         category: 'ui',
-        exec: ((cas, v) => {
+        exec: (async (cas, v) => {
             cas.clientActs.push(['EmptyElement', [v, {...cas.locals}]]);
         })
     },
@@ -206,6 +206,22 @@ let blockmap = {
         exec: (async (cas, l) => {
             return makeid(await getValue(l, cas));
         })
+    },
+    'Len': {
+        html: 'Size of ?T',
+        category: 'value',
+        isArgs: true,
+        exec: (async (cas, l) => {
+            return (await getValue(l, cas)).length;
+        })
+    },
+    'Index': {
+        html: '?T at ?T',
+        category: 'value',
+        isArgs: true,
+        exec: (async (cas, l, idx) => {
+            return (await getValue(l, cas))[await getValue(idx, cas)];
+        })
     }
 };
 
@@ -296,12 +312,14 @@ async function getValue(v, cas) {
             }));
         }
         else if (v.name == 'Cookie') {
-            return cas.clientCookies[await getValue(v.params[0])];
+            return cas.clientCookies[await getValue(v.params[0], cas)];
         }
         else if (v.name == 'Has Cookie') {
-            return (cas.clientCookies[await getValue(v.params[0])] !== undefined);
+            return (cas.clientCookies[await getValue(v.params[0], cas)] !== undefined);
         }
+        // let cas2 = { ...cas };
         return await blockmap[v.name].exec(cas, ...await Promise.all(v.params.map(e=>getValue(e, cas))));
+        // return await blockmap[v.name].exec(cas, v.params);
     }
     if (v.startsWith) {
         if (v.startsWith('#Local:')) {
@@ -361,10 +379,10 @@ async function runActionSequence(seq, cas) {
                 await new Promise(p => db.run(query, realValues, (err) => { console.log(err); p(0); }));
             }
             else if (code.name == 'Set Cookie') {
-                cas.cookies.push({ name: await getValue(code.params[0]), value: await getValue(code.params[1]) });
+                cas.cookies.push({ name: await getValue(code.params[0], cas), value: await getValue(code.params[1], cas) });
             }
             else if (code.name == 'Clear Cookie') {
-                cas.cookies.push({ name: await getValue(code.params[0]), clear: true });
+                cas.cookies.push({ name: await getValue(code.params[0], cas), clear: true });
             }
             continue;
         }
