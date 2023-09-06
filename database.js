@@ -133,6 +133,21 @@ function setupIpc(mainWindow) {
             }
         })
     });
+    ipcMain.on('DBQuery', async (e, query) => {
+        db.all(query, (err, r) => {
+            e.reply('DBQueryResult', JSON.stringify(err), JSON.stringify(r));
+        });
+    });
+    ipcMain.on('DBCreateTable', (e, tableName) => {
+        const safeTableName = asSafe(tableName);
+        db.run(`CREATE TABLE IF NOT EXISTS ${safeTableName} (id INTEGER PRIMARY KEY AUTOINCREMENT)`, (err) => {
+            if (!err) { e.reply('OKDBCreateTable', safeTableName); }
+            else {
+                console.log('?????');
+                console.log(err);
+            }
+        });
+    });
 }
 
 function getTableInfo() {

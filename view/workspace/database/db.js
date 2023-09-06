@@ -24,7 +24,7 @@ function databaseMenu(ws) {
         wse.label('Move Database File').attr('for','moveDBTo').addClass('moveDB').elem,
         saveDB,
         wse.label('Use online database (not supported)').elem,
-        
+        make('db-interface').elem
     ]);
     saveDB.addEventListener('click', e => {
         e.preventDefault();
@@ -185,3 +185,28 @@ function dbTableRemoveColumn(tableName, name, rerender) {
 // wse.br(),
 // wse.label('password').elem,
 // make('input').attr('type', 'password').elem,
+
+class DBInterface extends HTMLElement {
+    connectedCallback() {
+        this.style.display = 'block';
+        this.ta = make('textarea').elem;
+        this.appendChild(this.ta);
+        this.appendChild(wse.br());
+        this.qbt = make('button').text('query').addClass('dbquerybt').elem;
+        this.result = make('pre').elem;
+        this.qbt.addEventListener('click', async () => {
+            let electron = require('electron');
+            if (electron) {
+                electron.ipcRenderer.send('DBQuery', this.ta.value);
+                electron.ipcRenderer.once('DBQueryResult', (e, r) => {
+                    this.result.innerText = e + '\n' + r;
+                });
+            }
+        });
+        this.appendChild(this.qbt);
+        this.appendChild(wse.br());
+        this.appendChild(this.result);
+
+    }
+}
+window.customElements.define('db-interface', DBInterface);
