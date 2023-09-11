@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
 const { compileAction, execAction } = require('./compile');
 const { ipcSetupMakeServer } = require('./makeserver');
 const cookieParser = require('cookie-parser');
-const { setupIpc } = require('./database');
+const { setupIpc, db } = require('./database');
 const { sha356, sha256 } = require('js-sha256');
 const express = require('express');
 
@@ -10,6 +10,17 @@ const https = require('https');
 const path = require('path');
 const fs = require('fs');
 let port = 5252;
+
+const databaseColumnTypes = {
+    'Text (< 100 bytes)': 'varchar(100)',
+    'Text': 'text',
+    'Number (N)': 'integer',
+    'Number (Z)': 'integer',
+    'Number (R)': 'real',
+    'Hashed (MD5)': 'text',
+    'Hashed (SHA1)': 'text',
+    'Foreign Row': ''
+};
 
 function clearPath(path) {
     let pp = path.replace(/\/+/g, '/');
@@ -111,10 +122,26 @@ app.whenReady().then(async () => {
             });
         }
     });
-    ipcMain.on('loadFile', (e) => {
-        dialog.showOpenDialog(win, {properties: [ 'openFile' ], filters:[{name:'*.json', extensions: ['json']}]}).then(res => {
+    ipcMain.on('loadFile', (e, ls) => {
+        dialog.showOpenDialog(win, {properties: [ 'openFile' ], filters:[{name:'*.json', extensions: ['json']}]}).then(async res => {
             if (res.filePaths.length) {
+                let ptables = Object.keys(JSON.parse(ls.tables));
                 let lc = JSON.parse(fs.readFileSync(res.filePaths[0]).toString());
+                let tables = JSON.parse(lc.tables);
+                await Promise.all([...ptables.map(table => new Promise(p => db().run(`DROP TABLE IF EXISTS ` + table, (err) => { p() })))]);
+                await Promise.all(Object.keys(tables).map(k => {
+                    const safeTableName = k;
+                    let q = Object.keys(tables[k]).map(k => `, ${k} ${databaseColumnTypes[tables[k]]}`).join('');
+                    return new Promise(p => {   
+                        db().run(`CREATE TABLE IF NOT EXISTS ${safeTableName} (id INTEGER PRIMARY KEY AUTOINCREMENT${q})`, (err) => {
+                            if (!err) { p(); }
+                            else {
+                                console.log('?????');
+                                console.log(err);
+                            }
+                        });
+                    });
+                }));
                 e.reply('loadedLS', lc);
             }
         });

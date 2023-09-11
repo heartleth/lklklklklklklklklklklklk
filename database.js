@@ -23,17 +23,6 @@ let db = undefined;
     db = new sqlite3.Database(path.join(appdata, 'yghdatas/workspace-db/ws.db'));
 })();
 
-const databaseColumnTypes = {
-    'Text (< 100 bytes)': 'varchar(100)',
-    'Text': 'text',
-    'Number (N)': 'integer',
-    'Number (Z)': 'integer',
-    'Number (R)': 'real',
-    'Hashed (MD5)': 'text',
-    'Hashed (SHA1)': 'text',
-    'Foreign Row': ''
-};
-
 function asSafe(s) {
     return s.replace(/[^a-zA-Z0-9_]/g, '');
 }
@@ -160,4 +149,4 @@ function getTableInfo() {
     });
 }
 
-module.exports = { setupIpc };
+module.exports = { setupIpc, db: () => { return db; } };
