@@ -117,7 +117,6 @@ function drawResizeOne(div, ctx, canvasRect) {
     const divRect = div.getBoundingClientRect();
     ctx.lineWidth = 2.5;
     ctx.strokeStyle = 'rgba(50, 50, 255, 0.5)';
-    // ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top, divRect.width, divRect.height);
     ctx.font = '12px Consolas';
     let tw = 0;
     if (div.id.length) {
@@ -128,12 +127,13 @@ function drawResizeOne(div, ctx, canvasRect) {
     }
     if (!isInRect(...recc, {
         top: divRect.top -  15,
-        left: divRect.left,
-        right: divRect.right,
-        bottom: divRect.bottom
+        left: divRect.left - 10,
+        right: divRect.right + 10,
+        bottom: divRect.bottom + 10
     })) {
         return;
     }
+    ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top, divRect.width, divRect.height);
     ctx.fillStyle = 'rgba(100, 145, 255)';
     ctx.fillRect(divRect.left + tw - canvasRect.left, divRect.top - canvasRect.top-15, 31, 15);
     ctx.fillRect(divRect.left + tw - canvasRect.left + 35, divRect.top - canvasRect.top-15, 31, 15);

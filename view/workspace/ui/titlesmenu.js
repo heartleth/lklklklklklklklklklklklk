@@ -10,7 +10,7 @@ function titlesmenu(ws, edt) {
         ]);
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
-        uiedit.content = elementPropertySet().concat([
+        uiedit.content = elementPropertySet(edt).concat([
             make('value-input').set('fname', ['Text', 0]).set('defaultText', edt.innerText).elem,
         ]);
         let ac = addc(uiedit.addc(), [t], edt);
@@ -28,7 +28,7 @@ function titlesmenu(ws, edt) {
     ]);
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;
-    uiedit.content = elementPropertySet().concat([
+    uiedit.content = elementPropertySet(edt).concat([
         make('value-input').set('fname', ['Text', 0]).set('defaultText', 'Title').elem,
         make('select').set('fname', ['Level', 1, 'Title Size']).opts(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']).elem,
     ]);
@@ -54,7 +54,7 @@ function paragraphMenu(ws, edt) {
         ]);
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
-        uiedit.content = elementPropertySet().concat([
+        uiedit.content = elementPropertySet(edt).concat([
             make('value-input').set('fname', ['Text', 0]).set('defaultText', edt.innerText).elem,
             make('value-input').set('fname', ['FontSize', 1, 'Font Size']).set('defaultText', 16).set('lengthInput', true).elem,
             make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', Math.round(lpx(edt.style.minWidth) / cellSpacing)).elem,
@@ -79,7 +79,7 @@ function paragraphMenu(ws, edt) {
         ]);
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
-        uiedit.content = elementPropertySet().concat([
+        uiedit.content = elementPropertySet(edt).concat([
             make('value-input').set('fname', ['Text', 0]).set('defaultText', 'SampleText').elem,
             make('value-input').set('fname', ['FontSize', 1, 'Font Size']).set('defaultText', 16).set('lengthInput', true).elem,
             make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', '5').elem,
@@ -118,7 +118,7 @@ function imageMenu(ws, edt) {
     }
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;
-    uiedit.content = elementPropertySet().concat([
+    uiedit.content = elementPropertySet(edt).concat([
         make('value-input').set('fname', ['src', 0, 'url']).set('mode', 'Image').set('defaultText', 'https://raw.githubusercontent.com/heartleth/lklklklklklklklklklklklk/main/icon/icon.png').elem,
         make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 5).elem,
         make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', 5).elem
@@ -141,7 +141,7 @@ function listMenu(ws, edt) {
     if (edt) {
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
-        uiedit.content = elementPropertySet().concat([
+        uiedit.content = elementPropertySet(edt).concat([
             make('value-input').set('fname', ['Text', 0]).set('defaultText', edt.innerText).elem,
         ]);
         let ac = addc(uiedit.addc(), [t], edt);
@@ -152,7 +152,7 @@ function listMenu(ws, edt) {
     }
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;
-    uiedit.content = elementPropertySet().concat([
+    uiedit.content = elementPropertySet(edt).concat([
         make('value-input').set('fname', ['Text', 0]).set('defaultText', 'Item1,Item2').set('listInput', true).set('onlyText', true).elem,
         make('value-input').set('fname', ['FontSize', 1, 'Font Size']).set('defaultText', 16).set('lengthInput', true).elem,
         make('select').set('fname', ['Level', 0, 'List Type']).opts(['ol', 'ul']).elem,

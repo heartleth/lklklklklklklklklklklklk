@@ -438,9 +438,9 @@ function elementPropertySet(edt) {
     if (edt) {
         // let actionName = edt.getAttribute('ooonload').substring(20).split("'")[0];
         // console.log(edt);
-        // console.log(actionName);
+        console.log(edt.getAttribute('id'));
         return [
-            make('value-input').set('fname', ['Id', 2, 'ID']).set('defaultText', edt.id).set('onlyText', true).elem,
+            make('value-input').set('fname', ['Id', 2, 'ID']).set('defaultText', edt.getAttribute('id')).set('onlyText', true).elem,
             make('value-input').set('fname', ['Class', 2]).set('defaultText', edt.getAttribute('class').replace('natural', '')).set('onlyText', true).elem,
             // make('action-input').set('fname', ['OnLoad', 2, 'Load Action']).set('actionName', actionName).elem,
             make('checkbox-options').set('fname', ['Style', 1, 'Style']).set('optdf', edt.getAttribute('styles')).set('options', Object.keys(JSON.parse(localStorage.getItem('llstyle') || '{"None":[]}'))).elem
