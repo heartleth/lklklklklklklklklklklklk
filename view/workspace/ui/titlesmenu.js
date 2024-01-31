@@ -10,11 +10,13 @@ function titlesmenu(ws, edt) {
         ]);
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
-        uiedit.content = elementPropertySet(edt).concat([
+        let [content, su] = elementPropertySet(edt);
+        uiedit.content = content.concat([
             make('value-input').set('fname', ['Text', 0]).set('defaultText', edt.innerText).elem,
         ]);
         let ac = addc(uiedit.addc(), [t], edt);
         uiedit.then = ac;
+        uiedit.propagateState(su, t.updates);
         addChilds(ws, [wstitle('Title Texts'), ac, uiedit]);
         ac.updateref();
         return;
@@ -28,12 +30,14 @@ function titlesmenu(ws, edt) {
     ]);
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;
-    uiedit.content = elementPropertySet(edt).concat([
+    let [content, su] = elementPropertySet(edt).concat([
         make('value-input').set('fname', ['Text', 0]).set('defaultText', 'Title').elem,
         make('select').set('fname', ['Level', 1, 'Title Size']).opts(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']).elem,
     ]);
+    uiedit.content = content;
     let ac = addc(uiedit.addc(), [t]);
     uiedit.then = ac;
+    uiedit.propagateState(su, t.updates);
     addChilds(ws, [wstitle('Title Texts'), ac, uiedit]);
     ac.updateref();
 }
@@ -54,7 +58,8 @@ function paragraphMenu(ws, edt) {
         ]);
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
-        uiedit.content = elementPropertySet(edt).concat([
+        let [content, su] = elementPropertySet(edt);
+        uiedit.content = content.concat([
             make('value-input').set('fname', ['Text', 0]).set('defaultText', edt.innerText).elem,
             make('value-input').set('fname', ['FontSize', 1, 'Font Size']).set('defaultText', 16).set('lengthInput', true).elem,
             make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', Math.round(lpx(edt.style.minWidth) / cellSpacing)).elem,
@@ -62,6 +67,7 @@ function paragraphMenu(ws, edt) {
         ]);
         let ac = addc(uiedit.addc(), [div], edt);
         uiedit.then = ac;
+        uiedit.propagateState(su, div.updates);
         addChilds(ws, [wstitle('Paragraph'), ac, uiedit]);
         ac.updateref();
     }
@@ -79,7 +85,8 @@ function paragraphMenu(ws, edt) {
         ]);
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
-        uiedit.content = elementPropertySet(edt).concat([
+        let [content, su] = elementPropertySet(edt);
+        uiedit.content = content.concat([
             make('value-input').set('fname', ['Text', 0]).set('defaultText', 'SampleText').elem,
             make('value-input').set('fname', ['FontSize', 1, 'Font Size']).set('defaultText', 16).set('lengthInput', true).elem,
             make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', '5').elem,
@@ -87,6 +94,7 @@ function paragraphMenu(ws, edt) {
         ]);
         let ac = addc(uiedit.addc(), [div]);
         uiedit.then = ac;
+        uiedit.propagateState(su, div.updates);
         addChilds(ws, [wstitle('Paragraph'), ac, uiedit]);
         ac.updateref();
     }
@@ -118,13 +126,15 @@ function imageMenu(ws, edt) {
     }
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;
-    uiedit.content = elementPropertySet(edt).concat([
+    let [content, su] = elementPropertySet(edt);
+    uiedit.content = content.concat([
         make('value-input').set('fname', ['src', 0, 'url']).set('mode', 'Image').set('defaultText', 'https://raw.githubusercontent.com/heartleth/lklklklklklklklklklklklk/main/icon/icon.png').elem,
         make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 5).elem,
         make('value-input').set('fname', ['H', 1, 'Height']).set('defaultText', 5).elem
     ]);
     let ac = addc(uiedit.addc(), [t]);
     uiedit.then = ac;
+    uiedit.propagateState(su, t.updates);
     addChilds(ws, [wstitle('Image'), ac, uiedit]);
     ac.updateref();
 }
@@ -141,24 +151,28 @@ function listMenu(ws, edt) {
     if (edt) {
         let uiedit = make('ui-edit').elem;
         uiedit.name = 'b' + tok;
-        uiedit.content = elementPropertySet(edt).concat([
+        let [content, su] = elementPropertySet(edt);
+        uiedit.content = content.concat([
             make('value-input').set('fname', ['Text', 0]).set('defaultText', edt.innerText).elem,
         ]);
         let ac = addc(uiedit.addc(), [t], edt);
         uiedit.then = ac;
+        uiedit.propagateState(su);
         addChilds(ws, [wstitle('List'), ac, uiedit]);
         ac.updateref();
         return;
     }
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;
-    uiedit.content = elementPropertySet(edt).concat([
+    let [content, su] = elementPropertySet(edt);
+    uiedit.content = content.concat([
         make('value-input').set('fname', ['Text', 0]).set('defaultText', 'Item1,Item2').set('listInput', true).set('onlyText', true).elem,
         make('value-input').set('fname', ['FontSize', 1, 'Font Size']).set('defaultText', 16).set('lengthInput', true).elem,
         make('select').set('fname', ['Level', 0, 'List Type']).opts(['ol', 'ul']).elem,
     ]);
     let ac = addc(uiedit.addc(), [t]);
     uiedit.then = ac;
+    uiedit.propagateState(su, t.updates);
     addChilds(ws, [wstitle('List'), ac, uiedit]);
     ac.updateref();
 }

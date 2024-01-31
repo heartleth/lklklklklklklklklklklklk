@@ -5,9 +5,21 @@ class ValueInput extends HTMLElement {
     connectedCallback() {
         this.mode = this.mode ?? 'Text';
         this.render();
+        this.defaultState = '';
+        this.defaultAttr = '';
         if (this.then) {
             this.then.render();
         }
+    }
+
+    applyState(stateName) {
+        this.mode = 'State';
+        this.defaultState = stateName;
+    }
+
+    applyAttr(attrName) {
+        this.mode = 'Attr';
+        this.defaultAttr = attrName;
     }
 
     hide() {
@@ -108,7 +120,7 @@ class ValueInput extends HTMLElement {
                 modeSelect.children[1].selected = 'selected';
             }
             let statenameInput = make('select').addClass(this.onlyState ? 'fullStateName' : 'stateName').elem;
-            statenameInput.innerHTML = Object.keys(window.states).filter(t=>t.length&&t[0]!='_').map(t=>`<option>${t}</option>`).join('');
+            statenameInput.innerHTML = Object.keys(window.states).filter(t=>t.length&&t[0]!='_').map(t=>`<option${t===this.defaultState?' selected="selected"':''}>${t}</option>`).join('');
             this.appendChild(statenameInput);
             let newStatenameInput = make('text').addClass('newStateName').elem;
             this.appendChild(newStatenameInput);
@@ -172,7 +184,7 @@ class ValueInput extends HTMLElement {
             modeSelect.children[2].selected = 'selected';
             let mode = document.querySelector('wsbody').getAttribute('mode');
             if (mode != 'Page') {
-                this.appendChild(make('select').opts(window.builtComponents[mode].attributes).addClass('useStates').elem);
+                this.appendChild(make('select').opts(window.builtComponents[mode].attributes, this.defaultAttr).addClass('useStates').elem);
             }
         }
     }

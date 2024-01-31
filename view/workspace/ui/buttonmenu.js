@@ -24,7 +24,8 @@ function buttonMenu(ws, edt) {
     }
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;
-    uiedit.content = elementPropertySet(edt).concat([
+    let [content, su] = elementPropertySet(edt);
+    uiedit.content = content.concat([
         make('value-input').set('fname', ['Text', 0]).dtxt(es.it ?? 'Click!').elem,
         make('value-input').set('fname', ['FontSize', 1, 'Font Size']).dtxt(16).set('lengthInput', true).elem,
         make('action-input').set('fname', ['OnClick', 0, 'Click Action']).set('actionName', es.actionName).elem,
@@ -34,6 +35,7 @@ function buttonMenu(ws, edt) {
     ]);
     let ac = addc(uiedit.addc(), [bt], edt);
     uiedit.then = ac;
+    uiedit.propagateState(su, bt.updates);
     addChilds(ws, [wstitle('Button'), ac, uiedit]);
     ac.updateref();
     return;

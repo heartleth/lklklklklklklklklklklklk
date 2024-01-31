@@ -195,7 +195,7 @@ app.whenReady().then(async () => {
                 res.send(JSON.stringify({ builtComponents, actions, states, tables, serverSidePostActions }));
             });
             expressApp.get('/lls.css' + route, (req, res) => {
-                res.send(llstyle);
+                res.type('css').send(llstyle);
             });
             expressApp.get(route, (req, res) => {
                 res.setHeader('Content-Type', 'text/html; charset=utf-8').send('<meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="/payload.js"></script><link rel="stylesheet" href="default.css"><link rel="stylesheet" href="/lls.css">' + html);

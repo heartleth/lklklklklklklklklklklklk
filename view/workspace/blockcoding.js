@@ -74,7 +74,7 @@ let blockmap = {
         category: 'value',
         isArgs: true,
         exec: (async (stc, local, s) => {
-            return JSON.parse(window.locals[local].elementThis.getAttribute('attrs'))[s];
+            return JSON.parse(window.locals[local].elementThis.getAttribute('attrs'))[await s];
         })
     },
     'Local': {
@@ -89,9 +89,10 @@ let blockmap = {
         html: '?T ?{+,-,*,/,mod} ?T',
         category: 'value',
         isArgs: true,
-        exec: (async (stc, local, ta, op, tb) => {
+        exec: (async (stc, local, ta, opp, tb) => {
             const a = parseFloat(await getValue(ta, local));
             const b = parseFloat(await getValue(tb, local));
+            let op = await opp;
             if (op == '+') return a + b;
             if (op == '-') return a - b;
             if (op == '*') return a * b;
@@ -118,7 +119,6 @@ let blockmap = {
             let vt = await vvt;
             if (vt === undefined || vt === null) return;
             let v = vt.substring ? window.locals[local][await vt] : await getValue(vt, local);
-            console.log(v, vt, attrname);
             if (v[0]) {
                 if (v[0].classList) {
                     for (const e of v) {
@@ -229,7 +229,6 @@ let blockmap = {
         exec: (async (stc, local, child, ta, operator, tb) => {
             let a = await getValue(ta, local);
             let b = await getValue(tb, local);
-            console.log(a, b);
             let condition = ((a == b) && operator=='=')
                 ||((a != b) && operator=='≠')
                 ||((a < b) && operator=='<')
@@ -273,7 +272,6 @@ let blockmap = {
         category: 'control',
         exec: (async (stc, local, child, iterName, arrc) => {
             let arr = await getValue(arrc, local);
-            console.log(arr);
             for (let iter of arr) {
                 window.locals[local][iterName] = iter;
                 if (child) {
@@ -287,7 +285,6 @@ let blockmap = {
         category: 'code',
         exec: (async  (stc, local, s) => {
             let secs = await getValue(s, local);
-            console.log(secs);
             await new Promise(p => setTimeout(p, secs * 1000));
         })
     },
@@ -388,6 +385,10 @@ function showBlocks(d) {
 }
 
 async function getValue(v, local) {
+    console.log(v);
+    if (v instanceof Promise) {
+        return await v;
+    }
     if (!v.substring && v.name) {
         return await blockmap[v.name].exec([], local, ...v.params.map(e=>getValue(e, local)));
     }

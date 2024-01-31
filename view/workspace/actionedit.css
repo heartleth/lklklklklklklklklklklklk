@@ -271,6 +271,11 @@ small-value > button.m2 {
     height: 20px;
     right: 4px;
     left: 4px;
+    z-index: 101;
+}
+
+.addBlocks {
+    z-index: 101;
 }
 
 .blockNav > div {

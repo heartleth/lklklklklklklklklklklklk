@@ -48,11 +48,8 @@ function topLeftDrag(me, evt) {
                 else if (my > sibRect.bottom) {
                     upsib = sib;
                 }
-                else if (cell[1] >= sibCell[1] && cell[1] + mh <= sibCell[1] + Math.round(sibRect.height) / cellSpacing) {
+                else if (Math.round(cell[1] - momCell[1]) >= sibCell[1] && Math.round(cell[1] - momCell[1] + mh) <= sibCell[1] + Math.round(sibRect.height) / cellSpacing) {
                     idsib = sib;
-                }
-                else {
-                    
                 }
             }
             me.idsib = idsib;

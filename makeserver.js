@@ -41,7 +41,7 @@ function ipcSetupMakeServer(mainWindow) {
                 for (const routeName of (localStorage.route ?? '/').split(',')) {
                     const route = (routeName[0]=='/' ? '' : '/') + routeName;
                     const builtComponents = localStorage[route + '.components'] ?? '{}';
-                    const actions = JSON.parse(localStorage[route + '.actions']);
+                    const actions = JSON.parse(localStorage['actions']);
                     const states = JSON.parse(localStorage[route + '.states']);
                     let html = localStorage[route + '.page'];
 

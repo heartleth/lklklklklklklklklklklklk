@@ -32,23 +32,23 @@ h1.natural, h2.natural, h3.natural, h4.natural, h5.natural, h6.natural {
     display: block;
 }
 
-[boxStyle~="round"] {
+[styles~="ROUND"] {
     border-radius: 12px;
 }
 
-[boxStyle~="outlineless"] {
+[styles~="NO_OUTLINE"] {
     outline: none !important;
 }
 
-[boxStyle~="thick-outline"] {
+[styles~="BIG_OUTLINE"] {
     outline: solid 3px black !important;
 }
 
-[boxStyle~="shadow"] {
+[styles~="SHADOW"] {
     box-shadow: 0px 4px 8px 0px rgb(118, 118, 118);
 }
 
-[boxStyle~="center-box"] {
+[styles~="CENTER_BOX"] {
     margin-right: auto !important;
     margin-left: auto !important;
 }

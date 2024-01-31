@@ -66,9 +66,11 @@ let blockmap = {
     'PlusMinus': {
         category: 'value',
         isArgs: true,
-        exec: (async (stc, local, ta, op, tb) => {
+        exec: (async (stc, local, ta, opp, tb) => {
             const a = parseFloat(await getValue(ta, local));
             const b = parseFloat(await getValue(tb, local));
+            console.log('??');
+            let op = await opp;
             if (op == '+') return a + b;
             if (op == '-') return a - b;
             if (op == '*') return a * b;
@@ -407,7 +409,7 @@ function updateState(stateNames) {
 }
 
 async function getValue(v, local) {
-    if (!v) return;
+    if (!v) return v;
     if (!v.substring && v.name) {
         if (v.name.startsWith('GETCOL')) {
             let v1 = await getValue(v.params[1], local);

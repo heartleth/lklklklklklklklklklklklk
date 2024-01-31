@@ -372,10 +372,10 @@ class UIEdit extends HTMLElement {
     connectedCallback() {
         let categoryFlex = make('div').addClass('uieditcatdiv').elem;
         this.appendChild(categoryFlex);
-        categoryFlex.appendChild(make('div').text('normal').elem);
+        categoryFlex.appendChild(make('div').text('figure').elem);
         categoryFlex.appendChild(make('div').text('style').elem);
         categoryFlex.appendChild(make('div').text('selector').elem);
-        this.mode = 'normal';
+        this.mode = 'figure';
         [...categoryFlex.children].forEach(e => e.addEventListener('click', () => {
             this.mode = e.innerText;
             this.render();
@@ -394,7 +394,7 @@ class UIEdit extends HTMLElement {
 
     render() {
         let shmode = {
-            'normal': 0,
+            'figure': 0,
             'style': 1,
             'selector': 2
         };
@@ -417,6 +417,19 @@ class UIEdit extends HTMLElement {
         }
     }
 
+    propagateState(su, updates) {
+        for (let [property, stateName] of su.forStates) {
+            let id = updates.filter(e=>e[0]==property)[0][1].split('/')[0];
+            let target = this.content.filter(e=>e.id==id.substring(2))[0];
+            target.applyState(stateName);
+        }
+        for (let [property, attrName] of su.forAttrs) {
+            let id = updates.filter(e=>e[0]==property)[0][1].split('/')[0];
+            let target = this.content.filter(e=>e.id==id.substring(2))[0];
+            target.applyAttr(attrName);
+        }
+    }
+
     addc() {
         let ret = [];
         for (let c of this.content) {
@@ -436,24 +449,24 @@ function elementPropertySet(edt) {
         localStorage.setItem('llstyle', '{"None":{"from":""},"ROUND":{"from":""},"NO_OUTLINE":{"from":""},"BIG_OUTLINE":{"from":""},"SHADOW":{"from":""},"CENTER_BOX":{"from":""}}');
     }
     if (edt) {
+        let forStates = [...edt.attributes].filter(e=>e.name.startsWith('updateforstate-')).map(e=>[e.nodeValue, e.name.substring(15)])
+        let forAttrs = [...edt.attributes].filter(e=>e.name.startsWith('attributeSlot-')).map(e=>[e.nodeValue, e.name.substring(14)])
         // let actionName = edt.getAttribute('ooonload').substring(20).split("'")[0];
-        // console.log(edt);
-        console.log(edt.getAttribute('id'));
-        return [
+        return [[
             make('value-input').set('fname', ['Id', 2, 'ID']).set('defaultText', edt.getAttribute('id')).set('onlyText', true).elem,
             make('value-input').set('fname', ['Class', 2]).set('defaultText', edt.getAttribute('class').replace('natural', '')).set('onlyText', true).elem,
             // make('action-input').set('fname', ['OnLoad', 2, 'Load Action']).set('actionName', actionName).elem,
             make('checkbox-options').set('fname', ['Style', 1, 'Style']).set('optdf', edt.getAttribute('styles')).set('options', Object.keys(JSON.parse(localStorage.getItem('llstyle') || '{"None":[]}'))).elem
-        ];
+        ], { forStates, forAttrs }];
     }
     else {
-        return [
+        return [[
             make('value-input').set('fname', ['Id', 2, 'ID']).set('defaultText', '').set('onlyText', true).elem,
             make('value-input').set('fname', ['Class', 2]).set('defaultText', '').set('onlyText', true).elem,
             // make('action-input').set('fname', ['OnLoad', 2, 'Load Action']).elem,
             make('style-input').set('fname', ['OnLoad', 2, 'Load Action']).elem,
             make('checkbox-options').set('fname', ['Style', 1, 'Style']).set('optdf').set('options', Object.keys(JSON.parse(localStorage.getItem('llstyle') || '{"None":[]}'))).elem
-        ];
+        ], {}];
     }
 }
 

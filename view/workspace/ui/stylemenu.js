@@ -225,7 +225,12 @@ function applyStyle() {
     let ee = document.getElementById('lsimulate');
     ee.innerHTML = '';
     for (const styleName of Object.keys(s)) {
-        ee.innerHTML += `.natural[styles~="${styleName}"] {${Object.keys(s[styleName]).map(e=>`${e}: ${s[styleName][e]};`).join('')}}`
+        if (styleName != 'from') {
+            let slist = Object.keys(s[styleName]).filter(e=>e!='from');
+            if (slist.length) {
+                ee.innerHTML += `.natural[styles~="${styleName}"] {${slist.map(e=>`${e}: ${s[styleName][e]};`).join('')}}`
+            }
+        }
     }
     localStorage.setItem('llcss', ee.innerHTML);
 }

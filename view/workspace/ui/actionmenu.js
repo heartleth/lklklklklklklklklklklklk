@@ -14,10 +14,6 @@ class ActionInput extends HTMLElement {
 
     render() {
         this.innerHTML = '';
-        // this.appendChild(wse.label('Enabled').elem);
-        // this.enabled = make('input').attr('type', 'checkbox').elem;
-        // this.appendChild(this.enabled);
-        // this.appendChild(wse.br());
         this.actionNameInput = make('select').addClass('fullStateName').elem;
         this.actionNameInput.innerHTML = '<option>None</option>';
         this.actionNameInput.innerHTML += Object.keys(window.actions).filter(t=>t.length&&t[0]!='_'&&!t.startsWith('page load')).map(t=>`<option${t===this.actionName?' selected="selected"':''}>${t}</option>`).join('');
@@ -132,7 +128,8 @@ class FunctionEdit extends HTMLElement {
         this.innerHTML = '';
         if (this.actionName != 'None') {
             let div = make('div').elem;
-            div.appendChild(wse.label('Inherit').elem)
+            div.appendChild(wse.label('Inherit').elem);
+            // div.style.overflow = 'hidden';
             // this.appendChild();
             let inherit = make('input').attr('name', this.actionName).attr('type', 'checkbox').elem;
             inherit.checked = window.actions[this.actionName].inherit;
@@ -184,6 +181,7 @@ function functoreditmenu(ws, funcName) {
         ws.parentElement.style.width = '400px';
         ws.parentElement.style.left = '20px';
     }
+    ws.style.overflow = 'hidden';
     let funceditwin = make('function-edit-window').attr('actionName', funcName).elem;
     ws.appendChild(funceditwin);
 }
@@ -193,7 +191,23 @@ class FunctionEditWindow extends HTMLElement {
         if (localStorage.getItem(clearPath(location.hash.substring(1)) + '.actions')) {
             
         }
+        this.addEventListener('wheel', this.onwheel);
         this.init();
+    }
+
+    onwheel(e) {
+        let rect = this.getBoundingClientRect();
+        let ox = -e.deltaX / 8;
+        let oy = -e.deltaY / 8;
+        this.start.style.left = this.start.getBoundingClientRect().x - rect.x + 4 + ox + 'px';
+        this.start.style.top = this.start.getBoundingClientRect().y - rect.y + 4 + oy + 'px';
+        for (const hs of this.bgs) {
+            hs.style.left = hs.getBoundingClientRect().x - rect.x + 4 + ox + 'px';
+            hs.style.top = hs.getBoundingClientRect().y - rect.y + 4 + oy + 'px';
+            hs.render();
+        }
+        this.start.render();
+        this.saveCode();
     }
     
     elemToBlock(elem) {
@@ -280,7 +294,7 @@ class FunctionEditWindow extends HTMLElement {
             }
             this.blockNav = make('div').addClass('blockNav').elem;
             this.hideAddBlocks = make('button').text('-').addClass('newstate').elem;
-            this.addBlocks = make('div').elem;
+            this.addBlocks = make('div').addClass('addBlocks').elem;
             this.hideAddBlocks.addEventListener('click', () => {
                 if (this.hideAddBlocks.innerText == '-') {
                     this.hideAddBlocks.style.bottom = '20px';
@@ -316,6 +330,7 @@ class FunctionEditWindow extends HTMLElement {
     loadCode(t, codes, vk, acn) {
         let tail = t ?? this.start;
         for (let code of codes) {
+            if (!blockmap[code.name]) continue;
             tail = make('function-edit-block')
                 .html(parseBlock(blockmap[code.name].html))
                 .addClass(blockmap[code.name].category)
@@ -383,7 +398,7 @@ class FunctionEditWindow extends HTMLElement {
             this.deliver(code.child[0], acn, vk, [c]);
         }
         tail[0].child = c;
-        console.log(code.child);
+        // console.log(code.child);
         if (code.child.length > 1) {
             this.loadCode(c, code.child.slice(1), vk, acn);
         }
@@ -604,7 +619,7 @@ class FunctionEditWindow extends HTMLElement {
         if (this.start) {
             if (this.start.down) {
                 window.actions[this.actionName].code = this.start.down.makeCode();
-                console.log(isServerAction(window.actions[this.actionName].code));
+                // console.log(isServerAction(window.actions[this.actionName].code));
             }
             else {
                 window.actions[this.actionName].code = [];
@@ -614,7 +629,7 @@ class FunctionEditWindow extends HTMLElement {
             for (const hs of this.bgs) {
                 if (hs.down) {
                     window.actions[hs.hsn].code = hs.down.makeCode();
-                    console.log(isServerAction(window.actions[hs.hsn].code));
+                    // console.log(isServerAction(window.actions[hs.hsn].code));
                 }
                 else {
                     window.actions[hs.hsn].code = [];
