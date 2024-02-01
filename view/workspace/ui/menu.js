@@ -418,15 +418,17 @@ class UIEdit extends HTMLElement {
     }
 
     propagateState(su, updates) {
-        for (let [property, stateName] of su.forStates) {
-            let id = updates.filter(e=>e[0]==property)[0][1].split('/')[0];
-            let target = this.content.filter(e=>e.id==id.substring(2))[0];
-            target.applyState(stateName);
-        }
-        for (let [property, attrName] of su.forAttrs) {
-            let id = updates.filter(e=>e[0]==property)[0][1].split('/')[0];
-            let target = this.content.filter(e=>e.id==id.substring(2))[0];
-            target.applyAttr(attrName);
+        if (su.forStates) {
+            for (let [property, stateName] of su.forStates) {
+                let id = updates.filter(e=>e[0]==property)[0][1].split('/')[0];
+                let target = this.content.filter(e=>e.id==id.substring(2))[0];
+                target.applyState(stateName);
+            }
+            for (let [property, attrName] of su.forAttrs) {
+                let id = updates.filter(e=>e[0]==property)[0][1].split('/')[0];
+                let target = this.content.filter(e=>e.id==id.substring(2))[0];
+                target.applyAttr(attrName);
+            }
         }
     }
 

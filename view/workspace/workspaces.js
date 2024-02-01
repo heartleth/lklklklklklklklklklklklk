@@ -1,4 +1,6 @@
 window.builtComponents = {};
+window.undo = [{ ...localStorage }];
+window.redo = [];
 
 function componentmenu(ws) {
     let componentNameInput = make('text').elem;

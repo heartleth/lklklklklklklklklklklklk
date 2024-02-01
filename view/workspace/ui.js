@@ -353,6 +353,21 @@ window.addEventListener('mouseup', (e) => {
     this.resizing = false;
     this.isOut = false;
     this.ojf = false;
+    
+    if (window.undo.length == 0) {
+        window.undo.push({ ...localStorage });
+        window.redo = [];
+    }
+    else {
+        if (JSON.stringify(window.undo[window.undo.length - 1]) != JSON.stringify({ ...localStorage })) {
+            console.log('???');
+            window.undo.push({ ...localStorage });
+            window.redo = [];
+            if (window.undo.length > 15) {
+                window.undo.shift();
+            }
+        }
+    }
     return false;
 });
 
@@ -441,6 +456,12 @@ window.onkeydown = (k) => {
                 });
             }
             window.isBack = true;
+        }
+        if (k.key == 'y' && k.ctrlKey) {
+            redof();
+        }
+        else if (k.key == 'z' && k.ctrlKey) {
+            undof();
         }
     }
 };
@@ -565,3 +586,37 @@ document.getElementById('appearance').addEventListener('click', () => {
         canv.style.display = 'none';
     }
 });
+
+function undof() {
+    if (window.undo.length > 0) {
+        window.redo.push({ ...localStorage });
+        let wu = window.undo[window.undo.length - 1];
+        localStorage.clear();
+        for (let key in wu) {
+            localStorage.setItem(key, wu[key]);
+        }
+        window.undo.pop();
+        if (window.undo.length == 0) {
+            window.undo.push({ ...localStorage });
+        }
+        document.getElementById('menus').innerHTML = '';
+        load();
+    }
+}
+
+function redof() {
+    if (window.redo.length > 0) {
+        window.undo.push({ ...localStorage });
+        let wu = window.redo[window.redo.length - 1];
+        localStorage.clear();
+        for (let key in wu) {
+            localStorage.setItem(key, wu[key]);
+        }
+        window.redo.pop();
+        document.getElementById('menus').innerHTML = '';    
+        load();
+    }
+}
+
+document.getElementById('undo').addEventListener('click', undof);
+document.getElementById('redo').addEventListener('click', redof);

@@ -209,7 +209,7 @@ window.addEventListener('mousedown', (e) => {
     const canvasRect = canvas.getBoundingClientRect();
     let mx = e.clientX;
     let my = e.clientY;
-    if (isInRect(mx, my, canvasRect)) {
+    if (isInRect(mx, my, canvasRect) && e.target.offsetParent.tagName != 'SOME-MENU') {
         let ctx = canvas.getContext('2d');
         let wsb = document.querySelector('wsbody');
         for (let div of wsb.querySelectorAll('*')) {

@@ -50,9 +50,11 @@ function inputMenu(ws, edt) {
     ]);
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;
+    let su;
     if (edt) {
         let actionName = edt.getAttribute('onchange').substring(20).split("'")[0];
-        uiedit.content = elementPropertySet(edt).concat([
+        let [content, suu] = elementPropertySet(edt);
+        uiedit.content = content.concat([
             make('value-input').set('fname', ['Placeholder', 0]).set('onlyText', true).set('defaultText', edt.getAttribute('placeholder')).elem,
             // make('value-input').set('fname', ['DefaultValue', 0, 'Default Value']).set('defaultText', edt.value).elem,
             make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', Math.round(lpx(edt.style.width) / cellSpacing)).elem,
@@ -60,9 +62,11 @@ function inputMenu(ws, edt) {
             make('value-input').set('fname', ['Color', 1]).set('defaultText', edt.style.backgroundColor).elem,
             make('action-input').set('fname', ['OnChange', 0, 'Change Action']).set('actionName', actionName).elem
         ]);
+        su = suu;
     }
     else {
-        uiedit.content = elementPropertySet().concat([
+        let [content, suu] = elementPropertySet();
+        uiedit.content = content.concat([
             make('value-input').set('fname', ['Placeholder', 0]).set('onlyText', true).elem,
             // make('value-input').set('fname', ['DefaultValue', 0, 'Default Value']).elem,
             make('value-input').set('fname', ['W', 1, 'Width']).set('defaultText', 5).elem,
@@ -71,9 +75,11 @@ function inputMenu(ws, edt) {
             make('checkbox-options').set('fname', ['Style', 1, 'Box Style']).set('options', boxStyleOptions).elem,
             make('action-input').set('fname', ['OnChange', 0, 'Change Action']).elem
         ]);
+        su = suu;
     }
     let ac = addc(uiedit.addc(), [bt], edt);
     uiedit.then = ac;
+    uiedit.propagateState(su, bt.updates);
     addChilds(ws, [wstitle('Text Field'), ac, uiedit]);
     ac.updateref();
 }

@@ -125,8 +125,8 @@ app.whenReady().then(async () => {
     ipcMain.on('loadFile', (e, ls) => {
         dialog.showOpenDialog(win, {properties: [ 'openFile' ], filters:[{name:'*.json', extensions: ['json']}]}).then(async res => {
             if (res.filePaths.length) {
-                let ptables = Object.keys(JSON.parse(ls.tables));
                 let lc = JSON.parse(fs.readFileSync(res.filePaths[0]).toString());
+                let ptables = Object.keys(JSON.parse(lc.tables));
                 let tables = JSON.parse(lc.tables);
                 await Promise.all([...ptables.map(table => new Promise(p => db().run(`DROP TABLE IF EXISTS ` + table, (err) => { p() })))]);
                 await Promise.all(Object.keys(tables).map(k => {

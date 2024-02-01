@@ -4,6 +4,15 @@ const path = require('path');
 const plb = require('./plb');
 const fs = require('fs');
 
+function clearPath(path) {
+    if (path.length <= 1) return '';
+    let pp = path.replace(/\/+/g, '/');
+    if (pp[pp.length - 1] == '/') {
+        return pp.substring(0, pp.length - 1);
+    }
+    return pp;
+}
+
 function ipcSetupMakeServer(mainWindow) {
     ipcMain.on('makeServer', (e, html, builtComponents, actions, states, localStorage) => {
         dialog.showOpenDialog(mainWindow, {properties: [ 'openDirectory' ]}).then(res => {
@@ -39,7 +48,7 @@ function ipcSetupMakeServer(mainWindow) {
                 `;
                 
                 for (const routeName of (localStorage.route ?? '/').split(',')) {
-                    const route = (routeName[0]=='/' ? '' : '/') + routeName;
+                    const route = clearPath(routeName);
                     const builtComponents = localStorage[route + '.components'] ?? '{}';
                     const actions = JSON.parse(localStorage['actions']);
                     const states = JSON.parse(localStorage[route + '.states']);
@@ -96,11 +105,11 @@ function ipcSetupMakeServer(mainWindow) {
                             });`;
                         }
                         else {
-                            actionsJS += `function ${action}() { let local = {}; let stc = []; ${actions[action].code.map(asExp).join(' ')}; updateState(stc); }`;
+                            actionsJS += `function ${action.replace(/ /g, '_')}() { let local = {}; let stc = []; ${actions[action].code.map(asExp).join(' ')}; updateState(stc); }`;
                         }
-                        html = html.replace((new RegExp(`callfunctionwithus\\('${action}'\\)`)), (r)=>action + '()');
+                        html = html.replace((new RegExp(`callfunctionwithus\\('${action}', this\\)`)), (r)=>action.replace(/ /g, '_') + '()');
                     }
-                    fs.writeFileSync(path.join(targetPath, 'payload/lls.css'), localStorage['lls']);
+                    fs.writeFileSync(path.join(targetPath, 'payload/lls.css'), localStorage['llcss']);
                     fs.writeFileSync(path.join(targetPath, 'views/v' + i + '.html'), `
                     <!doctype html>
                     <html>
@@ -119,6 +128,7 @@ function ipcSetupMakeServer(mainWindow) {
                 
                 indexJS += 'app.listen(process.env.PORT || 8000, () => {console.log("Server is started at port " + (process.env.PORT || 8000))});'
                 fs.writeFileSync(path.join(targetPath, 'index.js'), indexJS);
+                fs.writeFileSync(path.join(targetPath, 'localStorage.json'), JSON.stringify(localStorage));
             }
         });
     });
@@ -166,7 +176,12 @@ const blockmap = {
     },
     'PlusMinus': {
         category: 'value',
-        exp: (ta, op, tb) => `(${asExp(ta)} ${op=='mod'?'%':op} ${asExp(tb)})`
+        exp: (ta, op, tb) => {
+            if ('+-*/'.includes(op)) {
+                return `${asExp(ta)} ${op} ${asExp(tb)}`;
+            }
+            return `((a, b, c)=>(({'+':a+c,'-':a-c,'*':a*c,mod:a%c,'/':c==0?NaN:a/c})[b]))(${asExp(ta)}, ${asExp(op)}, ${asExp(tb)})`
+        }
     },
     'Find': {
         category: 'ui',
@@ -199,6 +214,73 @@ const blockmap = {
     'WhileOrd': {
         category: 'control',
         exp: (child, ta, operator, tb) => `while (${asExp(ta)} ${ords[operator]} ${asExp(tb)}) { ${child.map(asExp).join(' ')} }`
+    },
+    'IterateOver': {
+        html: 'Each ?T in ?T',
+        category: 'control',
+        exp: (child, iterName, arrc) => `for (let ${asExp(iterName)} of ${asExp(arrc)})`
+    },
+    'Delay': {
+        html: 'Delay ?T s',
+        category: 'code',
+        exp: (s) => `console.log('slept ${asExp(s)}secs.');`
+        /*
+        (async  (stc, local, s) => {
+            let secs = await getValue(s, local);
+            await new Promise(p => setTimeout(p, secs * 1000));
+        })
+        */
+    },
+    'CallAction': {
+        html: 'Action ?A',
+        category: 'code',
+        exp: (action) => `${action}();`
+    },
+    'Cookie': {
+        html: 'Cookie ?T',
+        isArgs: true,
+        category: 'server',
+        exp: (c) => ``
+    },
+    'Has Cookie': {
+        html: 'Has Cookie ?T',
+        isArgs: true,
+        category: 'server',
+        exp: (c) => ``
+    },
+    'Clear Cookie': {
+        html: 'Clear Cookie ?T',
+        category: 'server',
+        exp: (c) => `` 
+    },
+    'Set Cookie': {
+        html: 'Set Cookie ?T = ?T',
+        category: 'server',
+        exp: (c, v) => ``
+    },
+    'Random': {
+        html: 'Random ?T ≤ X ≤ ?T',
+        category: 'value',
+        isArgs: true,
+        exp: (a, b) => `(()=>{let min = parseFloat(${asExp(a)});let max = parseFloat(${asExp(b)});return Math.floor(Math.random() * (max - min + 1) + min);})()`
+    },
+    'Token': {
+        html: 'Token size = ?T',
+        category: 'value',
+        isArgs: true,
+        exp: (l) => `makdid(${asExp(l)})`
+    },
+    'Len': {
+        html: 'Size of ?T',
+        category: 'value',
+        isArgs: true,
+        exp: (s) => asExp(s) + '.length'
+    },
+    'Index': {
+        html: '?T at ?T',
+        category: 'value',
+        isArgs: true,
+        exp: (l, idx) => `${asExp(l)}[${asExp(idx)}]`
     }
 };
 
