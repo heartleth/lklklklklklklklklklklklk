@@ -30,11 +30,11 @@ function titlesmenu(ws, edt) {
     ]);
     let uiedit = make('ui-edit').elem;
     uiedit.name = 'b' + tok;
-    let [content, su] = elementPropertySet(edt).concat([
+    let [content, su] = elementPropertySet(edt);
+    uiedit.content = content.concat([
         make('value-input').set('fname', ['Text', 0]).set('defaultText', 'Title').elem,
         make('select').set('fname', ['Level', 1, 'Title Size']).opts(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']).elem,
     ]);
-    uiedit.content = content;
     let ac = addc(uiedit.addc(), [t]);
     uiedit.then = ac;
     uiedit.propagateState(su, t.updates);

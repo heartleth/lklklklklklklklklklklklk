@@ -360,7 +360,6 @@ window.addEventListener('mouseup', (e) => {
     }
     else {
         if (JSON.stringify(window.undo[window.undo.length - 1]) != JSON.stringify({ ...localStorage })) {
-            console.log('???');
             window.undo.push({ ...localStorage });
             window.redo = [];
             if (window.undo.length > 15) {

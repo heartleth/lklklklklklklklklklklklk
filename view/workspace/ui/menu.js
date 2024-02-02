@@ -133,6 +133,9 @@ class LengthInput extends HTMLElement {
 
     set_val(l) {
         this.stv = l;
+        if (this.children && this.children[0]) {
+            this.children[0].value = this.stv.replace(/[a-zA-Z_]+/g, '');
+        }
     }
     
     get val() {

@@ -20,7 +20,10 @@ const styleoptions = [
     {
         title: 'Border Style',
         binds: [
-            ['Type', ['@[none,solid,dashed,double,inset,outset,ridge,groove]=border-style']]
+            ['Type', ['@[none,solid,dashed,double,inset,outset,ridge,groove]=border-style']],
+            ['Color', ['color=border-color']],
+            ['Width', ['len=border-width']],
+            ['Radius', ['len=border-radius']]
         ]
     }
 ];
@@ -37,7 +40,6 @@ function stylemenu(ws, dsn) {
         console.log(clearPath(location.hash.substring(1)));
         for (const stn in pstyles) {
             if (clearPath(location.hash.substring(1)).startsWith(pstyles[stn].from)) {
-
                 styleName.innerHTML += `<option ${stn == ws.dsn ? 'selected' : ''}>` + stn + '</option>';
             }
         }
@@ -63,7 +65,7 @@ function stylemenu(ws, dsn) {
         });
         ws.appendChild(nsi);
         ws.appendChild(nsbt);
-        if (["CENTER_BOX","ROUND","NO_OUTLINE","None","BIG_OUTLINE","SHADOW"].includes(ws.dsn)) {
+        if (["CENTER_BOX", "ROUND", "NO_OUTLINE", "None", "BIG_OUTLINE", "SHADOW"].includes(ws.dsn)) {
             return;
         }
         ws.appendChild(wse.br());
@@ -98,6 +100,7 @@ function stylemenu(ws, dsn) {
 class StyleBind extends HTMLElement {
     connectedCallback() {
         this.bindlist = [];
+        console.log(this.bind);
         let label = make('span').text(this.bind[0]).addClass('style-label').elem;
         this.appendChild(label);
         for (const bprop of this.bind[1]) {
@@ -142,6 +145,10 @@ class StyleBind extends HTMLElement {
             return [li, btarget, () => li.val, li.set_val];
         }
         else if (btype == 'color') {
+            let li = make('input').attr('type', 'color').elem;
+            return [li, btarget];
+        }
+        else if (btype == 'texture') {
             let li = make('input').attr('type', 'color').elem;
             return [li, btarget];
         }

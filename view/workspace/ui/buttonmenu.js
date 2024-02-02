@@ -19,6 +19,7 @@ function buttonMenu(ws, edt) {
         es.backgroundColor = edt.style.backgroundColor;
         es.bs = edt.getAttribute('boxStyle');
         // edt.style.fontSize;
+        es.fsize = edt.style.fontSize.replace(/[a-zA-Z_]+/g, '');
         es.it = edt.innerText;
         es.actionName = edt.getAttribute('onclick').substring(20).split("'")[0]
     }
@@ -27,7 +28,7 @@ function buttonMenu(ws, edt) {
     let [content, su] = elementPropertySet(edt);
     uiedit.content = content.concat([
         make('value-input').set('fname', ['Text', 0]).dtxt(es.it ?? 'Click!').elem,
-        make('value-input').set('fname', ['FontSize', 1, 'Font Size']).dtxt(16).set('lengthInput', true).elem,
+        make('value-input').set('fname', ['FontSize', 1, 'Font Size']).dtxt(es.fsize ?? 16).set('lengthInput', true).elem,
         make('action-input').set('fname', ['OnClick', 0, 'Click Action']).set('actionName', es.actionName).elem,
         make('value-input').set('fname', ['W', 1, 'Width']).dtxt(es.minWidth ?? '2').elem,
         make('value-input').set('fname', ['H', 1, 'Height']).dtxt(es.minHeight ?? '1').elem,
