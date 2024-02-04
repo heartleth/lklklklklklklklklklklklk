@@ -133,6 +133,7 @@ function drawResizeOne(div, ctx, canvasRect) {
     })) {
         return;
     }
+    if (window.srce && window.srce.offsetParent.getAttribute('id') != 'workspaceframe') return;
     ctx.strokeRect(divRect.left - canvasRect.left, divRect.top - canvasRect.top, divRect.width, divRect.height);
     ctx.fillStyle = 'rgba(100, 145, 255)';
     ctx.fillRect(divRect.left + tw - canvasRect.left, divRect.top - canvasRect.top-15, 31, 15);
@@ -209,7 +210,7 @@ window.addEventListener('mousedown', (e) => {
     const canvasRect = canvas.getBoundingClientRect();
     let mx = e.clientX;
     let my = e.clientY;
-    if (isInRect(mx, my, canvasRect) && e.target.offsetParent.tagName != 'SOME-MENU') {
+    if (isInRect(mx, my, canvasRect) && e.target.offsetParent.getAttribute('id') == 'workspaceframe') {
         let ctx = canvas.getContext('2d');
         let wsb = document.querySelector('wsbody');
         for (let div of wsb.querySelectorAll('*')) {

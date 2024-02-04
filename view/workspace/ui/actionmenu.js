@@ -615,6 +615,29 @@ class FunctionEditWindow extends HTMLElement {
         this.saveCode();
     }
 
+    cloneBlock(b, e, parent) {
+        if (b.classList.contains('start')) return;  
+
+        let boxRect = this.getBoundingClientRect();
+        let ptr = b;
+        let newPtr = ptr.clone();
+        let head = newPtr;
+        ptr = ptr.down;
+        this.appendChild(newPtr);
+        let px = e.clientX + 4;
+        let py = e.clientY + 4;
+        newPtr.style.left = px - boxRect.left + 'px';
+        newPtr.style.top =  py - boxRect.top + 'px';
+        while (ptr !== undefined) {
+            let up = newPtr;
+            newPtr = newPtr.down = ptr.clone();
+            newPtr.up = up;
+            this.appendChild(newPtr);
+            ptr = ptr.down;
+        }
+        return head;
+    }
+
     saveCode() {
         if (this.start) {
             if (this.start.down) {
@@ -697,31 +720,43 @@ class FunctionEditBlock extends HTMLElement {
         }
     }
 
-    onmousedown(e) {
-        this.style.zIndex = mzi + 1;
-        if (this.child) {
-            this.child.style.zIndex = this.style.zIndex + 1;
-            itmb = true;
+    clone() {
+        return make('function-edit-block').html(this.innerHTML).addClass(this.classList).set('params', this.params).elem;
+    }
 
-            this.child.render([], undefined, true);
-            itmb = false;
-            mzi += 1;
-        }
-        mzi += 1;
-        let boxRect = this.parentElement.getBoundingClientRect();
-        if (this.up) {
-            this.offset = [
-                this.getBoundingClientRect().x - e.clientX,
-                this.getBoundingClientRect().y - e.clientY
-            ];
-            this.parentElement.movingElement = this;
+    onmousedown(e) {
+        console.log(e);
+        if (e.ctrlKey) {
+            let ce = this.parentElement.cloneBlock(this, e);
+            ce.offset = [-4, -4];
+            this.parentElement.movingElement = ce;
         }
         else {
-            this.offset = [
-                this.getBoundingClientRect().x - e.clientX,
-                this.getBoundingClientRect().y - e.clientY
-            ];
-            this.parentElement.movingElement = this;
+            this.style.zIndex = mzi + 1;
+            if (this.child) {
+                this.child.style.zIndex = this.style.zIndex + 1;
+                itmb = true;
+
+                this.child.render([], undefined, true);
+                itmb = false;
+                mzi += 1;
+            }
+            mzi += 1;
+            let boxRect = this.parentElement.getBoundingClientRect();
+            if (this.up) {
+                this.offset = [
+                    this.getBoundingClientRect().x - e.clientX,
+                    this.getBoundingClientRect().y - e.clientY
+                ];
+                this.parentElement.movingElement = this;
+            }
+            else {
+                this.offset = [
+                    this.getBoundingClientRect().x - e.clientX,
+                    this.getBoundingClientRect().y - e.clientY
+                ];
+                this.parentElement.movingElement = this;
+            }
         }
     }
 

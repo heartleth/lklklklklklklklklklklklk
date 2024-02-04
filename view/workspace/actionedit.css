@@ -26,6 +26,10 @@ div > function-edit-block {
     top: 30px;
 }
 
+function-edit-window > function-edit-block:not(.args) {
+    box-shadow: 4px 4px 6px #00000040;
+}
+
 function-edit-window > function-edit-block.chain,
 div > function-edit-block.chain {
     border-radius: 0px 5px 5px 0px;
