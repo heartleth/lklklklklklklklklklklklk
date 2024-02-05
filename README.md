@@ -11,3 +11,5 @@ Yogurt는 블록코딩만으로 클라이언트와 서버를 모두 제작할 �
 ![](https://media.discordapp.net/attachments/1203010358642737192/1203011851496202240/image.png?ex=65cf8b18&is=65bd1618&hm=8aface990225fc7b371160374c9ced2b4aa14d8836bc903d6a1226d5d8e56ebc&=&format=webp&quality=lossless&width=2160&height=902)
 
 블록으로 코드를 짜기만 하면 Yogurt는 서버에서 작동될 코드인지 클라이언트에서 작동될 코드인지 알아서 구분합니다.
+
+블록 위아래의 점들은 루이스 전자점식을 본딴 것입니다. 블록의 결합을 원자의 결합에 빗대고 싶었지만 생각했던 것만큼 예쁘진 않은 것 같습니다.
