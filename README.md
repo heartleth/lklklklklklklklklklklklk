@@ -8,7 +8,7 @@ Yogurt는 블록코딩만으로 클라이언트와 서버를 모두 제작할 �
 
 # 블록코딩
 
-![](https://media.discordapp.net/attachments/1203010358642737192/1203011851496202240/image.png?ex=65cf8b18&is=65bd1618&hm=8aface990225fc7b371160374c9ced2b4aa14d8836bc903d6a1226d5d8e56ebc&=&format=webp&quality=lossless&width=2160&height=902)
+![](https://media.discordapp.net/attachments/1203010358642737192/1204025823758254080/image.png?ex=65d33b6e&is=65c0c66e&hm=8eeb06a3fe42b0617eb43007a25fca97a8d5fb13ccd8d0393fc8e277e2ff2e59&=&format=webp&quality=lossless&width=1430&height=994)
 
 블록으로 코드를 짜기만 하면 Yogurt는 서버에서 작동될 코드인지 클라이언트에서 작동될 코드인지 알아서 구분합니다.
 
