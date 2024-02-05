@@ -196,6 +196,7 @@ class FunctionEditWindow extends HTMLElement {
     }
 
     onwheel(e) {
+        if (e.target != this && (e.target.parentElement != this || e.target.tagName == 'DIV')) return;
         let rect = this.getBoundingClientRect();
         let ox = -e.deltaX / 8;
         let oy = -e.deltaY / 8;
@@ -817,6 +818,12 @@ class FunctionEditBlock extends HTMLElement {
     }
     
     render(l=[], b, start) {
+        if (this.classList.contains('control')) {
+            let last = this.children.length - 1;
+            this.children[last].style.backgroundPositionX = -this.offsetLeft - 11.1 + 'px';
+            this.children[last].style.backgroundPositionY = -this.offsetTop + 1 + 'px';
+        }
+
         if (this.classList.contains('args')) {
             let i = 0;
             for (let c of this.children) {

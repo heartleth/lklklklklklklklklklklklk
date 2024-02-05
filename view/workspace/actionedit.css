@@ -12,6 +12,7 @@ function-edit-window {
 
 function-edit-window > function-edit-block,
 div > function-edit-block {
+    box-shadow: inset -4px -4px 5px #2f2f2f25;
     border: solid 1px rgb(188, 188, 188);
     border-radius: 5px 5px 5px 5px;
     padding-right: 8px;
@@ -26,9 +27,12 @@ div > function-edit-block {
     top: 30px;
 }
 
-function-edit-window > function-edit-block:not(.args) {
+/*
+function-edit-window > function-edit-block:not(.args),
+div > function-edit-block:not(.args) {
     box-shadow: 4px 4px 6px #00000040;
 }
+*/
 
 function-edit-window > function-edit-block.chain,
 div > function-edit-block.chain {
@@ -107,8 +111,9 @@ function-edit-window > function-edit-block:not(.chain)::after, function-edit-win
 function-edit-window > function-edit-block.control > div::after
 /* ,div > function-edit-block.control > div::after */
 {
-    left: 18px;
+    left: 18px !important;
     bottom: -3.2px;
+    z-index: 100;
 }
 
 function-edit-window > function-edit-block:not(.chain)::before, function-edit-window > function-edit-block:not(.chain).control > div::before {
@@ -139,7 +144,7 @@ function-edit-window > function-edit-block.chain::before {
 }
 
 function-edit-window > function-edit-block.control > div::before {
-    left: 7px;
+    left: 7px !important;
 }
 
 function-edit-window > function-edit-block.start::before {
@@ -161,6 +166,9 @@ function-edit-window > function-edit-block.control > div {
     border-bottom: solid 1px #ddd;
     border-top: solid 1px #ddd;
     border-radius: 5px 0px 0px 5px;
+    background-image: radial-gradient(#bbbbbb 2px, transparent 0);
+    background-size: 25px 25px;
+    
 }
 
 function-edit-window > div {
