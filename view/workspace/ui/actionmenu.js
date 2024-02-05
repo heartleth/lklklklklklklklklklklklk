@@ -243,19 +243,13 @@ class FunctionEditWindow extends HTMLElement {
     }
     
     init() {
-        let codePositions = localStorage.getItem('codepositions');
+        // let codePositions = localStorage.getItem('codepositions');
         this.actionName = this.getAttribute('actionName');
         if (this.actionName) {
-            // let rect = this.getBoundingClientRect();
             if (window.actions[this.actionName].code) {
                 this.start = make('function-edit-block').addClass('start').html('Event start: ' + this.actionName).elem;
                 this.start.style.left = '10px';
                 this.start.style.top = '45px';
-                if (codePositions) {
-                    // codePositions = JSON.parse(codePositions);
-                    // this.start.style.left = codePositions.start.left;
-                    // this.start.style.top = codePositions.start.top;
-                }
                 this.appendChild(this.start);
                 this.loadCode(this.start, window.actions[this.actionName].code);
                 let cym = Math.max(...[...this.querySelectorAll('function-edit-window > function-edit-block')].map(e=>e.getBoundingClientRect().top));
@@ -269,10 +263,6 @@ class FunctionEditWindow extends HTMLElement {
                     let hs = make('function-edit-block').addClass('start').html('Event start: ' + hsn).elem;
                     hs.style.left = '10px';
                     hs.style.top = 95 + cym - this.getBoundingClientRect().top + 'px';
-                    if (codePositions) {
-                        // this.start.style.left = codePositions.start.left;
-                        // this.start.style.top = codePositions.start.top;
-                    }
                     hs.hsn = hsn;
                     this.bgs.push(hs);
                     this.appendChild(hs);
@@ -345,33 +335,6 @@ class FunctionEditWindow extends HTMLElement {
                 this.deliver(code, acn, vk, [tail]);
             }
             tail.render(undefined, undefined, true);
-
-            if (vk) {
-                let i = 0;
-                for (let param of code.params) {
-                    if (tail.children[i].tagName == 'SMALL-VALUE') {
-                        tail.children[i].setValue(param, true);
-                        let k = tail.children[i];
-                        tail.children[i].addEventListener('change', () => {
-                            window.actions[acn ?? this.actionName][vk].code[i] = k.val;
-                        });
-                        i += 1;
-                    }
-                }
-            }
-            else {
-                let i = 0;
-                for (let param of code.params) {
-                    if (tail.children[i].tagName == 'SMALL-VALUE') {
-                        tail.children[i].setValue(param, true);
-                        let k = tail.children[i];
-                        tail.children[i].addEventListener('change', () => {
-                            window.actions[acn ?? this.actionName].code[i] = k.val;
-                        });
-                        i += 1;
-                    }
-                }
-            }
         }
     }
 
@@ -454,6 +417,7 @@ class FunctionEditWindow extends HTMLElement {
 
                     if (ups.length) {
                         if (ups[0] == me.children[0]) {
+                            me.render();
                             return;
                         }
                         let tx = ups[0].getBoundingClientRect().left;
@@ -617,7 +581,7 @@ class FunctionEditWindow extends HTMLElement {
     }
 
     cloneBlock(b, e, parent) {
-        if (b.classList.contains('start')) return;  
+        if (b.classList.contains('start')) return;
 
         let boxRect = this.getBoundingClientRect();
         let ptr = b;
@@ -704,7 +668,6 @@ class FunctionEditBlock extends HTMLElement {
         }
         if (this.parentElement.tagName == 'FUNCTION-EDIT-WINDOW') {
             this.addEventListener('mousedown', this.onmousedown);
-            
             if (this.params) {
                 let i = 0
                 for (let c of this.children) {
@@ -722,11 +685,14 @@ class FunctionEditBlock extends HTMLElement {
     }
 
     clone() {
-        return make('function-edit-block').html(this.innerHTML).addClass(this.classList).set('params', this.params).elem;
+        let elem = make('function-edit-block').html(this.innerHTML).set('params', this.params);
+        for (const c of this.classList) {
+            elem.addClass(c);
+        }
+        return elem.elem;
     }
 
     onmousedown(e) {
-        console.log(e);
         if (e.ctrlKey) {
             let ce = this.parentElement.cloneBlock(this, e);
             ce.offset = [-4, -4];
@@ -862,7 +828,7 @@ class FunctionEditBlock extends HTMLElement {
             
             this.child.style.left = parseFloat(this.style.left.replace('px', '')) + 9 + 'px';
             this.child.style.top = parseFloat(this.style.top.replace('px', '')) + 23 + 'px';
-            this.child.style.zIndex = this.style.zIndex + 1;
+            this.child.style.zIndex = parseInt(this.style.zIndex) + 1;
             let c = this.child.render(l.concat([this]), undefined, start);
             this.style.height = c + 30 + 'px';
             ret = c + 30;
@@ -933,6 +899,7 @@ class BlockCreator {
         this.isArgs = isArgs;
         this.name = name;
     }
+
     make() {
         if (this.isArgs) {
             return make('function-edit-block')
@@ -991,6 +958,7 @@ class SmallValue extends HTMLElement {
                 .set('name', v.name)
                 .set('params', v.params).elem;
             this.setExpression(k);
+            console.log(k);
             this.parentElement.parentElement.appendChild(k);
         }
         // if (k) {
@@ -1005,7 +973,7 @@ class SmallValue extends HTMLElement {
     relocate(z) {
         if (this.expression) {
             this.innerHTML = '';
-            this.expression.style.zIndex = z + 1;
+            this.expression.style.zIndex = parseInt(z) + 1;
             let boxRect = this.parentElement.parentElement.getBoundingClientRect();
             let tx = this.getBoundingClientRect().left;
             let ty = this.getBoundingClientRect().top;
