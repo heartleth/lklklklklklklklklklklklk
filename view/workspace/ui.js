@@ -484,7 +484,7 @@ let bos = () => {
 document.getElementById('wsright').addEventListener('scroll', bos);
 document.getElementById('wsleft').addEventListener('scroll', bos);
 document.getElementById('reset').addEventListener('click', () => {
-    if (require) {
+    if (window.require) {
         let electron = require('electron');
         let tables = localStorage.getItem('tables');
         if (tables === null || tables == 'null') tables = '{}';
@@ -519,7 +519,7 @@ document.getElementById('toPage').addEventListener('click', () => {
 
 document.getElementById('makeServer').addEventListener('click', (e) => {
     e.preventDefault();
-    if (require) {
+    if (window.require) {
         let electron = require('electron');
         let wsb = document.querySelector('wsbody');
         wsb.setAttribute('mode', 'Page');
@@ -535,7 +535,7 @@ document.getElementById('makeServer').addEventListener('click', (e) => {
 
 function saveAsFile() {
     save();
-    if (require) {
+    if (window.require) {
         let electron = require('electron');
         electron.ipcRenderer.send('saveAsFile', { ...localStorage });
         electron.ipcRenderer.once('savedPath', (e, path) => {
@@ -556,7 +556,7 @@ window.addEventListener('keydown', (e) => {
 })
 
 document.getElementById('loadFromFile').addEventListener('click', () => {
-    if (require) {
+    if (window.require) {
         let electron = require('electron');
         electron.ipcRenderer.send('loadFile', { ...localStorage });
         electron.ipcRenderer.once('loadedLS', (e, lc) => {
@@ -570,7 +570,7 @@ document.getElementById('loadFromFile').addEventListener('click', () => {
 });
 
 document.getElementById('help').addEventListener('click', () => {
-    if (require) {
+    if (window.require) {
         let electron = require('electron');
         electron.shell.openExternal('https://heartleth.github.io/lklklklklklklklklklklklk/docs');
     }

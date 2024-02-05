@@ -87,7 +87,7 @@ class ValueInput extends HTMLElement {
                 }
             });
             lbl.addEventListener('click', () => {
-                if (require) {
+                if (window.require) {
                     let electron = require('electron');
                     electron.ipcRenderer.send('SelectImage');
                     electron.ipcRenderer.once('retf', (e, f) => {

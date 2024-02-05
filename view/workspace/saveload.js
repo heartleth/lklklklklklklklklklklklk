@@ -46,7 +46,7 @@ function save() {
         }
         return [top, left, right, width, height, type, x, an];
     })));
-    if (require) {
+    if (window.require) {
         let elecrtron = require('electron');
         elecrtron.ipcRenderer.send('save', {...localStorage});
     }
