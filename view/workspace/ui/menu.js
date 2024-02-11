@@ -122,6 +122,7 @@ class LengthInput extends HTMLElement {
             <option>mm</option>
             <option>em</option>
         </select>`;
+        this.stv = this.stv ?? this.getAttribute('stv');
         if (this.stv) {
             this.children[0 + !!(this.label)].value = this.stv.replace(/[a-zA-Z_]+/g, '');
             this.children[1 + !!(this.label)].value = this.stv.replace(/[0-9\-]+/g, '');
@@ -132,9 +133,13 @@ class LengthInput extends HTMLElement {
     }
 
     set_val(l) {
-        this.stv = l;
+        this.setAttribute('stv', l);
+        this.stv = this.getAttribute('stv');
         if (this.children && this.children[0]) {
             this.children[0].value = this.stv.replace(/[a-zA-Z_]+/g, '');
+            if (this.children[1]) {
+                this.children[1].value = this.stv.replace(/[0-9\-]+/g, '');
+            }
         }
     }
     

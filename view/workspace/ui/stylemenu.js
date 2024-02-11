@@ -142,7 +142,7 @@ class StyleBind extends HTMLElement {
         else if (btype == 'len') {
             let li = make('length-input').elem;
             li.style.width = '100px';
-            return [li, btarget, () => li.val, li.set_val];
+            return [li, btarget, () => li.val, li.set_val.bind(li)];
         }
         else if (btype == 'color') {
             let li = make('input').attr('type', 'color').elem;
